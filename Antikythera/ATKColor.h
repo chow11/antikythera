@@ -20,7 +20,7 @@ struct RGBA {
 	uint8_t r;
 	uint8_t a;
 
-	RGBA() { };
+	RGBA() { b = 0; g = 0; r = 0; a = 0; };
 	RGBA(uint8_t cr, uint8_t cg, uint8_t cb, uint8_t ca) { r = cr; g = cg; b = cb; a = ca; };
 };
 
@@ -31,7 +31,7 @@ struct HSVA {
 	uint8_t h;
 	uint8_t a;
 
-	HSVA() { };
+	HSVA() { v = 0; s = 0; h = 0; a = 0; };
 	HSVA(uint8_t ch, uint8_t cs, uint8_t cv, uint8_t ca) { h = ch; s = cs; v = cv; a = ca; };
 };
 

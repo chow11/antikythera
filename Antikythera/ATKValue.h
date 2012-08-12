@@ -21,7 +21,7 @@ union VALUE_TYPE {
 
 class ATKValue {
 public:
-	ATKValue() { }
+	ATKValue() { m_flags = 0; m_count = 0; }
 	~ATKValue() { if (m_values != NULL) delete[] m_values; }
 
 	bool isDirty() { return m_flags & VALUEFLAG_DIRTY; }
