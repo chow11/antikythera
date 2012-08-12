@@ -26,7 +26,7 @@
 
 class ATKPoint : public ATKIOperator {
 public:
-	ATKPoint() { }
+	ATKPoint();
 	~ATKPoint();
 
 	virtual bool load(Stream *program);
@@ -39,7 +39,7 @@ public:
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
 
 protected:
-	virtual void *result(uint8_t index) { m_result[0] = m_layer; return m_result; }
+	virtual void *resultGeneric(uint8_t index) { m_result[0] = m_layer; return m_result; }
 
 private:
 	ATK_OPERAND m_operands[];

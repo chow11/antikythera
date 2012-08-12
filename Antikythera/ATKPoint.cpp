@@ -10,6 +10,13 @@
 #include "ATKPoint.h"
 #include "Antikythera.h"
 
+ATKPoint::ATKPoint() {
+	m_x = 0;
+	m_y = 0;
+	m_displayNumber = 0;
+	m_layer = 0;
+}
+
 // <display type><display width><display height><frame width><frame height><num layers>
 bool ATKPoint::load(Stream *program) {
 	bool result = true;

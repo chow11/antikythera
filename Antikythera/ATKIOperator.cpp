@@ -11,6 +11,11 @@
 #include <ATKIOperator.h>
 #include <ATKValue.h>
 
+ATKIOperator::ATKIOperator() {
+	m_isProcessed = false;
+	m_operationCount = 0;
+}
+
 bool ATKIOperator::load(Stream *program) {
 	return true;
 }

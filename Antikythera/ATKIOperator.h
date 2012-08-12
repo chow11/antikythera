@@ -42,7 +42,7 @@ public:
 	void setProcessedFlag();
 	
 protected:
-	ATKIOperator() { }
+	ATKIOperator();
 
 	virtual void *resultGeneric(uint8_t index);
 	uint8_t operationCount() { return m_operationCount; };

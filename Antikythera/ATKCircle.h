@@ -27,20 +27,20 @@
 
 class ATKCircle : public ATKIOperator {
 public:
-	ATKCircle() { }
+	ATKCircle();
 	~ATKCircle();
 
 	virtual bool load(Stream *program);
 
 	virtual bool process(long now);
 
-	virtual uint8_t operandCount() { return 5; }
+	virtual uint8_t operandCount() { return 6; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
 	virtual uint8_t resultCount() { return 1; }
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
 
 protected:
-	virtual void *result(uint8_t index) { m_result[0] = m_layer; return m_result; }
+	virtual void *resultGeneric(uint8_t index) { m_result[0] = m_layer; return m_result; }
 
 private:
 	ATK_OPERAND m_operands[];

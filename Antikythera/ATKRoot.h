@@ -24,7 +24,7 @@ public:
 	virtual uint8_t operandCount();
 	virtual ATK_OPERAND operand(uint8_t index);
 	virtual uint8_t resultCount();
-	virtual void *result(uint8_t index);
+	virtual void *resultGeneric(uint8_t index);
 };
 
 #endif

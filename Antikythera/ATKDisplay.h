@@ -34,7 +34,7 @@ public:
 	virtual uint8_t resultSize(uint8_t index) { return 0; }
 
 protected:
-	virtual void *result(uint8_t index) { return NULL; }
+	virtual void *resultGeneric(uint8_t index) { return NULL; }
 
 private:
 	ATK_OPERAND m_operands[];

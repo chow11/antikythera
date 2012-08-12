@@ -10,6 +10,14 @@
 #include "ATKCircle.h"
 #include "Antikythera.h"
 
+ATKCircle::ATKCircle() {
+	m_x = 0;
+	m_y = 0;
+	m_radius = 0;
+	m_displayNumber = 0;
+	m_layer = 0;
+}
+
 // <display type><display width><display height><frame width><frame height><num layers>
 bool ATKCircle::load(Stream *program) {
 	bool result = true;

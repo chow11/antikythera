@@ -26,28 +26,33 @@
 
 class ATKLine : public ATKIOperator {
 public:
-	ATKLine() { }
+	ATKLine();
 	~ATKLine();
 
 	virtual bool load(Stream *program);
 
 	virtual bool process(long now);
 
-	virtual uint8_t operandCount() { return 5; }
+	virtual uint8_t operandCount() { return 10; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
 	virtual uint8_t resultCount() { return 1; }
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
 
 protected:
-	virtual void *result(uint8_t index) { m_result[0] = m_layer; return m_result; }
+	virtual void *resultGeneric(uint8_t index) { m_result[0] = m_layer; return m_result; }
 
 private:
 	ATK_OPERAND m_operands[];
 	uint8_t m_result[1];
 
-	uint8_t m_x;
-	uint8_t m_y;
+	uint8_t m_x1;
+	uint8_t m_y1;
+	uint8_t m_x2;
+	uint8_t m_y2;
 	HSVA m_color;
+	uint8_t m_width;
+	uint8_t m_style;
+	uint8_t m_mode;
 	uint8_t m_displayNumber;
 	uint8_t m_layer;
 };
