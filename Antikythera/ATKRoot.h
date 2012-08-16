@@ -10,7 +10,9 @@
 #ifndef ATK_Root_H_
 #define ATK_Root_H_
 
-#include "ATKIOperator.h"
+
+#include <ATKIOperator.h>
+
 
 class ATKRoot : public ATKIOperator {
 public:
@@ -26,6 +28,7 @@ public:
 	virtual uint8_t resultCount();
 	virtual void *resultGeneric(uint8_t index);
 };
+
 
 #endif
 

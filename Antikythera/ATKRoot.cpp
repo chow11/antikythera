@@ -7,8 +7,9 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include "ATKRoot.h"
-#include "Antikythera.h"
+#include <ATKRoot.h>
+#include <Antikythera.h>
+
 
 bool ATKRoot::load(Stream *program) {
 	return true;

@@ -10,8 +10,6 @@
 #ifndef ATKCOLOR_H_
 #define ATKCOLOR_H_
 
-#include <WProgram.h>
-
 
 // aarrggbb
 struct RGBA {
@@ -34,9 +32,6 @@ struct HSVA {
 	HSVA() { v = 0; s = 0; h = 0; a = 0; };
 	HSVA(uint8_t ch, uint8_t cs, uint8_t cv, uint8_t ca) { h = ch; s = cs; v = cv; a = ca; };
 };
-
-
-inline RGBA HSVAtoRGBA(HSVA hsva);
 
 
 /*
@@ -76,7 +71,7 @@ const uint8_t DIM_CURVE[] = {
 	This looks the most natural.
 	Hue presicion is 1/255ths rather than 1 degree increments
 */
-RGBA HSVAtoRGBA(HSVA hsva) { 
+RGBA HSVAtoRGBA(HSVA hsva) {
 	RGBA rgba;
 	uint8_t h = hsva.h;
   uint8_t s = 255 - DIM_CURVE[255 - hsva.s];

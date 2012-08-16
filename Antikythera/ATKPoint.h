@@ -10,8 +10,10 @@
 #ifndef ATK_Point_H_
 #define ATK_Point_H_
 
-#include "ATKColor.h"
-#include "ATKIOperator.h"
+
+#include <ATKColor.h>
+#include <ATKIOperator.h>
+
 
 /*
 	Operands:
@@ -39,7 +41,7 @@ public:
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
 
 protected:
-	virtual void *resultGeneric(uint8_t index) { m_result[0] = m_layer; return m_result; }
+	virtual void *resultGeneric(uint8_t index) { return m_result; }
 
 private:
 	ATK_OPERAND m_operands[];
@@ -51,6 +53,7 @@ private:
 	uint8_t m_displayNumber;
 	uint8_t m_layer;
 };
+
 
 #endif
 

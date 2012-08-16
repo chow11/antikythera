@@ -7,8 +7,9 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include "ATKCircle.h"
-#include "Antikythera.h"
+#include <ATKCircle.h>
+#include <Antikythera.h>
+
 
 ATKCircle::ATKCircle() {
 	m_x = 0;
@@ -45,6 +46,7 @@ bool ATKCircle::process(long now) {
 		m_layer = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
 
 		Antikythera::displays[0]->circle(m_x, m_y, m_radius, m_color, m_layer);
+		m_result[0] = m_layer;
 	}
 
 	setProcessedFlag();

@@ -10,18 +10,22 @@
 #ifndef ATK_IOperator_H_
 #define ATK_IOperator_H_
 
+
 #include <Stream.h>
+
 
 #define OPERANDFLAG_LINK	0x80		// 0=constant 1=link to operator output
 #define OPERANDFLAG_LIMIT	0x40		// 0=fill 1=limit
 #define OPERANDFLAG_EXTEND	0x20		// 0=cycle 1=extend
 #define OPERANDFLAG_SINGLE	0x10		// 0=use all values 1=always use first value
 
+
 struct ATK_OPERAND {
 	uint8_t flags;				// lower 4 bits used for data type (future)
 	uint8_t operatorIndex;
 	uint8_t resultIndex;		// if OPERANDFLAG_CONST then constant value index
 };
+
 
 class ATKIOperator {
 public:
@@ -52,6 +56,7 @@ private:
 	bool m_isProcessed;
 	uint8_t m_operationCount;
 };
+
 
 #endif
 

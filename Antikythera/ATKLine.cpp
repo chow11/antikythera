@@ -10,6 +10,7 @@
 #include "ATKLine.h"
 #include "Antikythera.h"
 
+
 ATKLine::ATKLine() {
 	m_x1 = 0;
 	m_y1 = 0;
@@ -56,6 +57,7 @@ bool ATKLine::process(long now) {
 		m_layer = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
 
 		Antikythera::displays[0]->line(m_x1, m_y1, m_x2, m_y2, m_color, m_width, m_style, m_mode, m_layer);
+		m_result[0] = m_layer;
 	}
 
 	setProcessedFlag();

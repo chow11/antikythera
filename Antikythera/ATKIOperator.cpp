@@ -9,7 +9,8 @@
 
 #include <Antikythera.h>
 #include <ATKIOperator.h>
-#include <ATKValue.h>
+//#include <ATKValue.h>
+
 
 ATKIOperator::ATKIOperator() {
 	m_isProcessed = false;

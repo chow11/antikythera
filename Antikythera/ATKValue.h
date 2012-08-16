@@ -10,6 +10,10 @@
 #ifndef ATK_VALUE_H_
 #define ATK_VALUE_H_
 
+
+#define VALUEFLAG_DIRTY		0x80
+
+
 union VALUE_TYPE {
 	bool b;
 	int8_t i8;
@@ -17,7 +21,6 @@ union VALUE_TYPE {
 	int8_t i32;
 };
 
-#define VALUEFLAG_DIRTY		0x80
 
 class ATKValue {
 public:

@@ -10,6 +10,7 @@
 #ifndef ATK_ISensor_H_
 #define ATK_ISensor_H_
 
+
 class ATKISensor {
 public:
 	virtual ~ATKISensor();
@@ -35,6 +36,7 @@ public:
 protected:
 	ATKISensor() { }
 };
+
 
 #endif
 

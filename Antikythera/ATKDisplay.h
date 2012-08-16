@@ -10,7 +10,9 @@
 #ifndef ATK_Display_H_
 #define ATK_Display_H_
 
-#include "ATKIOperator.h"
+
+#include <ATKIOperator.h>
+
 
 /*
 	Operands:
@@ -39,6 +41,7 @@ protected:
 private:
 	ATK_OPERAND m_operands[];
 };
+
 
 #endif
 

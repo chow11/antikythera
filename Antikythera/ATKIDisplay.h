@@ -10,7 +10,9 @@
 #ifndef ATK_IDisplay_H_
 #define ATK_IDisplay_H_
 
+
 #include <ATKColor.h>
+
 
 class ATKIDisplay {
 public:
@@ -37,6 +39,7 @@ public:
 protected:
 	ATKIDisplay() { }
 };
+
 
 #endif
 

@@ -10,10 +10,12 @@
 #ifndef ATK_H_
 #define ATK_H_
 
+
 #include <Stream.h>
-#include "ATKIOperator.h"
-#include "ATKIDisplay.h"
-#include "ATKISensor.h"
+#include <ATKIOperator.h>
+#include <ATKIDisplay.h>
+#include <ATKISensor.h>
+
 
 class Antikythera {
 public:
@@ -33,6 +35,7 @@ public:
 	static uint8_t numSensors;
 	static ATKISensor **sensors;
 };
+
 
 #endif
 

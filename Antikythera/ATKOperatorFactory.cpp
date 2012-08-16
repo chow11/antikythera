@@ -7,12 +7,14 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include "ATKOperatorFactory.h"
-#include "ATKRoot.h"
-#include "ATKDisplay.h"
-#include "ATKPoint.h"
-#include "ATKLine.h"
-#include "ATKCircle.h"
+#include <ATKOperatorFactory.h>
+#include <ATKRoot.h>
+#include <ATKDisplay.h>
+#include <ATKPoint.h>
+#include <ATKLine.h>
+#include <ATKCircle.h>
+#include <ATKSignal.h>
+
 
 ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
 
@@ -35,6 +37,10 @@ ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
 
 		case ATKOPERATOR_CIRCLE:
 			return new ATKCircle();
+		break;
+
+		case ATKOPERATOR_SIGNAL:
+			return new ATKSignal();
 		break;
 
 	};

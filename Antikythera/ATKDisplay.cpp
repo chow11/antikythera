@@ -7,8 +7,9 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include "ATKDisplay.h"
-#include "Antikythera.h"
+#include <ATKDisplay.h>
+#include <Antikythera.h>
+
 
 // <display type><display width><display height><frame width><frame height><num layers>
 bool ATKDisplay::load(Stream *program) {
