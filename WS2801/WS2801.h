@@ -10,11 +10,12 @@
 #ifndef WS2801_H_
 #define WS2801_H_
 
-//#include  <WProgram.h>
+
 #include  <p32xxxx.h>
 #include  <p32_defs.h>
 #include  <ATKIDisplay.h>
 #include  <ATKColor.h>
+
 
 #define	DSPI_MODE0	((0 << _SPICON_CKP)|(1 << _SPICON_CKE))		// CKP = 0 CKE = 1
 #define	DSPI_MODE1	((0 << _SPICON_CKP)|(0 << _SPICON_CKE))		// CKP = 0 CKE = 0
@@ -25,6 +26,7 @@
 
 #define SPRITE_WIDTH			5
 #define SPRITE_HEIGHT			5
+
 
 class WS2801 : public ATKIDisplay {
 public:

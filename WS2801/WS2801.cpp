@@ -9,6 +9,7 @@
 
 #include <WS2801.h>
 
+
 WS2801::WS2801(p32_spi *pspi, uint8_t pinSS) {
 	m_pspi = pspi;
 	m_pinSS = pinSS;
