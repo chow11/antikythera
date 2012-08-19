@@ -33,7 +33,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(long now);
+	virtual bool process(unsigned long now);
 
 	virtual uint8_t operandCount() { return 5; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }

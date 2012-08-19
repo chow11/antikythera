@@ -15,7 +15,7 @@ bool ATKRoot::load(Stream *program) {
 	return true;
 }
 
-bool ATKRoot::process(long now) {
+bool ATKRoot::process(unsigned long now) {
 	bool result = true;
 
 	for (uint8_t count = 0; count < operandCount(); count++) {

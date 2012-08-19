@@ -16,23 +16,25 @@
 
 /*
 	Operands:
-		- frequency
-		- minimum amplitude
-		- maximum amplitude
 		- waveform (cardiac, exp rise, exp fall, noise, pulse, ramp, sine, square, triangle)
+		- wavelength (milliseconds)
+		- amplitude
+		- offset (phase shift in milliseconds)
 	Results:
 		- evaluation of waveform at the current time
 */
 
+#define SIGNAL_NONE			0
 #define SIGNAL_CARDIAC		1
 #define SIGNAL_EXP_FALL		2
 #define SIGNAL_EXP_RISE		3
 #define SIGNAL_NOISE		4
-#define SIGNAL_PULSE		5
+#define SIGNAL_PULSE		5		// normalized sinc()
 #define SIGNAL_RAMP			6
-#define SIGNAL_SINE			7
-#define SIGNAL_SQUARE		8
-#define SIGNAL_TRIANGLE		9
+#define SIGNAL_SAWTOOTH		7
+#define SIGNAL_SINE			8
+#define SIGNAL_SQUARE		9
+#define SIGNAL_TRIANGLE		10
 
 class ATKSignal : public ATKIOperator {
 public:
@@ -41,7 +43,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(long now);
+	virtual bool process(unsigned long now);
 
 	virtual uint8_t operandCount() { return 4; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
@@ -52,15 +54,15 @@ protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
 
 private:
+	int16_t f_cardiac(double phase);
+
 	ATK_OPERAND m_operands[];
-	uint8_t m_result[1];
+	int16_t *m_result;
 
-	uint8_t m_frequency;
-	uint8_t m_minAmplitude;
-	uint8_t m_maxAmplitude;
 	uint8_t m_waveform;
-
-	long m_periodStart;
+	uint32_t m_wavelength;
+	int16_t m_amplitude;
+	uint32_t m_offset;
 };
 
 
