@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Circle_H_
-#define ATK_Circle_H_
+#ifndef ATK_CIRCLE_H_
+#define ATK_CIRCLE_H_
 
 
 #include <ATKColor.h>
@@ -34,7 +34,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool evaluate(long now);
+	virtual bool evaluate(unsigned long now);
 
 	virtual uint8_t operandCount() { return 6; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
@@ -57,7 +57,7 @@ private:
 	uint8_t m_x;
 	uint8_t m_y;
 	uint8_t m_radius;
-	HSVA m_color;
+	ATKColor::HSVA m_color;
 	uint8_t m_displayNumber;
 	uint8_t m_layer;
 };
@@ -65,4 +65,4 @@ private:
 
 #endif
 
-/* ATK_Circle_H_ */
+/* ATK_CIRCLE_H_ */

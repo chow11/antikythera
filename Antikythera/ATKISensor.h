@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_ISensor_H_
-#define ATK_ISensor_H_
+#ifndef ATK_ISENSOR_H_
+#define ATK_ISENSOR_H_
 
 
 class ATKISensor {
@@ -40,4 +40,4 @@ protected:
 
 #endif
 
-/* ATK_ISensor_H_ */
+/* ATK_ISENSOR_H_ */

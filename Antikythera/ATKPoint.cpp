@@ -26,20 +26,20 @@ bool ATKPoint::load(Stream *program) {
 	return result;
 }
 
-bool ATKPoint::evaluate(long now) {
+bool ATKPoint::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 
 	for (uint8_t i; i < operationCount(); i++) {
 		ATK_OPERAND o = operand(0);
-		m_x = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		m_x = Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(1);
-		m_y = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		m_y = Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(2);
-		m_color = *(Antikythera::operators[o.operatorIndex]->result<HSVA *>(o.resultIndex)[operandElementIndex(o, i)]);
+		m_color = Antikythera::operators[o.operatorIndex]->result<ATKColor::HSVA>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(3);
-		m_displayNumber = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		m_displayNumber = Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(4);
-		m_layer = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		m_layer = Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)];
 
 		Antikythera::displays[0]->point(m_x, m_y, m_color, m_layer);
 		m_result[0] = m_layer;

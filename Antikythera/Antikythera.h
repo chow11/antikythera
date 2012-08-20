@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_H_
-#define ATK_H_
+#ifndef ANTIKYTHERA_H_
+#define ANTIKYTHERA_H_
 
 
 #include <Stream.h>
@@ -42,4 +42,4 @@ public:
 
 #endif
 
-/* ATK_H_ */
+/* ANTIKYTHERA_H_ */

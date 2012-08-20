@@ -23,7 +23,7 @@ bool ATKDisplay::load(Stream *program) {
 		- operators that draw to the frame in order of back to front
 */
 
-bool ATKDisplay::evaluate(long now) {
+bool ATKDisplay::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 	
 	// assume display number input is set to 0 and Display start X,Y matches frame start

@@ -42,14 +42,14 @@ public:
 	virtual uint8_t numLayers() { return m_numLayers; }
 
 	virtual void render(uint16_t frameX, uint16_t frameY);
-	virtual RGBA* framebuffer(uint8_t layer) { return m_frames + layer * m_frameWidth * m_frameHeight; }
+	virtual ATKColor::RGBA* framebuffer(uint8_t layer) { return m_frames + layer * m_frameWidth * m_frameHeight; }
 
-	virtual void circle(uint8_t x, uint8_t y, uint8_t r, HSVA c, uint8_t layer);
-	virtual void circle(uint8_t x, uint8_t y, uint8_t r, RGBA c, uint8_t layer);
-	virtual void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void point(uint8_t x, uint8_t y, uint8_t pointType, HSVA c, uint8_t layer);
-	virtual void point(uint8_t x, uint8_t y, uint8_t pointType, RGBA c, uint8_t layer);
+	virtual void circle(uint8_t x, uint8_t y, uint8_t r, ATKColor::HSVA c, uint8_t layer);
+	virtual void circle(uint8_t x, uint8_t y, uint8_t r, ATKColor::RGBA c, uint8_t layer);
+	virtual void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, ATKColor::HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, ATKColor::RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void point(uint8_t x, uint8_t y, uint8_t pointType, ATKColor::HSVA c, uint8_t layer);
+	virtual void point(uint8_t x, uint8_t y, uint8_t pointType, ATKColor::RGBA c, uint8_t layer);
 
 	void begin();
 	void end();
@@ -66,7 +66,7 @@ protected:
 	uint16_t m_frameWidth;
 	uint16_t m_frameHeight;
 	uint8_t m_numLayers;
-	RGBA *m_frames;
+	ATKColor::RGBA *m_frames;
 
 	static const uint8_t DIM_CURVE[];
 };

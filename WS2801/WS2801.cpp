@@ -184,7 +184,7 @@ void WS2801::initialize(uint16_t displayWidth, uint16_t displayHeight, uint16_t 
 	m_frameHeight = frameHeight;
 	m_numLayers = numLayers;
 
-	m_frames = new RGBA[numLayers * m_frameWidth * m_frameHeight];
+	m_frames = new ATKColor::RGBA[numLayers * m_frameWidth * m_frameHeight];
 
 	begin();
 	setSpeed(2000000);
@@ -196,8 +196,8 @@ void WS2801::initialize(uint16_t displayWidth, uint16_t displayHeight, uint16_t 
 // layer 1 is premultiplied alpha
 void WS2801::render(uint16_t frameX, uint16_t frameY) {
 	uint8_t trash;
-	RGBA *p0 = m_frames;
-	RGBA *p1 = p0 + m_frameWidth * m_frameHeight;
+	ATKColor::RGBA *p0 = m_frames;
+	ATKColor::RGBA *p1 = p0 + m_frameWidth * m_frameHeight;
 
 	for (int x = 0; x < m_displayWidth; x += 2) {
 		for (int y = 0; y < m_displayHeight; y++) {
@@ -255,27 +255,27 @@ void WS2801::render(uint16_t frameX, uint16_t frameY) {
 };
 
 
-void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, HSVA c, uint8_t layer, bool enabled) {
+void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, HSVA c, uint8_t layer) {
 }
 
 
-void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, RGBA c, uint8_t layer, bool enabled) {
+void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, RGBA c, uint8_t layer) {
 }
 
 
-void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer, bool enabled) {
+void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
 
-void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer, bool enabled) {
+void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
 
-void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, HSVA c, uint8_t layer, bool enabled) {
+void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, HSVA c, uint8_t layer) {
 }
 
 
-void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, RGBA c, uint8_t layer, bool enabled) {
+void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, RGBA c, uint8_t layer) {
 }
 
 

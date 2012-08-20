@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_IOperator_H_
-#define ATK_IOperator_H_
+#ifndef ATK_IOPERATOR_H_
+#define ATK_IOPERATOR_H_
 
 
 #include <Stream.h>
@@ -46,7 +46,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool evaluate(long now);
+	virtual bool evaluate(unsigned long now);
 
 	uint8_t numOperands() { return m_numOperands; }
 	ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
@@ -89,4 +89,4 @@ private:
 
 #endif
 
-/* ATK_IOperator_H_ */
+/* ATK_IOPERATOR_H_ */

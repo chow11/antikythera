@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_IDisplay_H_
-#define ATK_IDisplay_H_
+#ifndef ATK_IDISPLAY_H_
+#define ATK_IDISPLAY_H_
 
 
 #include <ATKColor.h>
@@ -27,14 +27,14 @@ public:
 	virtual uint8_t numLayers();	// number of additional layers other than the background layer
 
 	virtual void render(uint16_t frameX, uint16_t frameY);
-	virtual RGBA* framebuffer(uint8_t layer);
+	virtual ATKColor::RGBA* framebuffer(uint8_t layer);
 
-	virtual void circle(int8_t x, int8_t y, uint8_t r, HSVA c, uint8_t layer);
-	virtual void circle(int8_t x, int8_t y, uint8_t r, RGBA c, uint8_t layer);
-	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void point(int8_t x, int8_t y, HSVA c, uint8_t layer);
-	virtual void point(int8_t x, int8_t y, RGBA c, uint8_t layer);
+	virtual void circle(int8_t x, int8_t y, uint8_t r, ATKColor::HSVA c, uint8_t layer);
+	virtual void circle(int8_t x, int8_t y, uint8_t r, ATKColor::RGBA c, uint8_t layer);
+	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t layer);
+	virtual void point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t layer);
 
 protected:
 	ATKIDisplay() { }
@@ -43,4 +43,4 @@ protected:
 
 #endif
 
-/* ATK_IDisplay_H_ */
+/* ATK_IDISPLAY_H_ */

@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Operator_Factory_H_
-#define ATK_Operator_Factory_H_
+#ifndef ATK_OPERATOR_FACTORY_H_
+#define ATK_OPERATOR_FACTORY_H_
 
 
 #include <ATKIOperator.h>
@@ -33,4 +33,4 @@ protected:
 
 #endif
 
-/* ATK_Operator_Factory_H_ */
+/* ATK_OPERATOR_FACTORY_H_ */

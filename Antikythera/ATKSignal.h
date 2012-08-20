@@ -43,7 +43,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(unsigned long now);
+	virtual bool evaluate(unsigned long now);
 
 	virtual uint8_t resultCount() { return 1; }
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
@@ -51,7 +51,7 @@ public:
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
 	virtual void *constantGeneric(uint8_t index);
-	virtual uint8_t loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 #ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKSignal"; }

@@ -117,7 +117,7 @@ bool ATKIOperator::load(Stream *program) {
 	return true;
 }
 
-bool ATKIOperator::evaluate(long now) {
+bool ATKIOperator::evaluate(unsigned long now) {
 	bool result = true;
 
 	for (uint8_t count = 0; count < numOperands(); count++) {
@@ -312,7 +312,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 }
 
 // update to arrays and support more types
-bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	uint8_t operandType = flags & 0x07;
 
 	uint8_t maxLength = 0;
@@ -428,15 +428,15 @@ bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *progra
 
 	switch (operandType) {
 	case OPERANDTYPE_INT8:
-		constant<int8_t *>(operandIndex)[0] = (int8_t)strtol(buffer, NULL, 10);
+		constant<int8_t>(operandIndex)[0] = (int8_t)strtol(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_INT16:
-		constant<int16_t *>(operandIndex)[0] = (int16_t)strtol(buffer, NULL, 10);
+		constant<int16_t>(operandIndex)[0] = (int16_t)strtol(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_INT32:
-		constant<int32_t *>(operandIndex)[0] = (int32_t)strtol(buffer, NULL, 10);
+		constant<int32_t>(operandIndex)[0] = (int32_t)strtol(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_INT64:
@@ -449,15 +449,15 @@ bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *progra
 		return true;
 
 	case OPERANDTYPE_UINT8:
-		constant<uint8_t *>(operandIndex)[0] = (uint8_t)strtoul(buffer, NULL, 10);
+		constant<uint8_t>(operandIndex)[0] = (uint8_t)strtoul(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_UINT16:
-		constant<uint16_t *>(operandIndex)[0] = (uint16_t)strtoul(buffer, NULL, 10);
+		constant<uint16_t>(operandIndex)[0] = (uint16_t)strtoul(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_UINT32:
-		constant<uint32_t *>(operandIndex)[0] = (uint32_t)strtoul(buffer, NULL, 10);
+		constant<uint32_t>(operandIndex)[0] = (uint32_t)strtoul(buffer, NULL, 10);
 		break;
 
 	case OPERANDTYPE_UINT64:

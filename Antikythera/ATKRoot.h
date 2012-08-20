@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Root_H_
-#define ATK_Root_H_
+#ifndef ATK_ROOT_H_
+#define ATK_ROOT_H_
 
 
 #include <ATKIOperator.h>
@@ -21,7 +21,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(unsigned long now);
+	virtual bool evaluate(unsigned long now);
 
 	virtual uint8_t operandCount();
 	virtual ATK_OPERAND operand(uint8_t index);
@@ -39,4 +39,4 @@ public:
 
 #endif
 
-/* ATK_Root_H_ */
+/* ATK_ROOT_H_ */

@@ -52,14 +52,14 @@ bool Antikythera::load(Stream *program) {
 		}
 		if (index == 5) {
 #ifdef ANTIKYTHERA_DEBUG
-			this->lastErrorString = "Antikythera::load() - operator count has too many digits.";
+			Antikythera::lastErrorString = "Antikythera::load() - operator count has too many digits.";
 #endif
 			program->flush();
 			return false;
 		}
 		if (!isdigit(c)) {
 #ifdef ANTIKYTHERA_DEBUG
-			this->lastErrorString = "Antikythera::load() - operator count contains invalid character: " + String(c);
+			Antikythera::lastErrorString = "Antikythera::load() - operator count contains invalid character: " + String(c);
 #endif
 			program->flush();
 			return false;
@@ -68,7 +68,7 @@ bool Antikythera::load(Stream *program) {
 	}
 	if (!valid) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator count.";
+		Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator count.";
 #endif
 		return false;
 	}
@@ -89,14 +89,14 @@ bool Antikythera::load(Stream *program) {
 			}
 			if (index == 5) {
 #ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = "Antikythera::load() - operator[" + String(count) + "] type has too many digits.";
+				Antikythera::lastErrorString = "Antikythera::load() - operator[" + String(count) + "] type has too many digits.";
 #endif
 				program->flush();
 				return false;
 			}
 			if (!isdigit(c)) {
 #ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = "Antikythera::load() - operator[" + String(count) + "] contains invalid character: " + String(c);
+				Antikythera::lastErrorString = "Antikythera::load() - operator[" + String(count) + "] contains invalid character: " + String(c);
 #endif
 				program->flush();
 				return false;
@@ -105,7 +105,7 @@ bool Antikythera::load(Stream *program) {
 		}
 		if (!valid) {
 #ifdef ANTIKYTHERA_DEBUG
-			this->lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator[" + String(count) + "] type.";
+			Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator[" + String(count) + "] type.";
 #endif
 			return false;
 		}
@@ -113,7 +113,7 @@ bool Antikythera::load(Stream *program) {
 		uint16_t operatorType = (uint16_t)strtoul(buffer, NULL, 10);
 		operators[count] = ATKOperatorFactory::createOperator(operatorType);
 		if (!operators[count]->load(program)) {
-			this->lastErrorString = operators[count]->lastErrorString();
+			Antikythera::lastErrorString = operators[count]->lastErrorString();
 			return false;
 		}
 	}
@@ -126,14 +126,14 @@ bool Antikythera::load(Stream *program) {
 			break;
 		}
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "Antikythera::load() - expected closing parenthesis, read invalid character: " + String(c);
+		Antikythera::lastErrorString = "Antikythera::load() - expected closing parenthesis, read invalid character: " + String(c);
 #endif
 		program->flush();
 		return false;
 	}
 	if (!valid) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "Antikythera::load() - unexpected end of stream while reading closing parenthesis.";
+		Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading closing parenthesis.";
 #endif
 		return false;
 	}

@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Display_H_
-#define ATK_Display_H_
+#ifndef ATK_DISPLAY_H_
+#define ATK_DISPLAY_H_
 
 
 #include <ATKIOperator.h>
@@ -28,7 +28,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool evaluate(long now);
+	virtual bool evaluate(unsigned long now);
 
 	virtual uint8_t operandCount();
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
@@ -51,4 +51,4 @@ private:
 
 #endif
 
-/* ATK_Display_H_ */
+/* ATK_DISPLAY_H_ */

@@ -54,11 +54,11 @@ void *ATKSignal::constantGeneric(uint8_t index) {
 	return NULL;
 }
 
-uint8_t ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }
 
-bool ATKSignal::process(unsigned long now) {
+bool ATKSignal::evaluate(unsigned long now) {
 	delete[] m_result;
 	bool result = ATKIOperator::evaluate(now);
 	m_result = new int16_t[operationCount()];
@@ -66,13 +66,13 @@ bool ATKSignal::process(unsigned long now) {
 	for (uint8_t i; i < operationCount(); i++) {
 
 		ATK_OPERAND o = operand(0);
-		uint8_t waveform = Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)];
+		uint8_t waveform = Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(1);
-		uint32_t wavelength = Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)];
+		uint32_t wavelength = Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(2);
-		int16_t amplitude = Antikythera::operators[o.operatorIndex]->result<int16_t *>(o.resultIndex)[operandElementIndex(o, i)];
+		int16_t amplitude = Antikythera::operators[o.operatorIndex]->result<int16_t>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(3);
-		uint32_t offset = Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)];
+		uint32_t offset = Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)];
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
 		double phase = ((now - (unsigned long)offset) % wavelength) / wavelength;

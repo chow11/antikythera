@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Point_H_
-#define ATK_Point_H_
+#ifndef ATK_POINT_H_
+#define ATK_POINT_H_
 
 
 #include <ATKColor.h>
@@ -33,7 +33,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(unsigned long now);
+	virtual bool evaluate(unsigned long now);
 
 	virtual uint8_t operandCount() { return 5; }
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
@@ -55,7 +55,7 @@ private:
 
 	uint8_t m_x;
 	uint8_t m_y;
-	HSVA m_color;
+	ATKColor::HSVA m_color;
 	uint8_t m_displayNumber;
 	uint8_t m_layer;
 };
@@ -63,4 +63,4 @@ private:
 
 #endif
 
-/* ATK_Point_H_ */
+/* ATK_POINT_H_ */
