@@ -28,7 +28,7 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(long now);
+	virtual bool evaluate(long now);
 
 	virtual uint8_t operandCount();
 	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }

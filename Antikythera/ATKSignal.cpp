@@ -13,13 +13,13 @@
 #include <WProgram.h>
 
 ATKSignal::ATKSignal() {
-	m_waveform = 0;
-	m_wavelength = 0;
-	m_amplitude = 0;
-	m_offset = 0;
-
 	m_result = new int16_t[1];
 	m_result[0] = 0;
+
+	m_constWaveform = 0;
+	m_constWavelength = 0;
+	m_constAmplitude = 0;
+	m_constOffset = 0;
 }
 
 bool ATKSignal::load(Stream *program) {
@@ -37,29 +37,47 @@ bool ATKSignal::load(Stream *program) {
 	return true;
 }
 
+void *ATKSignal::constantGeneric(uint8_t index) {
+	switch (index) {
+	case 0:
+		return m_constWaveform;
+
+	case 1:
+		return m_constWavelength;
+
+	case 2:
+		return m_constAmplitude;
+
+	case 3:
+		return m_constOffset;
+	}
+	return NULL;
+}
+
 uint8_t ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }
 
 bool ATKSignal::process(unsigned long now) {
 	delete[] m_result;
-	bool result = ATKIOperator::process(now);
+	bool result = ATKIOperator::evaluate(now);
 	m_result = new int16_t[operationCount()];
 
 	for (uint8_t i; i < operationCount(); i++) {
+
 		ATK_OPERAND o = operand(0);
-		m_waveform = *(Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		uint8_t waveform = Antikythera::operators[o.operatorIndex]->result<uint8_t *>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(1);
-		m_wavelength = *(Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		uint32_t wavelength = Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(2);
-		m_amplitude = *(Antikythera::operators[o.operatorIndex]->result<int16_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		int16_t amplitude = Antikythera::operators[o.operatorIndex]->result<int16_t *>(o.resultIndex)[operandElementIndex(o, i)];
 		o = operand(3);
-		m_offset = *(Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)]);
+		uint32_t offset = Antikythera::operators[o.operatorIndex]->result<uint32_t *>(o.resultIndex)[operandElementIndex(o, i)];
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
-		double phase = ((now - (unsigned long)m_offset) % m_wavelength) / m_wavelength;
+		double phase = ((now - (unsigned long)offset) % wavelength) / wavelength;
 
-		switch (m_waveform) {
+		switch (waveform) {
 		case SIGNAL_NONE:
 			m_result[i] = 0;
 			break;
@@ -77,40 +95,40 @@ bool ATKSignal::process(unsigned long now) {
 			break;
 
 		case SIGNAL_NOISE:
-			m_result[i] = (m_amplitude < 0) ? 0 - random(0, abs(m_amplitude)) : random(0, m_amplitude);
+			m_result[i] = (amplitude < 0) ? 0 - random(0, abs(amplitude)) : random(0, amplitude);
 			break;
 
 		case SIGNAL_PULSE:
 			if (phase == 0) {
 				m_result[i] = 1;
 			} else {
-				m_result[i] = (phase < 0.5) ? m_amplitude * sin(phase * 4 * M_PI) / phase * 4 * M_PI : m_amplitude * sin((phase - 1) * 4 * M_PI) / (phase - 1) * 4 * M_PI;
+				m_result[i] = (phase < 0.5) ? amplitude * sin(phase * 4 * M_PI) / phase * 4 * M_PI : amplitude * sin((phase - 1) * 4 * M_PI) / (phase - 1) * 4 * M_PI;
 			}
 			break;
 
 		case SIGNAL_RAMP:
-			m_result[i] = m_amplitude * phase;
+			m_result[i] = amplitude * phase;
 			break;
 
 		case SIGNAL_SAWTOOTH:
-			m_result[i] = (phase < 0.5) ? 2 * m_amplitude * phase : 2 * m_amplitude * (phase - 1);
+			m_result[i] = (phase < 0.5) ? 2 * amplitude * phase : 2 * amplitude * (phase - 1);
 			break;
 
 		case SIGNAL_SINE:
-			m_result[i] = m_amplitude * sin(phase * M_TWOPI);
+			m_result[i] = amplitude * sin(phase * M_TWOPI);
 			break;
 
 		case SIGNAL_SQUARE:
-			m_result[i] = (phase < 0.5) ? m_amplitude : 0 - m_amplitude;
+			m_result[i] = (phase < 0.5) ? amplitude : 0 - amplitude;
 			break;
 
 		case SIGNAL_TRIANGLE:
-			m_result[i] = (phase < 0.5) ? 4 * m_amplitude * abs(phase - 0.25) : -4 * m_amplitude * abs(phase - 0.75);
+			m_result[i] = (phase < 0.5) ? 4 * amplitude * abs(phase - 0.25) : -4 * amplitude * abs(phase - 0.75);
 			break;
 		}
 	}
 
-	setProcessedFlag();
+	setEvaluatedFlag();
 
 	return result;
 }

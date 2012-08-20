@@ -24,12 +24,13 @@
 #define OPERANDTYPE_INT32	2
 #define OPERANDTYPE_INT64	3
 #define OPERANDTYPE_FLOAT	4
+#define OPERANDTYPE_STRING	7
 #define OPERANDTYPE_UINT8	8
 #define OPERANDTYPE_UINT16	9
 #define OPERANDTYPE_UINT32	10
 #define OPERANDTYPE_UINT64	11
 #define OPERANDTYPE_DOUBLE	12
-#define OPERANDTYPE_STRING	15
+#define OPERANDTYPE_CUSTOM	15
 
 
 struct ATK_OPERAND {
@@ -45,17 +46,18 @@ public:
 
 	virtual bool load(Stream *program);
 
-	virtual bool process(long now);
+	virtual bool evaluate(long now);
 
 	uint8_t numOperands() { return m_numOperands; }
 	ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
+	template<typename T> inline T *constant(uint8_t index) { return (T *)constantGeneric(index); }
 	virtual uint8_t resultCount();
 	template<typename T> inline T *result(uint8_t index) { return (T *)resultGeneric(index); }
 	virtual uint8_t resultSize(uint8_t index);
 
-	bool isProcessed();
-	void resetProcessedFlag();
-	void setProcessedFlag();
+	bool isEvaluated();
+	void resetEvaluatedFlag();
+	void setEvaluatedFlag();
 
 	virtual String name();
 	String lastErrorString() { return m_lastErrorString; }
@@ -66,16 +68,17 @@ protected:
 	virtual void *resultGeneric(uint8_t index);
 	uint8_t operationCount() { return m_numOperations; };
 	uint8_t operandElementIndex(ATK_OPERAND o, uint8_t iteration);
+	virtual void *constantGeneric(uint8_t index);
 
 	uint8_t loadFlags(Stream *program);
 	uint16_t loadOperatorIndex(Stream *program);
 	uint8_t loadResultIndex(Stream *program);
-	virtual uint8_t loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 	String m_lastErrorString;
 
 private:
-	bool m_isProcessed;
+	bool m_isEvaluated;
 
 	uint8_t m_numOperands;
 	ATK_OPERAND *m_operands;

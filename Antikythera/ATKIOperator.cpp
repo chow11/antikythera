@@ -12,7 +12,7 @@
 
 
 ATKIOperator::ATKIOperator() {
-	m_isProcessed = false;
+	m_isEvaluated = false;
 	m_numOperands = 0;
 	m_operands = NULL;
 	m_numOperations = 0;
@@ -112,7 +112,92 @@ bool ATKIOperator::load(Stream *program) {
 		return false;
 	}
 
+	// connect root to leaf nodes
+
 	return true;
+}
+
+bool ATKIOperator::evaluate(long now) {
+	bool result = true;
+
+	for (uint8_t count = 0; count < numOperands(); count++) {
+		if ((operand(count).flags & OPERANDFLAG_LINK)) {
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
+		}
+	}
+
+	uint8_t max = 0;
+	uint8_t min = 255;
+	for (uint8_t i = 0; i < numOperands(); i++) {
+		ATK_OPERAND o = operand(i);
+		if (o.flags & OPERANDFLAG_LINK) {
+			if (o.flags & OPERANDFLAG_LIMIT) {
+				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
+				if (temp < min) {
+					min = temp;
+				}
+			} else {
+				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
+				if (temp > max) {
+					min = max;
+				}
+			}
+		}
+	}
+	m_numOperations = min;
+	if (max < min) {
+		m_numOperations = max;
+	}
+
+
+	return result;
+};
+
+uint8_t ATKIOperator::resultCount() {
+	return 0;
+}
+
+bool ATKIOperator::isEvaluated() {
+	return m_isEvaluated;
+}
+
+void ATKIOperator::resetEvaluatedFlag() {
+	m_isEvaluated = false;
+}
+
+void ATKIOperator::setEvaluatedFlag() {
+	m_isEvaluated = true;
+}
+
+void *ATKIOperator::resultGeneric(uint8_t index) {
+	return NULL;
+}
+
+uint8_t ATKIOperator::operandElementIndex(ATK_OPERAND o, uint8_t iteration) {
+	uint8_t result = 0;
+
+	uint8_t operandElementSize = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
+	if (o.flags & OPERANDFLAG_LINK) {
+		if (o.flags & OPERANDFLAG_SINGLE) {
+			result = 0;
+		} else {
+			if (m_numOperations < operandElementSize) {
+				result = iteration;
+			} else {
+				if (o.flags & OPERANDFLAG_EXTEND) {
+					result = operandElementSize - 1;
+				} else {
+					result = iteration % operandElementSize;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+void *ATKIOperator::constantGeneric(uint8_t index) {
+	return NULL;
 }
 
 uint8_t ATKIOperator::loadFlags(Stream *program) {
@@ -226,85 +311,164 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	return (uint8_t)strtoul(buffer, NULL, 10);
 }
 
-uint8_t ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return 0;
-}
+// update to arrays and support more types
+bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+	uint8_t operandType = flags & 0x07;
 
-bool ATKIOperator::process(long now) {
-	bool result = true;
+	uint8_t maxLength = 0;
+	switch (operandType) {
+	case OPERANDTYPE_INT8:
+		maxLength = 4;
+		break;
 
-	for (uint8_t count = 0; count < numOperands(); count++) {
-		if ((operand(count).flags & OPERANDFLAG_LINK)) {
-			result &= Antikythera::operators[operand(count).operatorIndex]->process(now);
-		}
+	case OPERANDTYPE_INT16:
+		maxLength = 6;
+		break;
+
+	case OPERANDTYPE_INT32:
+		maxLength = 11;
+		break;
+
+	case OPERANDTYPE_INT64:
+		return true;
+
+	case OPERANDTYPE_FLOAT:
+		return true;
+
+	case OPERANDTYPE_STRING:
+		return true;
+
+	case OPERANDTYPE_UINT8:
+		maxLength = 3;
+		break;
+
+	case OPERANDTYPE_UINT16:
+		maxLength = 5;
+		break;
+
+	case OPERANDTYPE_UINT32:
+		maxLength = 10;
+		break;
+
+	case OPERANDTYPE_UINT64:
+		return true;
+
+	case OPERANDTYPE_DOUBLE:
+		return true;
+
+	case OPERANDTYPE_CUSTOM:
+		return true;
 	}
 
-	uint8_t max = 0;
-	uint8_t min = 255;
-	for (uint8_t i = 0; i < numOperands(); i++) {
-		ATK_OPERAND o = operand(i);
-		if (o.flags & OPERANDFLAG_LINK) {
-			if (o.flags & OPERANDFLAG_LIMIT) {
-				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-				if (temp < min) {
-					min = temp;
-				}
-			} else {
-				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-				if (temp > max) {
-					min = max;
-				}
+	char buffer[21];
+	memset(buffer, 0, 21);
+	int index = 0;
+	bool valid = false;
+	if ((operandType >= OPERANDTYPE_INT8) && (operandType >= OPERANDTYPE_INT32)) {
+		while(program->available()) {
+			char c = (char)program->read();
+			if (c == ')') {
+				valid = true;
+				break;
 			}
-		}
-	}
-	m_numOperations = min;
-	if (max < min) {
-		m_numOperations = max;
-	}
-
-
-	return result;
-};
-
-uint8_t ATKIOperator::resultCount() {
-	return 0;
-}
-
-bool ATKIOperator::isProcessed() {
-	return m_isProcessed;
-}
-
-void ATKIOperator::resetProcessedFlag() {
-	m_isProcessed = false;
-}
-
-void ATKIOperator::setProcessedFlag() {
-	m_isProcessed = true;
-}
-
-void *ATKIOperator::resultGeneric(uint8_t index) {
-	return NULL;
-}
-
-uint8_t ATKIOperator::operandElementIndex(ATK_OPERAND o, uint8_t iteration) {
-	uint8_t result = 0;
-
-	uint8_t operandElementSize = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-	if (o.flags & OPERANDFLAG_LINK) {
-		if (o.flags & OPERANDFLAG_SINGLE) {
-			result = 0;
-		} else {
-			if (m_numOperations < operandElementSize) {
-				result = iteration;
-			} else {
-				if (o.flags & OPERANDFLAG_EXTEND) {
-					result = operandElementSize - 1;
-				} else {
-					result = iteration % operandElementSize;
-				}
+			if (index == maxLength) {
+	#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - constant has too many digits.";
+	#endif
+				program->flush();
+				return false;
 			}
+			if (c && (strchr("-0123456789", c) == NULL)) {
+	#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
+	#endif
+				program->flush();
+				return false;
+			}
+			buffer[index++] = c;
+		}
+		if (!valid) {
+	#ifdef ANTIKYTHERA_DEBUG
+			this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
+	#endif
+			return false;
+		}
+
+		return (uint8_t)strtol(buffer, NULL, 10);
+	} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType >= OPERANDTYPE_UINT32)) {
+		while(program->available()) {
+			char c = (char)program->read();
+			if (c == ')') {
+				valid = true;
+				break;
+			}
+			if (index == maxLength) {
+	#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - constant has too many digits.";
+	#endif
+				program->flush();
+				return false;
+			}
+			if (!isdigit(c)) {
+	#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
+	#endif
+				program->flush();
+				return false;
+			}
+			buffer[index++] = c;
+		}
+		if (!valid) {
+	#ifdef ANTIKYTHERA_DEBUG
+			this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
+	#endif
+			return false;
 		}
 	}
 
-	return result;
+	switch (operandType) {
+	case OPERANDTYPE_INT8:
+		constant<int8_t *>(operandIndex)[0] = (int8_t)strtol(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_INT16:
+		constant<int16_t *>(operandIndex)[0] = (int16_t)strtol(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_INT32:
+		constant<int32_t *>(operandIndex)[0] = (int32_t)strtol(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_INT64:
+		return true;
+
+	case OPERANDTYPE_FLOAT:
+		return true;
+
+	case OPERANDTYPE_STRING:
+		return true;
+
+	case OPERANDTYPE_UINT8:
+		constant<uint8_t *>(operandIndex)[0] = (uint8_t)strtoul(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_UINT16:
+		constant<uint16_t *>(operandIndex)[0] = (uint16_t)strtoul(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_UINT32:
+		constant<uint32_t *>(operandIndex)[0] = (uint32_t)strtoul(buffer, NULL, 10);
+		break;
+
+	case OPERANDTYPE_UINT64:
+		return true;
+
+	case OPERANDTYPE_DOUBLE:
+		return true;
+
+	case OPERANDTYPE_CUSTOM:
+		return true;
+	}
+
+	return true;
 }

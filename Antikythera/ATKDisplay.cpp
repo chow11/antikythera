@@ -23,13 +23,13 @@ bool ATKDisplay::load(Stream *program) {
 		- operators that draw to the frame in order of back to front
 */
 
-bool ATKDisplay::process(long now) {
-	bool result = ATKIOperator::process(now);
+bool ATKDisplay::evaluate(long now) {
+	bool result = ATKIOperator::evaluate(now);
 	
 	// assume display number input is set to 0 and Display start X,Y matches frame start
 	Antikythera::displays[0]->render(0, 0);
 
-	setProcessedFlag();
+	setEvaluatedFlag();
 
 	return result;
 }

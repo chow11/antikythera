@@ -50,6 +50,7 @@ public:
 
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
+	virtual void *constantGeneric(uint8_t index);
 	virtual uint8_t loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 #ifdef ANTIKYTHERA_DEBUG
@@ -63,10 +64,10 @@ private:
 
 	int16_t *m_result;
 
-	uint8_t m_waveform;
-	uint32_t m_wavelength;
-	int16_t m_amplitude;
-	uint32_t m_offset;
+	uint8_t *m_constWaveform;
+	uint32_t *m_constWavelength;
+	int16_t *m_constAmplitude;
+	uint32_t *m_constOffset;
 };
 
 

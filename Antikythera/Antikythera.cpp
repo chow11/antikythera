@@ -35,7 +35,7 @@ bool Antikythera::process(long now) {
 
 	resetProcessedFlags();
 
-	return operators[0]->process(now);
+	return operators[0]->evaluate(now);
 };
 
 // operator count(operatortype0()...operatorNtype())
@@ -143,6 +143,6 @@ bool Antikythera::load(Stream *program) {
 
 void Antikythera::resetProcessedFlags() {
 	for (uint8_t count = 0; count < numOperators; count++) {
-		operators[count]->resetProcessedFlag();
+		operators[count]->resetEvaluatedFlag();
 	}
 };

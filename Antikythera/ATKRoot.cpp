@@ -20,11 +20,11 @@ bool ATKRoot::process(unsigned long now) {
 
 	for (uint8_t count = 0; count < operandCount(); count++) {
 		if ((operand(count).flags & OPERANDFLAG_LINK)) {
-			result &= Antikythera::operators[operand(count).operatorIndex]->process(now);
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
 		}
 	}
 
-	setProcessedFlag();
+	setEvaluatedFlag();
 
 	return result;
 };

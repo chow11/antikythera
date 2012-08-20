@@ -27,8 +27,8 @@ bool ATKCircle::load(Stream *program) {
 	return result;
 }
 
-bool ATKCircle::process(long now) {
-	bool result = ATKIOperator::process(now);
+bool ATKCircle::evaluate(long now) {
+	bool result = ATKIOperator::evaluate(now);
 
 	for (uint8_t i; i < operationCount(); i++) {
 		ATK_OPERAND o = operand(0);
@@ -49,7 +49,7 @@ bool ATKCircle::process(long now) {
 		m_result[0] = m_layer;
 	}
 
-	setProcessedFlag();
+	setEvaluatedFlag();
 
 	return result;
 }
