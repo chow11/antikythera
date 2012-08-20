@@ -11,6 +11,10 @@
 #define ATK_ISENSOR_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
+
+
 class ATKISensor {
 public:
 	virtual ~ATKISensor();

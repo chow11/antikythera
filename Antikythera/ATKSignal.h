@@ -11,6 +11,8 @@
 #define ATK_Signal_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
 #include <ATKIOperator.h>
 
 

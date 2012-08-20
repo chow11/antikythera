@@ -11,6 +11,10 @@
 #define ATK_COLOR_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
+
+
 class ATKColor {
 public:
 	// aarrggbb

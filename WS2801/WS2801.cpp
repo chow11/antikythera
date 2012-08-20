@@ -8,6 +8,7 @@
  */
 
 #include <WS2801.h>
+#include <WProgram.h>
 
 
 WS2801::WS2801(p32_spi *pspi, uint8_t pinSS) {
@@ -255,27 +256,27 @@ void WS2801::render(uint16_t frameX, uint16_t frameY) {
 };
 
 
-void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, HSVA c, uint8_t layer) {
+void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, ATKColor::HSVA c, uint8_t layer) {
 }
 
 
-void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, RGBA c, uint8_t layer) {
+void WS2801::circle(uint8_t x, uint8_t y, uint8_t r, ATKColor::RGBA c, uint8_t layer) {
 }
 
 
-void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
+void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, ATKColor::HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
 
-void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
+void WS2801::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, ATKColor::RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
 
-void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, HSVA c, uint8_t layer) {
+void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, ATKColor::HSVA c, uint8_t layer) {
 }
 
 
-void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, RGBA c, uint8_t layer) {
+void WS2801::point(uint8_t x, uint8_t y, uint8_t pointType, ATKColor::RGBA c, uint8_t layer) {
 }
 
 

@@ -11,6 +11,8 @@
 #define ATK_LINE_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
 #include <ATKColor.h>
 #include <ATKIOperator.h>
 

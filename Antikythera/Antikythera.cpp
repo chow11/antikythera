@@ -19,6 +19,8 @@ ATKIDisplay **Antikythera::displays = NULL;
 uint8_t Antikythera::numSensors = 0;
 ATKISensor **Antikythera::sensors = NULL;
 
+String Antikythera::lastErrorString = "";
+
 
 void Antikythera::unload() {
 	for (uint8_t count = 0; count < numOperators; count++) {

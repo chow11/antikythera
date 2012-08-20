@@ -11,6 +11,8 @@
 #define ATK_IOPERATOR_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
 #include <Stream.h>
 
 

@@ -11,6 +11,8 @@
 #define ANTIKYTHERA_H_
 
 
+#include <stddef.h>
+#include <inttypes.h>
 #include <Stream.h>
 #include <ATKIOperator.h>
 #include <ATKIDisplay.h>

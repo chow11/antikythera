@@ -11,10 +11,12 @@
 #define WS2801_H_
 
 
-#include  <p32xxxx.h>
-#include  <p32_defs.h>
-#include  <ATKIDisplay.h>
-#include  <ATKColor.h>
+#include <stddef.h>
+#include <inttypes.h>
+#include <p32xxxx.h>
+#include <p32_defs.h>
+#include <ATKIDisplay.h>
+#include <ATKColor.h>
 
 
 #define	DSPI_MODE0	((0 << _SPICON_CKP)|(1 << _SPICON_CKE))		// CKP = 0 CKE = 1
