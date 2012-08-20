@@ -11,7 +11,7 @@
 #include <Antikythera.h>
 
 
-// <display type><display width><display height><frame width><frame height><num layers>
+// display type,display width,display height,frame width,frame height,num layers)
 bool ATKDisplay::load(Stream *program) {
 	bool result = true;
 //	while(!program->available()) { }

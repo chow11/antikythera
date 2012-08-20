@@ -38,6 +38,12 @@ public:
 protected:
 	virtual void *resultGeneric(uint8_t index) { return NULL; }
 
+#ifdef ANTIKYTHERA_DEBUG
+	virtual String name() { return "ATKDisplay"; }
+#else
+	virtual String name() { return ""; }
+#endif
+
 private:
 	ATK_OPERAND m_operands[];
 };

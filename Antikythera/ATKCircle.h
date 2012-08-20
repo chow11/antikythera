@@ -44,6 +44,12 @@ public:
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
 
+#ifdef ANTIKYTHERA_DEBUG
+	virtual String name() { return "ATKCircle"; }
+#else
+	virtual String name() { return ""; }
+#endif
+
 private:
 	ATK_OPERAND m_operands[];
 	uint8_t m_result[1];

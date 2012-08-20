@@ -45,18 +45,22 @@ public:
 
 	virtual bool process(unsigned long now);
 
-	virtual uint8_t operandCount() { return 4; }
-	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
 	virtual uint8_t resultCount() { return 1; }
 	virtual uint8_t resultSize(uint8_t index) { return 1; }
 
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
+	virtual uint8_t loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+
+#ifdef ANTIKYTHERA_DEBUG
+	virtual String name() { return "ATKSignal"; }
+#else
+	virtual String name() { return ""; }
+#endif
 
 private:
 	int16_t f_cardiac(double phase);
 
-	ATK_OPERAND m_operands[];
 	int16_t *m_result;
 
 	uint8_t m_waveform;

@@ -19,10 +19,22 @@
 #define OPERANDFLAG_EXTEND	0x20		// 0=cycle 1=extend
 #define OPERANDFLAG_SINGLE	0x10		// 0=use all values 1=always use first value
 
+#define OPERANDTYPE_INT8	0
+#define OPERANDTYPE_INT16	1
+#define OPERANDTYPE_INT32	2
+#define OPERANDTYPE_INT64	3
+#define OPERANDTYPE_FLOAT	4
+#define OPERANDTYPE_UINT8	8
+#define OPERANDTYPE_UINT16	9
+#define OPERANDTYPE_UINT32	10
+#define OPERANDTYPE_UINT64	11
+#define OPERANDTYPE_DOUBLE	12
+#define OPERANDTYPE_STRING	15
+
 
 struct ATK_OPERAND {
 	uint8_t flags;				// lower 4 bits used for data type (future)
-	uint8_t operatorIndex;
+	uint16_t operatorIndex;
 	uint8_t resultIndex;		// if OPERANDFLAG_CONST then constant value index
 };
 
@@ -35,8 +47,8 @@ public:
 
 	virtual bool process(long now);
 
-	virtual uint8_t operandCount();
-	virtual ATK_OPERAND operand(uint8_t index);
+	uint8_t numOperands() { return m_numOperands; }
+	ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
 	virtual uint8_t resultCount();
 	template<typename T> inline T *result(uint8_t index) { return (T *)resultGeneric(index); }
 	virtual uint8_t resultSize(uint8_t index);
@@ -44,17 +56,31 @@ public:
 	bool isProcessed();
 	void resetProcessedFlag();
 	void setProcessedFlag();
-	
+
+	virtual String name();
+	String lastErrorString() { return m_lastErrorString; }
+
 protected:
 	ATKIOperator();
 
 	virtual void *resultGeneric(uint8_t index);
-	uint8_t operationCount() { return m_operationCount; };
+	uint8_t operationCount() { return m_numOperations; };
 	uint8_t operandElementIndex(ATK_OPERAND o, uint8_t iteration);
+
+	uint8_t loadFlags(Stream *program);
+	uint16_t loadOperatorIndex(Stream *program);
+	uint8_t loadResultIndex(Stream *program);
+	virtual uint8_t loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+
+	String m_lastErrorString;
 
 private:
 	bool m_isProcessed;
-	uint8_t m_operationCount;
+
+	uint8_t m_numOperands;
+	ATK_OPERAND *m_operands;
+
+	uint8_t m_numOperations;
 };
 
 

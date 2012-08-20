@@ -22,12 +22,23 @@ ATKSignal::ATKSignal() {
 	m_result[0] = 0;
 }
 
-// <display type><display width><display height><frame width><frame height><num layers>
 bool ATKSignal::load(Stream *program) {
-	bool result = true;
-//	while(!program->available()) { }
-//	int c = program->read();
-	return result;
+	if (!ATKIOperator::load(program)) {
+		return false;
+	}
+
+	if (numOperands() != 4) {
+#ifdef ANTIKYTHERA_DEBUG
+		this->lastErrorString = "ATKSignal::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
+#endif
+		return false;
+	}
+
+	return true;
+}
+
+uint8_t ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }
 
 bool ATKSignal::process(unsigned long now) {

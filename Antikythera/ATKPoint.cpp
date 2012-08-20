@@ -18,7 +18,7 @@ ATKPoint::ATKPoint() {
 	m_layer = 0;
 }
 
-// <display type><display width><display height><frame width><frame height><num layers>
+// display type,display width,display height,frame width,frame height,num layers)
 bool ATKPoint::load(Stream *program) {
 	bool result = true;
 //	while(!program->available()) { }

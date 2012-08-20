@@ -27,6 +27,13 @@ public:
 	virtual ATK_OPERAND operand(uint8_t index);
 	virtual uint8_t resultCount();
 	virtual void *resultGeneric(uint8_t index);
+
+#ifdef ANTIKYTHERA_DEBUG
+	virtual String name() { return "ATKRoot"; }
+#else
+	virtual String name() { return ""; }
+#endif
+
 };
 
 

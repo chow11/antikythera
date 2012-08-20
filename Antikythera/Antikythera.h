@@ -26,7 +26,8 @@ public:
 
 	static void resetProcessedFlags();
 
-	static ATKIOperator *operators[256];
+	static uint16_t numOperators;
+	static ATKIOperator **operators;
 
 	// installed hardware components added during setup()
 	static uint8_t numDisplays;
@@ -34,6 +35,8 @@ public:
 
 	static uint8_t numSensors;
 	static ATKISensor **sensors;
+
+	static String lastErrorString;
 };
 
 
