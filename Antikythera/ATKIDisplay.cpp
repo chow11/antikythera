@@ -44,7 +44,7 @@ uint8_t ATKIDisplay::numLayers() {
 void ATKIDisplay::render(uint16_t frameX, uint16_t frameY) {
 }
 
-ATKColor::RGBA* framebuffer(uint8_t layer) {
+ATKColor::RGBA* ATKIDisplay::framebuffer(uint8_t layer) {
 	return NULL;
 }
 

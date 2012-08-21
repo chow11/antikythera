@@ -44,7 +44,7 @@ public:
 	virtual uint8_t numLayers() { return m_numLayers; }
 
 	virtual void render(uint16_t frameX, uint16_t frameY);
-	virtual ATKColor::RGBA* framebuffer(uint8_t layer) { return m_frames + layer * m_frameWidth * m_frameHeight; }
+	virtual ATKColor::RGBA* framebuffer(uint8_t layer);
 
 	virtual void circle(int8_t x, int8_t y, int8_t r, ATKColor::HSVA c, int8_t thickness, uint8_t style, uint8_t layer);
 	virtual void circle(int8_t x, int8_t y, int8_t r, ATKColor::RGBA c, int8_t thickness, uint8_t style, uint8_t layer);
@@ -69,8 +69,6 @@ protected:
 	uint16_t m_frameHeight;
 	uint8_t m_numLayers;
 	ATKColor::RGBA *m_frames;
-
-	static const uint8_t DIM_CURVE[];
 };
 
 

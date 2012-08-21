@@ -15,6 +15,11 @@ WS2801::WS2801(p32_spi *pspi, uint8_t pinSS) {
 	m_pspi = pspi;
 	m_pinSS = pinSS;
 	
+	m_displayWidth = 0;
+	m_displayHeight = 0;
+	m_frameWidth = 0;
+	m_frameHeight = 0;
+	m_numLayers = 0;
 	m_frames = NULL;
 }
 
@@ -255,26 +260,24 @@ void WS2801::render(uint16_t frameX, uint16_t frameY) {
 	memset(m_frames, 0 , m_frameWidth * m_frameHeight * 4 * m_numLayers);
 };
 
+ATKColor::RGBA* WS2801::framebuffer(uint8_t layer) {
+	return m_frames + layer * m_frameWidth * m_frameHeight;
+}
 
 void WS2801::circle(int8_t x, int8_t y, int8_t r, ATKColor::HSVA c, int8_t thickness, uint8_t style, uint8_t layer) {
 }
 
-
 void WS2801::circle(int8_t x, int8_t y, int8_t r, ATKColor::RGBA c, int8_t thickness, uint8_t style, uint8_t layer) {
 }
-
 
 void WS2801::line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::HSVA c, int8_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
-
 void WS2801::line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, int8_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
 }
 
-
 void WS2801::point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
 }
-
 
 void WS2801::point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
 }
