@@ -19,7 +19,11 @@ ATKIDisplay **Antikythera::displays = NULL;
 uint8_t Antikythera::numSensors = 0;
 ATKISensor **Antikythera::sensors = NULL;
 
+#ifdef ANTIKYTHERA_DEBUG
+String Antikythera::lastErrorString = "debug";
+#else
 String Antikythera::lastErrorString = "";
+#endif
 
 
 void Antikythera::unload() {
@@ -72,6 +76,7 @@ bool Antikythera::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator count.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -109,13 +114,17 @@ bool Antikythera::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 			Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading operator[" + String(count) + "] type.";
 #endif
+			program->flush();
 			return false;
 		}
 
 		uint16_t operatorType = (uint16_t)strtoul(buffer, NULL, 10);
 		operators[count] = ATKOperatorFactory::createOperator(operatorType);
 		if (!operators[count]->load(program)) {
+#ifdef ANTIKYTHERA_DEBUG
 			Antikythera::lastErrorString = operators[count]->lastErrorString();
+#endif
+			program->flush();
 			return false;
 		}
 	}
@@ -137,6 +146,7 @@ bool Antikythera::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading closing parenthesis.";
 #endif
+		program->flush();
 		return false;
 	}
 

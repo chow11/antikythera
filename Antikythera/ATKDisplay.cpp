@@ -21,10 +21,19 @@ ATKDisplay::~ATKDisplay() {
 
 // display type,display width,display height,frame width,frame height,num layers)
 bool ATKDisplay::load(Stream *program) {
-	bool result = true;
-//	while(!program->available()) { }
-//	int c = program->read();
-	return result;
+	if (!ATKIOperator::load(program)) {
+		return false;
+	}
+
+	if (numOperands() != 0) {
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKDisplay::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 0.";
+#endif
+		program->flush();
+		return false;
+	}
+
+	return true;
 }
 /*
 	Operands:

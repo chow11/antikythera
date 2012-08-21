@@ -62,6 +62,7 @@ bool ATKIOperator::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		this->lastErrorString = name() + "::load() - unexpected end of stream while reading operand count.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -87,6 +88,7 @@ bool ATKIOperator::load(Stream *program) {
 	#ifdef ANTIKYTHERA_DEBUG
 			this->lastErrorString = name() + "::load() - operand[" + String(count) + "] unexpected end of stream while reading opening parenthesis.";
 	#endif
+			program->flush();
 			return false;
 		}
 
@@ -116,6 +118,7 @@ bool ATKIOperator::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		this->lastErrorString = name() + "::load() - unexpected end of stream while reading closing parenthesis.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -240,6 +243,7 @@ uint8_t ATKIOperator::loadFlags(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		this->lastErrorString = name() + "::load() - unexpected end of stream while reading flags.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -277,6 +281,7 @@ uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		this->lastErrorString = name() + "::load() - unexpected end of stream while reading operator index.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -314,6 +319,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 		this->lastErrorString = name() + "::load() - unexpected end of stream while reading result index.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -356,6 +362,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 #ifdef ANTIKYTHERA_DEBUG
 		Antikythera::lastErrorString = name() + "::load() - unexpected end of stream while reading constant count.";
 #endif
+		program->flush();
 		return false;
 	}
 
@@ -418,6 +425,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 #ifdef ANTIKYTHERA_DEBUG
 						this->lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
+						program->flush();
 						return false;
 					}
 					break;
@@ -427,6 +435,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 #ifdef ANTIKYTHERA_DEBUG
 						this->lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif
+						program->flush();
 						return false;
 					}
 					break;
@@ -451,6 +460,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		#ifdef ANTIKYTHERA_DEBUG
 				this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
 		#endif
+				program->flush();
 				return false;
 			}
 		} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType >= OPERANDTYPE_UINT32)) {
@@ -461,6 +471,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 #ifdef ANTIKYTHERA_DEBUG
 						this->lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
+						program->flush();
 						return false;
 					}
 					break;
@@ -470,6 +481,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 #ifdef ANTIKYTHERA_DEBUG
 						this->lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif
+						program->flush();
 						return false;
 					}
 					break;
@@ -494,6 +506,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		#ifdef ANTIKYTHERA_DEBUG
 				this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
 		#endif
+				program->flush();
 				return false;
 			}
 		}

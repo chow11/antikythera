@@ -36,8 +36,9 @@ bool ATKPoint::load(Stream *program) {
 
 	if (numOperands() != 6) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKPoint::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 6.";
+		m_lastErrorString = "ATKPoint::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 6.";
 #endif
+		program->flush();
 		return false;
 	}
 

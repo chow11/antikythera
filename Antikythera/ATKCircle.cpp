@@ -41,8 +41,9 @@ bool ATKCircle::load(Stream *program) {
 
 	if (numOperands() != 8) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKCircle::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 8.";
+		m_lastErrorString = "ATKCircle::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 8.";
 #endif
+		program->flush();
 		return false;
 	}
 

@@ -10,6 +10,8 @@
 #ifndef ANTIKYTHERA_H_
 #define ANTIKYTHERA_H_
 
+#define ANTIKYTHERA_DEBUG
+
 
 #include <stddef.h>
 #include <inttypes.h>

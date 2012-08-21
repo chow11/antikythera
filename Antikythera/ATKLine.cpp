@@ -45,8 +45,9 @@ bool ATKLine::load(Stream *program) {
 
 	if (numOperands() != 10) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKLine::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 10.";
+		m_lastErrorString = "ATKLine::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 10.";
 #endif
+		program->flush();
 		return false;
 	}
 

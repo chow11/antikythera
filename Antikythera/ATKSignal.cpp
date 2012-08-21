@@ -38,8 +38,9 @@ bool ATKSignal::load(Stream *program) {
 
 	if (numOperands() != 4) {
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKSignal::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
+		m_lastErrorString = "ATKSignal::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
 #endif
+		program->flush();
 		return false;
 	}
 
