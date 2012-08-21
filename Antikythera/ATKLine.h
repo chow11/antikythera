@@ -19,13 +19,18 @@
 
 /*
 	Operands:
-		- x location
-		- y location
+		- first x location
+		- first y location
+		- second x location
+		- second y location
 		- color (HSVA)
-		- display number
+		- line width
+		- style
+		- mode
+		- display
 		- layer (0 = background)
 	Results:
-		- layer (0 = background)
+		- none
 */
 
 class ATKLine : public ATKIOperator {
@@ -33,38 +38,34 @@ public:
 	ATKLine();
 	~ATKLine();
 
-	virtual bool load(Stream *program);
-
-	virtual bool evaluate(unsigned long now);
-
-	virtual uint8_t operandCount() { return 10; }
-	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
-	virtual uint8_t resultCount() { return 1; }
-	virtual uint8_t resultSize(uint8_t index) { return 1; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return m_result; }
-
 #ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKLine"; }
 #else
 	virtual String name() { return ""; }
 #endif
 
-private:
-	ATK_OPERAND m_operands[];
-	uint8_t m_result[1];
+	virtual bool load(Stream *program);
+	virtual bool evaluate(unsigned long now);
+	virtual uint8_t numResults() { return 0; }
+	virtual uint8_t resultSize(uint8_t index) { return 0; }
 
-	uint8_t m_x1;
-	uint8_t m_y1;
-	uint8_t m_x2;
-	uint8_t m_y2;
-	ATKColor::HSVA m_color;
-	uint8_t m_width;
-	uint8_t m_style;
-	uint8_t m_mode;
-	uint8_t m_displayNumber;
-	uint8_t m_layer;
+protected:
+	virtual void *resultGeneric(uint8_t index) { return NULL; }
+	virtual void *constantGeneric(uint8_t index);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+
+private:
+	int8_t *m_constX1;
+	int8_t *m_constY1;
+	int8_t *m_constX2;
+	int8_t *m_constY2;
+	ATKColor::HSVA *m_constColor;
+	int8_t *m_constThickness;
+	uint8_t *m_constStyle;
+	uint8_t *m_constMode;
+	uint8_t *m_constDisplay;
+	uint8_t *m_constLayer;
 };
 
 

@@ -16,15 +16,21 @@ ATKIOperator::ATKIOperator() {
 	m_numOperands = 0;
 	m_operands = NULL;
 	m_numOperations = 0;
+	m_constantSize = NULL;
 }
 
 ATKIOperator::~ATKIOperator() {
 	delete[] m_operands;
+	delete[] m_constantSize;
+}
+
+String ATKIOperator::name() {
+	return "";
 }
 
 // operand count((operand0 flags, operand0 operator index, operand0 result index)...(operand0 flags, [operandN operator index, operandN result index|operandN constant value]))
 // alternate operand specification:
-// (operand0 flags, operand operator index, operand constant value)
+// (operand0 flags, constant(constant0 value,...,constantN value))
 bool ATKIOperator::load(Stream *program) {
 	char buffer[21];
 	memset(buffer, 0, 21);
@@ -61,6 +67,7 @@ bool ATKIOperator::load(Stream *program) {
 
 	m_numOperands = (uint8_t)strtoul(buffer, NULL, 10);
 	m_operands = new ATK_OPERAND[m_numOperands];
+	m_constantSize = new uint8_t[m_numOperands];
 
 	for (int count = 0; count < numOperands(); count++) {
 		valid = false;
@@ -130,17 +137,15 @@ bool ATKIOperator::evaluate(unsigned long now) {
 	uint8_t min = 255;
 	for (uint8_t i = 0; i < numOperands(); i++) {
 		ATK_OPERAND o = operand(i);
-		if (o.flags & OPERANDFLAG_LINK) {
-			if (o.flags & OPERANDFLAG_LIMIT) {
-				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-				if (temp < min) {
-					min = temp;
-				}
-			} else {
-				uint8_t temp = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-				if (temp > max) {
-					min = max;
-				}
+		if (o.flags & OPERANDFLAG_LIMIT) {
+			uint8_t temp = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			if (temp < min) {
+				min = temp;
+			}
+		} else {
+			uint8_t temp = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			if (temp > max) {
+				min = max;
 			}
 		}
 	}
@@ -153,7 +158,11 @@ bool ATKIOperator::evaluate(unsigned long now) {
 	return result;
 };
 
-uint8_t ATKIOperator::resultCount() {
+uint8_t ATKIOperator::numResults() {
+	return 0;
+}
+
+uint8_t ATKIOperator::resultSize(uint8_t index) {
 	return 0;
 }
 
@@ -311,10 +320,47 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	return (uint8_t)strtoul(buffer, NULL, 10);
 }
 
+bool ATKIOperator::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	return true;
+}
+
 // update to arrays and support more types
 bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	uint8_t operandType = flags & 0x07;
+	char buffer[21];
+	memset(buffer, 0, 21);
+	int index = 0;
+	bool valid = false;
+	while(program->available()) {
+		char c = (char)program->read();
+		if (c == '(') {
+			valid = true;
+			break;
+		}
+		if (index == 3) {
+#ifdef ANTIKYTHERA_DEBUG
+			Antikythera::lastErrorString = name() + "::load() - constant count has too many digits.";
+#endif
+			program->flush();
+			return false;
+		}
+		if (!isdigit(c)) {
+#ifdef ANTIKYTHERA_DEBUG
+			Antikythera::lastErrorString = name() + "::load() - operator count contains invalid character: " + String(c);
+#endif
+			program->flush();
+			return false;
+		}
+		buffer[index++] = c;
+	}
+	if (!valid) {
+#ifdef ANTIKYTHERA_DEBUG
+		Antikythera::lastErrorString = name() + "::load() - unexpected end of stream while reading constant count.";
+#endif
+		return false;
+	}
 
+	initializeConstant(operandIndex, (uint8_t)strtoul(buffer, NULL, 10));
+	uint8_t operandType = flags & 0x07;
 	uint8_t maxLength = 0;
 	switch (operandType) {
 	case OPERANDTYPE_INT8:
@@ -360,114 +406,141 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		return true;
 	}
 
-	char buffer[21];
-	memset(buffer, 0, 21);
-	int index = 0;
-	bool valid = false;
-	if ((operandType >= OPERANDTYPE_INT8) && (operandType >= OPERANDTYPE_INT32)) {
-		while(program->available()) {
-			char c = (char)program->read();
-			if (c == ')') {
-				valid = true;
-				break;
+	for (int count = 0; count < constantSize(operandIndex); count++) {
+		memset(buffer, 0, 21);
+		index = 0;
+		valid = false;
+		if ((operandType >= OPERANDTYPE_INT8) && (operandType >= OPERANDTYPE_INT32)) {
+			while(program->available()) {
+				char c = (char)program->read();
+				if (c == ',') {
+					if (count == (constantSize(operandIndex) - 1)) {
+#ifdef ANTIKYTHERA_DEBUG
+						this->lastErrorString = name() + "::load() - constant count is less than number of constants.";
+#endif
+						return false;
+					}
+					break;
+				}
+				if (c == ')') {
+					if (count != (constantSize(operandIndex) - 1)) {
+#ifdef ANTIKYTHERA_DEBUG
+						this->lastErrorString = name() + "::load() - constant count is greater than number of constants.";
+#endif
+						return false;
+					}
+					break;
+				}
+				if (index == maxLength) {
+		#ifdef ANTIKYTHERA_DEBUG
+					this->lastErrorString = name() + "::load() - constant has too many digits.";
+		#endif
+					program->flush();
+					return false;
+				}
+				if (c && (strchr("-0123456789", c) == NULL)) {
+		#ifdef ANTIKYTHERA_DEBUG
+					this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
+		#endif
+					program->flush();
+					return false;
+				}
+				buffer[index++] = c;
 			}
-			if (index == maxLength) {
-	#ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = name() + "::load() - constant has too many digits.";
-	#endif
-				program->flush();
+			if (!valid) {
+		#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
+		#endif
 				return false;
 			}
-			if (c && (strchr("-0123456789", c) == NULL)) {
-	#ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
-	#endif
-				program->flush();
+		} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType >= OPERANDTYPE_UINT32)) {
+			while(program->available()) {
+				char c = (char)program->read();
+				if (c == ',') {
+					if (count == (constantSize(operandIndex) - 1)) {
+#ifdef ANTIKYTHERA_DEBUG
+						this->lastErrorString = name() + "::load() - constant count is less than number of constants.";
+#endif
+						return false;
+					}
+					break;
+				}
+				if (c == ')') {
+					if (count != (constantSize(operandIndex) - 1)) {
+#ifdef ANTIKYTHERA_DEBUG
+						this->lastErrorString = name() + "::load() - constant count is greater than number of constants.";
+#endif
+						return false;
+					}
+					break;
+				}
+				if (index == maxLength) {
+		#ifdef ANTIKYTHERA_DEBUG
+					this->lastErrorString = name() + "::load() - constant has too many digits.";
+		#endif
+					program->flush();
+					return false;
+				}
+				if (!isdigit(c)) {
+		#ifdef ANTIKYTHERA_DEBUG
+					this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
+		#endif
+					program->flush();
+					return false;
+				}
+				buffer[index++] = c;
+			}
+			if (!valid) {
+		#ifdef ANTIKYTHERA_DEBUG
+				this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
+		#endif
 				return false;
 			}
-			buffer[index++] = c;
-		}
-		if (!valid) {
-	#ifdef ANTIKYTHERA_DEBUG
-			this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
-	#endif
-			return false;
 		}
 
-		return (uint8_t)strtol(buffer, NULL, 10);
-	} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType >= OPERANDTYPE_UINT32)) {
-		while(program->available()) {
-			char c = (char)program->read();
-			if (c == ')') {
-				valid = true;
-				break;
-			}
-			if (index == maxLength) {
-	#ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = name() + "::load() - constant has too many digits.";
-	#endif
-				program->flush();
-				return false;
-			}
-			if (!isdigit(c)) {
-	#ifdef ANTIKYTHERA_DEBUG
-				this->lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
-	#endif
-				program->flush();
-				return false;
-			}
-			buffer[index++] = c;
+		switch (operandType) {
+		case OPERANDTYPE_INT8:
+			constant<int8_t>(operandIndex)[count] = (int8_t)strtol(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_INT16:
+			constant<int16_t>(operandIndex)[count] = (int16_t)strtol(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_INT32:
+			constant<int32_t>(operandIndex)[count] = (int32_t)strtol(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_INT64:
+			return true;
+
+		case OPERANDTYPE_FLOAT:
+			return true;
+
+		case OPERANDTYPE_STRING:
+			return true;
+
+		case OPERANDTYPE_UINT8:
+			constant<uint8_t>(operandIndex)[count] = (uint8_t)strtoul(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_UINT16:
+			constant<uint16_t>(operandIndex)[count] = (uint16_t)strtoul(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_UINT32:
+			constant<uint32_t>(operandIndex)[count] = (uint32_t)strtoul(buffer, NULL, 10);
+			break;
+
+		case OPERANDTYPE_UINT64:
+			return true;
+
+		case OPERANDTYPE_DOUBLE:
+			return true;
+
+		case OPERANDTYPE_CUSTOM:
+			return true;
 		}
-		if (!valid) {
-	#ifdef ANTIKYTHERA_DEBUG
-			this->lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
-	#endif
-			return false;
-		}
-	}
-
-	switch (operandType) {
-	case OPERANDTYPE_INT8:
-		constant<int8_t>(operandIndex)[0] = (int8_t)strtol(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_INT16:
-		constant<int16_t>(operandIndex)[0] = (int16_t)strtol(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_INT32:
-		constant<int32_t>(operandIndex)[0] = (int32_t)strtol(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_INT64:
-		return true;
-
-	case OPERANDTYPE_FLOAT:
-		return true;
-
-	case OPERANDTYPE_STRING:
-		return true;
-
-	case OPERANDTYPE_UINT8:
-		constant<uint8_t>(operandIndex)[0] = (uint8_t)strtoul(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_UINT16:
-		constant<uint16_t>(operandIndex)[0] = (uint16_t)strtoul(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_UINT32:
-		constant<uint32_t>(operandIndex)[0] = (uint32_t)strtoul(buffer, NULL, 10);
-		break;
-
-	case OPERANDTYPE_UINT64:
-		return true;
-
-	case OPERANDTYPE_DOUBLE:
-		return true;
-
-	case OPERANDTYPE_CUSTOM:
-		return true;
 	}
 
 	return true;

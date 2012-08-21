@@ -31,15 +31,15 @@ public:
 	virtual void render(uint16_t frameX, uint16_t frameY);
 	virtual ATKColor::RGBA* framebuffer(uint8_t layer);
 
-	virtual void circle(int8_t x, int8_t y, uint8_t r, ATKColor::HSVA c, uint8_t layer);
-	virtual void circle(int8_t x, int8_t y, uint8_t r, ATKColor::RGBA c, uint8_t layer);
-	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::HSVA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, uint8_t width, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t layer);
-	virtual void point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t layer);
+	virtual void circle(int8_t x, int8_t y, int8_t r, ATKColor::HSVA c, int8_t thickness, uint8_t style, uint8_t layer);
+	virtual void circle(int8_t x, int8_t y, int8_t r, ATKColor::RGBA c, int8_t thickness, uint8_t style, uint8_t layer);
+	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::HSVA c, int8_t thickness, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, int8_t thickness, uint8_t style, uint8_t mode, uint8_t layer);
+	virtual void point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer);
+	virtual void point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer);
 
 protected:
-	ATKIDisplay() { }
+	ATKIDisplay();
 };
 
 

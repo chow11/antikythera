@@ -43,23 +43,22 @@ public:
 	ATKSignal();
 	~ATKSignal();
 
-	virtual bool load(Stream *program);
-
-	virtual bool evaluate(unsigned long now);
-
-	virtual uint8_t resultCount() { return 1; }
-	virtual uint8_t resultSize(uint8_t index) { return 1; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return m_result; }
-	virtual void *constantGeneric(uint8_t index);
-	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
-
 #ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKSignal"; }
 #else
 	virtual String name() { return ""; }
 #endif
+
+	virtual bool load(Stream *program);
+	virtual bool evaluate(unsigned long now);
+	virtual uint8_t numResults() { return 1; }
+	virtual uint8_t resultSize(uint8_t index) { return 1; }
+
+protected:
+	virtual void *resultGeneric(uint8_t index) { return m_result; }
+	virtual void *constantGeneric(uint8_t index);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 private:
 	int16_t f_cardiac(double phase);

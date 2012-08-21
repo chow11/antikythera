@@ -25,20 +25,8 @@
 
 class ATKDisplay : public ATKIOperator {
 public:
-	ATKDisplay() { }
-	~ATKDisplay() { }
-
-	virtual bool load(Stream *program);
-
-	virtual bool evaluate(unsigned long now);
-
-	virtual uint8_t operandCount();
-	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
-	virtual uint8_t resultCount() { return 0; }
-	virtual uint8_t resultSize(uint8_t index) { return 0; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return NULL; }
+	ATKDisplay();
+	~ATKDisplay();
 
 #ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKDisplay"; }
@@ -46,8 +34,16 @@ protected:
 	virtual String name() { return ""; }
 #endif
 
-private:
-	ATK_OPERAND m_operands[];
+	virtual bool load(Stream *program);
+	virtual bool evaluate(unsigned long now);
+	virtual uint8_t numResults() { return 0; }
+	virtual uint8_t resultSize(uint8_t index) { return 0; }
+
+protected:
+	virtual void *resultGeneric(uint8_t index) { return NULL; }
+	virtual void *constantGeneric(uint8_t index);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 };
 
 

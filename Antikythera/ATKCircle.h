@@ -23,10 +23,12 @@
 		- y location
 		- radius
 		- color (HSVA)
-		- display number
+		- thickness
+		- style
+		- display (number of the display - must match the order provided by the sketch
 		- layer (0 = background)
 	Results:
-		- layer (0 = background)
+		- none
 */
 
 class ATKCircle : public ATKIOperator {
@@ -34,34 +36,32 @@ public:
 	ATKCircle();
 	~ATKCircle();
 
-	virtual bool load(Stream *program);
-
-	virtual bool evaluate(unsigned long now);
-
-	virtual uint8_t operandCount() { return 6; }
-	virtual ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
-	virtual uint8_t resultCount() { return 1; }
-	virtual uint8_t resultSize(uint8_t index) { return 1; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return m_result; }
-
 #ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKCircle"; }
 #else
 	virtual String name() { return ""; }
 #endif
 
-private:
-	ATK_OPERAND m_operands[];
-	uint8_t m_result[1];
+	virtual bool load(Stream *program);
+	virtual bool evaluate(unsigned long now);
+	virtual uint8_t numResults() { return 0; }
+	virtual uint8_t resultSize(uint8_t index) { return 0; }
 
-	uint8_t m_x;
-	uint8_t m_y;
-	uint8_t m_radius;
-	ATKColor::HSVA m_color;
-	uint8_t m_displayNumber;
-	uint8_t m_layer;
+protected:
+	virtual void *resultGeneric(uint8_t index) { return NULL; }
+	virtual void *constantGeneric(uint8_t index);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+
+private:
+	int8_t *m_constX;
+	int8_t *m_constY;
+	int8_t *m_constRadius;
+	ATKColor::HSVA *m_constColor;
+	int8_t *m_constThickness;
+	uint8_t *m_constStyle;
+	uint8_t *m_constDisplay;
+	uint8_t *m_constLayer;
 };
 
 

@@ -11,21 +11,37 @@
 #include <Antikythera.h>
 
 
+ATKRoot::ATKRoot() {
+
+}
+
+ATKRoot::~ATKRoot() {
+
+}
+
 bool ATKRoot::load(Stream *program) {
 	return true;
 }
 
 bool ATKRoot::evaluate(unsigned long now) {
-	bool result = true;
-
-	for (uint8_t count = 0; count < operandCount(); count++) {
-		if ((operand(count).flags & OPERANDFLAG_LINK)) {
-			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
-		}
-	}
+	bool result = ATKIOperator::evaluate(now);
 
 	setEvaluatedFlag();
 
 	return result;
 };
 
+void *ATKRoot::constantGeneric(uint8_t index) {
+	return NULL;
+}
+
+bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+#ifdef ANTIKYTHERA_DEBUG
+	this->lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
+#endif
+	return false;
+}
+
+bool ATKRoot::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+	return ATKIOperator::loadConstant(operandIndex, flags, program);
+}

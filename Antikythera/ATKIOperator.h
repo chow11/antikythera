@@ -46,37 +46,40 @@ class ATKIOperator {
 public:
 	virtual ~ATKIOperator();
 
-	virtual bool load(Stream *program);
+	virtual String name();
 
+	virtual bool load(Stream *program);
 	virtual bool evaluate(unsigned long now);
+	virtual uint8_t numResults();
+	virtual uint8_t resultSize(uint8_t index);
 
 	uint8_t numOperands() { return m_numOperands; }
 	ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
 	template<typename T> inline T *constant(uint8_t index) { return (T *)constantGeneric(index); }
-	virtual uint8_t resultCount();
 	template<typename T> inline T *result(uint8_t index) { return (T *)resultGeneric(index); }
-	virtual uint8_t resultSize(uint8_t index);
 
 	bool isEvaluated();
 	void resetEvaluatedFlag();
 	void setEvaluatedFlag();
 
-	virtual String name();
 	String lastErrorString() { return m_lastErrorString; }
 
 protected:
 	ATKIOperator();
 
 	virtual void *resultGeneric(uint8_t index);
-	uint8_t operationCount() { return m_numOperations; };
+	uint8_t numOperations() { return m_numOperations; };
 	uint8_t operandElementIndex(ATK_OPERAND o, uint8_t iteration);
 	virtual void *constantGeneric(uint8_t index);
 
 	uint8_t loadFlags(Stream *program);
 	uint16_t loadOperatorIndex(Stream *program);
 	uint8_t loadResultIndex(Stream *program);
+	uint8_t constantSize(uint8_t index) { return (index < m_numOperands) ? m_constantSize[index] : 0; }
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
+	uint8_t *m_constantSize;
 	String m_lastErrorString;
 
 private:
