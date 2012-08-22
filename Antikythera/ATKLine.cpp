@@ -8,7 +8,7 @@
  */
 
 #include "ATKLine.h"
-#include "Antikythera.h"
+#include <Antikythera.h>
 
 
 ATKLine::ATKLine() {
@@ -124,6 +124,8 @@ void *ATKLine::constantGeneric(uint8_t index) {
 }
 
 bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
 	switch (operandIndex) {
 	case 0:
 		m_constX1 = new int8_t[constantSize];
@@ -167,7 +169,7 @@ bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	default:
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKLine::initializeConstant() - operandIndex out of range.";
+		m_lastErrorString = "ATKLine::initializeConstant() - operandIndex out of range.";
 #endif
 		return false;
 	}

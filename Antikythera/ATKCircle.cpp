@@ -110,6 +110,8 @@ void *ATKCircle::constantGeneric(uint8_t index) {
 }
 
 bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
 	switch (operandIndex) {
 	case 0:
 		m_constX = new int8_t[constantSize];
@@ -145,7 +147,7 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	default:
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKCircle::initializeConstant() - operandIndex out of range.";
+		m_lastErrorString = "ATKCircle::initializeConstant() - operandIndex out of range.";
 #endif
 		return false;
 	}

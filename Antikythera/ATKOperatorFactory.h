@@ -11,8 +11,7 @@
 #define ATK_OPERATOR_FACTORY_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
+#include <ATKIncludes.h>
 #include <ATKIOperator.h>
 
 

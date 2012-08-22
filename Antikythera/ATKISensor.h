@@ -11,8 +11,7 @@
 #define ATK_ISENSOR_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
+#include <ATKIncludes.h>
 
 
 class ATKISensor {

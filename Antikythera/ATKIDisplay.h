@@ -11,8 +11,7 @@
 #define ATK_IDISPLAY_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
+#include <ATKIncludes.h>
 #include <ATKColor.h>
 
 

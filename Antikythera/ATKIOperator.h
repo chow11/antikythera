@@ -11,9 +11,8 @@
 #define ATK_IOPERATOR_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
 #include <Stream.h>
+#include <ATKIncludes.h>
 
 
 #define OPERANDFLAG_LINK	0x80		// 0=constant 1=link to operator output

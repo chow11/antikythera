@@ -7,9 +7,12 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
+#define ANTIKYTHERA_DEBUG
+
+
+#include <stdlib.h>
 #include <Antikythera.h>
 #include <ATKOperatorFactory.h>
-#include <stdlib.h>
 
 
 uint16_t Antikythera::numOperators = 0;
@@ -52,6 +55,9 @@ bool Antikythera::load(Stream *program) {
 	bool valid = false;
 	while(program->available()) {
 		char c = (char)program->read();
+#ifdef ANTIKYTHERA_DEBUG
+			program->print(c);
+#endif
 		if (c == '(') {
 			valid = true;
 			break;
@@ -90,6 +96,9 @@ bool Antikythera::load(Stream *program) {
 	for (int count = 1; count < numOperators + 1; count++) {
 		while(program->available()) {
 			char c = (char)program->read();
+#ifdef ANTIKYTHERA_DEBUG
+			program->print(c);
+#endif
 			if (c == '(') {
 				valid = true;
 				break;
@@ -132,6 +141,9 @@ bool Antikythera::load(Stream *program) {
 	valid = false;
 	while(program->available()) {
 		char c = (char)program->read();
+#ifdef ANTIKYTHERA_DEBUG
+			program->print(c);
+#endif
 		if (c == ')') {
 			valid = true;
 			break;

@@ -36,8 +36,10 @@ void *ATKRoot::constantGeneric(uint8_t index) {
 }
 
 bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
 #ifdef ANTIKYTHERA_DEBUG
-	this->lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
+	m_lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
 #endif
 	return false;
 }

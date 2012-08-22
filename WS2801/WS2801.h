@@ -11,10 +11,9 @@
 #define WS2801_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
 #include <p32xxxx.h>
 #include <p32_defs.h>
+#include <ATKIncludes.h>
 #include <ATKIDisplay.h>
 #include <ATKColor.h>
 

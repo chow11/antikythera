@@ -11,8 +11,8 @@
 #define ATK_Signal_H_
 
 
-#include <stddef.h>
-#include <inttypes.h>
+#include <Stream.h>
+#include <ATKIncludes.h>
 #include <ATKIOperator.h>
 
 
@@ -43,11 +43,7 @@ public:
 	ATKSignal();
 	~ATKSignal();
 
-#ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKSignal"; }
-#else
-	virtual String name() { return ""; }
-#endif
 
 	virtual bool load(Stream *program);
 	virtual bool evaluate(unsigned long now);

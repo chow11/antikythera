@@ -10,12 +10,9 @@
 #ifndef ANTIKYTHERA_H_
 #define ANTIKYTHERA_H_
 
-#define ANTIKYTHERA_DEBUG
 
-
-#include <stddef.h>
-#include <inttypes.h>
 #include <Stream.h>
+#include <ATKIncludes.h>
 #include <ATKIOperator.h>
 #include <ATKIDisplay.h>
 #include <ATKISensor.h>

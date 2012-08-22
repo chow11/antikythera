@@ -7,10 +7,11 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include <ATKSignal.h>
-#include <Antikythera.h>
 #include <math.h>
 #include <WProgram.h>
+#include <ATKSignal.h>
+#include <Antikythera.h>
+
 
 ATKSignal::ATKSignal() {
 	m_result = new int16_t[1];
@@ -140,6 +141,8 @@ void *ATKSignal::constantGeneric(uint8_t index) {
 }
 
 bool ATKSignal::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
 	switch (operandIndex) {
 	case 0:
 		m_constWaveform = new uint8_t[constantSize];
@@ -159,7 +162,7 @@ bool ATKSignal::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	default:
 #ifdef ANTIKYTHERA_DEBUG
-		this->lastErrorString = "ATKSignal::initializeConstant() - operandIndex out of range.";
+		m_lastErrorString = "ATKSignal::initializeConstant() - operandIndex out of range.";
 #endif
 		return false;
 	}
