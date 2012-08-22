@@ -37,14 +37,20 @@ void Antikythera::unload() {
 	numOperators = 0;
 }
 
-bool Antikythera::process(long now) {
+bool Antikythera::evaluate(unsigned long now) {
 	if (numOperators == 0) {
 		return true;
 	}
 
 	resetProcessedFlags();
 
-	return operators[0]->evaluate(now);
+	bool result = operators[0]->evaluate(now);
+#ifdef ANTIKYTHERA_DEBUG
+	if (!result) {
+		Antikythera::lastErrorString = "Antikythera::evaluate() - failed.";
+	}
+#endif
+	return result;
 };
 
 // operator count(operatortype0()...operatorNtype())
@@ -56,7 +62,7 @@ bool Antikythera::load(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == '(') {
 			valid = true;
@@ -94,10 +100,14 @@ bool Antikythera::load(Stream *program) {
 	index = 0;
 	valid = false;
 	for (int count = 1; count < numOperators + 1; count++) {
+#ifdef ANTIKYTHERA_DEBUG
+		program->print("Processing operator #");
+		program->println(count);
+#endif
 		while(program->available()) {
 			char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 			if (c == '(') {
 				valid = true;
@@ -136,13 +146,37 @@ bool Antikythera::load(Stream *program) {
 			program->flush();
 			return false;
 		}
+
+		valid = false;
+		while(program->available()) {
+			char c = (char)program->read();
+	#ifdef ANTIKYTHERA_DEBUG
+				program->println(c);
+	#endif
+			if (c == ')') {
+				valid = true;
+				break;
+			}
+	#ifdef ANTIKYTHERA_DEBUG
+			Antikythera::lastErrorString = "Antikythera::load() - expected closing parenthesis, read invalid character: " + String(c);
+	#endif
+			program->flush();
+			return false;
+		}
+		if (!valid) {
+	#ifdef ANTIKYTHERA_DEBUG
+			Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading closing parenthesis.";
+	#endif
+			program->flush();
+			return false;
+		}
 	}
 
 	valid = false;
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == ')') {
 			valid = true;
@@ -162,6 +196,7 @@ bool Antikythera::load(Stream *program) {
 		return false;
 	}
 
+	program->flush();
 	return true;
 };
 

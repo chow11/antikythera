@@ -16,7 +16,7 @@ CHANGE_HEAP_SIZE(0x2000);
 
 // device management
 #define SERIAL_READ_TIMEOUT 1000
-#define ATK_PROCESS_TIMEOUT 40        // 25 fps
+#define ANTIKYTHERA_TIMEOUT 40        // 25 fps
 #define GPS_READ_TIMEOUT 1000
 #define COMPASS_READ_TIMEOUT 250
 #define ACCELEROMETER_READ_TIMEOUT 250
@@ -25,8 +25,8 @@ CHANGE_HEAP_SIZE(0x2000);
 struct TIMERS {
   bool serialEnabled;
   unsigned long serialRead;
-  bool atkEnabled;
-  unsigned long atkProcess;
+  bool antikytheraEnabled;
+  unsigned long antikythera;
   bool gpsEnabled;
   unsigned long gpsRead;
   bool compassEnabled;
@@ -82,18 +82,23 @@ void loop()
     now = millis();
   }
 
-  if (timers.atkEnabled && (timers.atkProcess + ATK_PROCESS_TIMEOUT) < now) {
-    Antikythera::operators[0]->evaluate(now);
-    timers.atkProcess = now;
+  if (timers.antikytheraEnabled && (timers.antikythera + ANTIKYTHERA_TIMEOUT) < now) {
+    if (!Antikythera::evaluate(now)) {
+        Serial.print("\nError running program: ");
+        Serial.println(Antikythera::lastErrorString);
+    }
+    Serial.println(Antikythera::lastErrorString);
+    timers.antikythera = now;
     now = millis();
   }
 
   if (timers.serialEnabled && (timers.serialRead + SERIAL_READ_TIMEOUT) < now) {
     if (Serial.available() > 0) {
       if (Antikythera::load(&Serial)) {
-        timers.atkEnabled = true;
+        Serial.print("\nProgram loaded and running.");
+        timers.antikytheraEnabled = true;
       } else {
-        Serial.print("Error loading program: ");
+        Serial.print("\nError loading program: ");
         Serial.println(Antikythera::lastErrorString);
       }
     }

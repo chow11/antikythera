@@ -39,7 +39,7 @@ bool ATKIOperator::load(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == '(') {
 			valid = true;
@@ -73,7 +73,7 @@ bool ATKIOperator::load(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 	program->print("[num operands:");
 	program->print(buffer);
-	program->print("]");
+	program->println("]");
 #endif
 	m_operands = new ATK_OPERAND[m_numOperands];
 	m_constantSize = new uint8_t[m_numOperands];
@@ -83,7 +83,7 @@ bool ATKIOperator::load(Stream *program) {
 		while(program->available()) {
 			char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 			if (c == '(') {
 				valid = true;
@@ -105,19 +105,36 @@ bool ATKIOperator::load(Stream *program) {
 
 		m_operands[count].flags = loadFlags(program);
 		if (m_operands[count].flags & OPERANDFLAG_LINK) {
-#ifdef ANTIKYTHERA_DEBUG
-	program->print("[loadOperatorIndex()]");
-#endif
 			m_operands[count].operatorIndex = loadOperatorIndex(program);
-#ifdef ANTIKYTHERA_DEBUG
-	program->print("[loadResultIndex()]");
-#endif
 			m_operands[count].resultIndex = loadResultIndex(program);
 		} else {
-#ifdef ANTIKYTHERA_DEBUG
-	program->print("[loadConstant()]");
-#endif
-			m_operands[count].resultIndex = loadConstant(count, m_operands[count].flags, program);
+			if (!loadConstant(count, m_operands[count].flags, program)) {
+				return false;
+			}
+		}
+
+		valid = false;
+		while(program->available()) {
+			char c = (char)program->read();
+	#ifdef ANTIKYTHERA_DEBUG
+				program->println(c);
+	#endif
+			if (c == ')') {
+				valid = true;
+				break;
+			}
+	#ifdef ANTIKYTHERA_DEBUG
+			m_lastErrorString = name() + "::load() - expected closing parenthesis, read invalid character: " + String(c);
+	#endif
+			program->flush();
+			return false;
+		}
+		if (!valid) {
+	#ifdef ANTIKYTHERA_DEBUG
+			m_lastErrorString = name() + "::load() - unexpected end of stream while reading closing parenthesis.";
+	#endif
+			program->flush();
+			return false;
 		}
 	}
 
@@ -125,7 +142,7 @@ bool ATKIOperator::load(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == ')') {
 			valid = true;
@@ -243,7 +260,7 @@ uint8_t ATKIOperator::loadFlags(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == ',') {
 			valid = true;
@@ -289,7 +306,7 @@ uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == ',') {
 			valid = true;
@@ -330,7 +347,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == ')') {
 			valid = true;
@@ -377,7 +394,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	while(program->available()) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 		if (c == '(') {
 			valid = true;
@@ -412,7 +429,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	program->print((int)operandIndex);
 	program->print(", count:");
 	program->print(buffer);
-	program->print("]");
+	program->println("]");
 #endif
 	initializeConstant(operandIndex, (uint8_t)strtoul(buffer, NULL, 10));
 	uint8_t operandType = flags & 0x07;
@@ -466,7 +483,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	program->print((int)constantSize(operandIndex));
 	program->print(", type:");
 	program->print((int)operandType);
-	program->print(" constants]");
+	program->println(" constants]");
 #endif
 	for (int count = 0; count < constantSize(operandIndex); count++) {
 		memset(buffer, 0, 21);
@@ -476,7 +493,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			while(program->available()) {
 				char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 				if (c == ',') {
 					if (count == (constantSize(operandIndex) - 1)) {
@@ -486,6 +503,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 						program->flush();
 						return false;
 					}
+					valid = true;
 					break;
 				}
 				if (c == ')') {
@@ -496,6 +514,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 						program->flush();
 						return false;
 					}
+					valid = true;
 					break;
 				}
 				if (index == maxLength) {
@@ -525,7 +544,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			while(program->available()) {
 				char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
-			program->print(c);
+			program->println(c);
 #endif
 				if (c == ',') {
 					if (count == (constantSize(operandIndex) - 1)) {
@@ -535,6 +554,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 						program->flush();
 						return false;
 					}
+					valid = true;
 					break;
 				}
 				if (c == ')') {
@@ -545,6 +565,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 						program->flush();
 						return false;
 					}
+					valid = true;
 					break;
 				}
 				if (index == maxLength) {
@@ -577,7 +598,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	program->print((int)count);
 	program->print(":");
 	program->print(buffer);
-	program->print("]");
+	program->println("]");
 #endif
 		switch (operandType) {
 		case OPERANDTYPE_INT8:

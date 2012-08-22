@@ -20,7 +20,7 @@
 
 class Antikythera {
 public:
-	static bool process(long now);
+	static bool evaluate(unsigned long now);
 
 	static bool load(Stream *patch);
 	static void unload();

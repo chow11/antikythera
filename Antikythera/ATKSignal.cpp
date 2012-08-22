@@ -116,6 +116,9 @@ bool ATKSignal::evaluate(unsigned long now) {
 			break;
 		}
 	}
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKSignal::evaluate() - m_result[0] = " + String(m_result[0]);
+#endif
 
 	setEvaluatedFlag();
 
