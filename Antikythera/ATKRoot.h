@@ -37,6 +37,9 @@ protected:
 	virtual void *constantGeneric(uint8_t index);
 	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+
+private:
+	uint8_t *m_constLeaf;
 };
 
 

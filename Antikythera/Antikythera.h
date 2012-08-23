@@ -20,7 +20,11 @@
 
 class Antikythera {
 public:
+#ifdef ANTIKYTHERA_DEBUG
+	static bool evaluate(unsigned long now, Stream *debug);
+#else
 	static bool evaluate(unsigned long now);
+#endif
 
 	static bool load(Stream *patch);
 	static void unload();

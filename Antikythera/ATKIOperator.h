@@ -35,7 +35,7 @@
 
 
 struct ATK_OPERAND {
-	uint8_t flags;				// lower 4 bits used for data type (future)
+	uint8_t flags;				// lower 4 bits used for data type
 	uint16_t operatorIndex;
 	uint8_t resultIndex;		// if OPERANDFLAG_CONST then constant value index
 };

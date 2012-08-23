@@ -37,7 +37,11 @@ void Antikythera::unload() {
 	numOperators = 0;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool Antikythera::evaluate(unsigned long now, Stream *debug) {
+#else
 bool Antikythera::evaluate(unsigned long now) {
+#endif
 	if (numOperators == 0) {
 		return true;
 	}
@@ -46,9 +50,7 @@ bool Antikythera::evaluate(unsigned long now) {
 
 	bool result = operators[0]->evaluate(now);
 #ifdef ANTIKYTHERA_DEBUG
-	if (!result) {
-		Antikythera::lastErrorString = "Antikythera::evaluate() - failed.";
-	}
+	Antikythera::lastErrorString = operators[1]->lastErrorString();
 #endif
 	return result;
 };
@@ -93,13 +95,12 @@ bool Antikythera::load(Stream *program) {
 	}
 
 	numOperators = (uint16_t)strtoul(buffer, NULL, 10);
-	operators = new ATKIOperator*[numOperators + 1];
-	operators[0] = ATKOperatorFactory::createOperator(ATKOPERATOR_ROOT);
+	operators = new ATKIOperator*[numOperators];
 
 	memset(buffer, 0, 21);
 	index = 0;
 	valid = false;
-	for (int count = 1; count < numOperators + 1; count++) {
+	for (int count = 0; count < numOperators; count++) {
 #ifdef ANTIKYTHERA_DEBUG
 		program->print("Processing operator #");
 		program->println(count);

@@ -95,7 +95,7 @@ void loop()
   if (timers.serialEnabled && (timers.serialRead + SERIAL_READ_TIMEOUT) < now) {
     if (Serial.available() > 0) {
       if (Antikythera::load(&Serial)) {
-        Serial.print("\nProgram loaded and running.");
+        Serial.println("\nProgram loaded and running.");
         timers.antikytheraEnabled = true;
       } else {
         Serial.print("\nError loading program: ");

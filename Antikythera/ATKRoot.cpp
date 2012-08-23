@@ -12,19 +12,38 @@
 
 
 ATKRoot::ATKRoot() {
-
+	m_constLeaf = NULL;
 }
 
 ATKRoot::~ATKRoot() {
-
+	delete[] m_constLeaf;
 }
 
 bool ATKRoot::load(Stream *program) {
+	if (!ATKIOperator::load(program)) {
+		return false;
+	}
+
+	if (numOperands() != 1) {
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKRoot::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
+#endif
+		program->flush();
+		return false;
+	}
+
 	return true;
 }
 
 bool ATKRoot::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
+
+	for (uint8_t i; i < numOperations(); i++) {
+		ATK_OPERAND o = operand(0);
+		uint8_t leaf = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
+
+		result &= Antikythera::operators[leaf]->evaluate(now);
+	}
 
 	setEvaluatedFlag();
 
@@ -32,16 +51,30 @@ bool ATKRoot::evaluate(unsigned long now) {
 };
 
 void *ATKRoot::constantGeneric(uint8_t index) {
+	switch (index) {
+	case 0:
+		return m_constLeaf;
+	}
+
 	return NULL;
 }
 
 bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
+	switch (operandIndex) {
+	case 0:
+		m_constLeaf = new uint8_t[constantSize];
+		break;
+
+	default:
 #ifdef ANTIKYTHERA_DEBUG
-	m_lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
+		m_lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
 #endif
-	return false;
+		return false;
+	}
+
+	return true;
 }
 
 bool ATKRoot::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {

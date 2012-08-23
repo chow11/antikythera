@@ -181,12 +181,12 @@ bool ATKIOperator::evaluate(unsigned long now) {
 	for (uint8_t i = 0; i < numOperands(); i++) {
 		ATK_OPERAND o = operand(i);
 		if (o.flags & OPERANDFLAG_LIMIT) {
-			uint8_t temp = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
 			if (temp < min) {
 				min = temp;
 			}
 		} else {
-			uint8_t temp = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
 			if (temp > max) {
 				min = max;
 			}
@@ -432,7 +432,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	program->println("]");
 #endif
 	initializeConstant(operandIndex, (uint8_t)strtoul(buffer, NULL, 10));
-	uint8_t operandType = flags & 0x07;
+	uint8_t operandType = flags & 0x0F;
 	uint8_t maxLength = 0;
 	switch (operandType) {
 	case OPERANDTYPE_INT8:

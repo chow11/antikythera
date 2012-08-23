@@ -55,16 +55,19 @@ bool ATKSignal::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t waveform = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
+		uint8_t waveform = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
 		o = operand(1);
-		uint32_t wavelength = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
+		uint32_t wavelength = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
 		o = operand(2);
-		int16_t amplitude = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->result<int16_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<int16_t>(i)[operandElementIndex(o, i)];
+		int16_t amplitude = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int16_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<int16_t>(i)[operandElementIndex(o, i)];
 		o = operand(3);
-		uint32_t offset = (o.flags & OPERANDFLAG_LIMIT) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
+		uint32_t offset = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
 		double phase = ((now - (unsigned long)offset) % wavelength) / wavelength;
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKSignal::evaluate(" + String((int)(phase * 1000)) + ") - sine = " + String((int)(amplitude * sin(phase * M_TWOPI)));
+#endif
 
 		switch (waveform) {
 		case SIGNAL_NONE:
@@ -116,9 +119,6 @@ bool ATKSignal::evaluate(unsigned long now) {
 			break;
 		}
 	}
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKSignal::evaluate() - m_result[0] = " + String(m_result[0]);
-#endif
 
 	setEvaluatedFlag();
 
