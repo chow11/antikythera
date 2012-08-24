@@ -7,7 +7,6 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include <math.h>
 #include <WProgram.h>
 #include <ATKSignal.h>
 #include <Antikythera.h>
@@ -55,7 +54,6 @@ bool ATKSignal::evaluate(unsigned long now) {
 #endif
 	delete[] m_result;
 #ifdef ANTIKYTHERA_DEBUG
-	debug->println("ATKSignal::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);
@@ -64,19 +62,16 @@ bool ATKSignal::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t waveform = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
+		uint8_t waveform = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<uint8_t>(0)[operandElementIndex(0, o, i)];
 		o = operand(1);
-		uint32_t wavelength = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
+		uint32_t wavelength = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(1, o, i)] : constant<uint32_t>(1)[operandElementIndex(1, o, i)];
 		o = operand(2);
-		int16_t amplitude = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int16_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<int16_t>(i)[operandElementIndex(o, i)];
+		int16_t amplitude = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int16_t>(o.resultIndex)[operandElementIndex(2, o, i)] : constant<int16_t>(2)[operandElementIndex(2, o, i)];
 		o = operand(3);
-		uint32_t offset = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint32_t>(i)[operandElementIndex(o, i)];
+		uint32_t offset = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint32_t>(o.resultIndex)[operandElementIndex(3, o, i)] : constant<uint32_t>(3)[operandElementIndex(3, o, i)];
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
-		double phase = ((now - (unsigned long)offset) % wavelength) / wavelength;
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKSignal::evaluate(" + String((int)(phase * 1000)) + ") - sine = " + String((int)(amplitude * sin(phase * M_TWOPI)));
-#endif
+		double phase = ((now - (unsigned long)offset) % wavelength) / (double)wavelength;
 
 		switch (waveform) {
 		case SIGNAL_NONE:
@@ -127,6 +122,9 @@ bool ATKSignal::evaluate(unsigned long now) {
 			m_result[i] = (phase < 0.5) ? 4 * amplitude * abs(phase - 0.25) : -4 * amplitude * abs(phase - 0.75);
 			break;
 		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKSignal::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)waveform) + ", " + String(wavelength) + ", " + String(amplitude) + ", " + String(offset) + ") = " + String(m_result[i]));
+#endif
 	}
 
 	setEvaluatedFlag();
@@ -184,6 +182,17 @@ bool ATKSignal::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	return ATKIOperator::loadConstant(operandIndex, flags, program);
+}
+
+double ATKSignal::sin(double x) {
+	x -= M_PI;
+	double value = x;
+	value -= (x*x*x)/6.0;
+	value += (x*x*x*x*x)/120.0;
+	value -= (x*x*x*x*x*x*x)/5040.0;
+	value *= -1.0;
+
+	return value;
 }
 
 /*

@@ -53,9 +53,6 @@ bool Antikythera::evaluate(unsigned long now) {
 #else
 	bool result = operators[0]->evaluate(now);
 #endif
-#ifdef ANTIKYTHERA_DEBUG
-	Antikythera::lastErrorString = operators[1]->lastErrorString();
-#endif
 	return result;
 };
 

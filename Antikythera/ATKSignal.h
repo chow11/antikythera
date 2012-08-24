@@ -61,6 +61,7 @@ protected:
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 private:
+	double sin(double x);
 	int16_t f_cardiac(double phase);
 
 	int16_t *m_result;

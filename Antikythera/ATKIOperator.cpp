@@ -179,7 +179,7 @@ bool ATKIOperator::evaluate(unsigned long now) {
 #ifdef ANTIKYTHERA_DEBUG
 			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now, debug);
 #else
-	result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
 #endif
 		}
 	}
@@ -196,7 +196,7 @@ bool ATKIOperator::evaluate(unsigned long now) {
 		} else {
 			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
 			if (temp > max) {
-				min = max;
+				max = temp;
 			}
 		}
 	}
@@ -204,7 +204,6 @@ bool ATKIOperator::evaluate(unsigned long now) {
 	if (max < min) {
 		m_numOperations = max;
 	}
-
 
 	return result;
 };
@@ -233,22 +232,20 @@ void *ATKIOperator::resultGeneric(uint8_t index) {
 	return NULL;
 }
 
-uint8_t ATKIOperator::operandElementIndex(ATK_OPERAND o, uint8_t iteration) {
+uint8_t ATKIOperator::operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration) {
 	uint8_t result = 0;
 
-	uint8_t operandElementSize = Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex);
-	if (o.flags & OPERANDFLAG_LINK) {
-		if (o.flags & OPERANDFLAG_SINGLE) {
-			result = 0;
+	uint8_t operandElementSize = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(operandIndex);
+	if (o.flags & OPERANDFLAG_SINGLE) {
+		result = 0;
+	} else {
+		if (m_numOperations < operandElementSize) {
+			result = iteration;
 		} else {
-			if (m_numOperations < operandElementSize) {
-				result = iteration;
+			if (o.flags & OPERANDFLAG_EXTEND) {
+				result = operandElementSize - 1;
 			} else {
-				if (o.flags & OPERANDFLAG_EXTEND) {
-					result = operandElementSize - 1;
-				} else {
-					result = iteration % operandElementSize;
-				}
+				result = iteration % operandElementSize;
 			}
 		}
 	}

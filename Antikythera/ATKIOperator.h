@@ -72,7 +72,7 @@ protected:
 
 	virtual void *resultGeneric(uint8_t index);
 	uint8_t numOperations() { return m_numOperations; };
-	uint8_t operandElementIndex(ATK_OPERAND o, uint8_t iteration);
+	uint8_t operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration);
 	virtual void *constantGeneric(uint8_t index);
 
 	uint8_t loadFlags(Stream *program);

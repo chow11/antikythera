@@ -49,7 +49,7 @@ bool ATKRoot::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t leaf = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
+		uint8_t leaf = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<uint8_t>(i)[operandElementIndex(0, o, i)];
 
 #ifdef ANTIKYTHERA_DEBUG
 		result &= Antikythera::operators[leaf]->evaluate(now, debug);
