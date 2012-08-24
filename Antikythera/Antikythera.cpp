@@ -48,7 +48,11 @@ bool Antikythera::evaluate(unsigned long now) {
 
 	resetProcessedFlags();
 
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = operators[0]->evaluate(now, debug);
+#else
 	bool result = operators[0]->evaluate(now);
+#endif
 #ifdef ANTIKYTHERA_DEBUG
 	Antikythera::lastErrorString = operators[1]->lastErrorString();
 #endif

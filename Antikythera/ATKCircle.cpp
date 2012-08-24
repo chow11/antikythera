@@ -50,8 +50,16 @@ bool ATKCircle::load(Stream *program) {
 	return true;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKCircle::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKCircle::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
 	bool result = ATKIOperator::evaluate(now);
+#endif
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);

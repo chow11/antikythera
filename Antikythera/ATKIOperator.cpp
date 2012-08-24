@@ -167,12 +167,20 @@ bool ATKIOperator::load(Stream *program) {
 	return true;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKIOperator::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKIOperator::evaluate(unsigned long now) {
+#endif
 	bool result = true;
 
 	for (uint8_t count = 0; count < numOperands(); count++) {
 		if ((operand(count).flags & OPERANDFLAG_LINK)) {
-			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
+#ifdef ANTIKYTHERA_DEBUG
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now, debug);
+#else
+	result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
+#endif
 		}
 	}
 

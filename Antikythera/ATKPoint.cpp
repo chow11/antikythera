@@ -45,8 +45,16 @@ bool ATKPoint::load(Stream *program) {
 	return true;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKPoint::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKPoint::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
 	bool result = ATKIOperator::evaluate(now);
+#endif
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);

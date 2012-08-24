@@ -48,9 +48,17 @@ bool ATKSignal::load(Stream *program) {
 	return true;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKSignal::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKSignal::evaluate(unsigned long now) {
+#endif
 	delete[] m_result;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
 	bool result = ATKIOperator::evaluate(now);
+#endif
 	m_result = new int16_t[numOperations()];
 
 	for (uint8_t i; i < numOperations(); i++) {

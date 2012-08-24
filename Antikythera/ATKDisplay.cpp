@@ -40,8 +40,16 @@ bool ATKDisplay::load(Stream *program) {
 		- operators that draw to the frame in order of back to front
 */
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKDisplay::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKDisplay::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
 	bool result = ATKIOperator::evaluate(now);
+#endif
 
 	for (uint8_t i; i < numOperations(); i++) {
 		// assume display number input is set to 0 and Display start X,Y matches frame start

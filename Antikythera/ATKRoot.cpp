@@ -35,14 +35,26 @@ bool ATKRoot::load(Stream *program) {
 	return true;
 }
 
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKRoot::evaluate(unsigned long now, Stream *debug) {
+#else
 bool ATKRoot::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
 	bool result = ATKIOperator::evaluate(now);
+#endif
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
 		uint8_t leaf = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(o, i)] : constant<uint8_t>(i)[operandElementIndex(o, i)];
 
-		result &= Antikythera::operators[leaf]->evaluate(now);
+#ifdef ANTIKYTHERA_DEBUG
+		result &= Antikythera::operators[leaf]->evaluate(now, debug);
+#else
+	result &= Antikythera::operators[leaf]->evaluate(now);
+#endif
 	}
 
 	setEvaluatedFlag();
