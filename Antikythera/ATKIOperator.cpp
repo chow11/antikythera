@@ -30,13 +30,13 @@ String ATKIOperator::name() {
 
 // operand count((operand0 flags, operand0 operator index, operand0 result index)...(operand0 flags, [operandN operator index, operandN result index|operandN constant value]))
 // alternate operand specification:
-// (operand0 flags, constant(constant0 value,...,constantN value))
+// (operand0 flags, constant count(constant0 value,...,constantN value))
 bool ATKIOperator::load(Stream *program) {
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -80,7 +80,7 @@ bool ATKIOperator::load(Stream *program) {
 
 	for (int count = 0; count < numOperands(); count++) {
 		valid = false;
-		while(program->available()) {
+		while(Antikythera::readProgram(program)) {
 			char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -89,16 +89,16 @@ bool ATKIOperator::load(Stream *program) {
 				valid = true;
 				break;
 			}
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 			m_lastErrorString = name() + "::load() - operand[" + String(count) + "] expected opening parenthesis, read invalid character: " + String(c);
-	#endif
+#endif
 			program->flush();
 			return false;
 		}
 		if (!valid) {
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 			m_lastErrorString = name() + "::load() - operand[" + String(count) + "] unexpected end of stream while reading opening parenthesis.";
-	#endif
+#endif
 			program->flush();
 			return false;
 		}
@@ -111,35 +111,35 @@ bool ATKIOperator::load(Stream *program) {
 			if (!loadConstant(count, m_operands[count].flags, program)) {
 				return false;
 			}
-		}
 
-		valid = false;
-		while(program->available()) {
-			char c = (char)program->read();
-	#ifdef ANTIKYTHERA_DEBUG
-				program->println(c);
-	#endif
-			if (c == ')') {
-				valid = true;
-				break;
+			valid = false;
+			while(Antikythera::readProgram(program)) {
+				char c = (char)program->read();
+#ifdef ANTIKYTHERA_DEBUG
+					program->println(c);
+#endif
+				if (c == ')') {
+					valid = true;
+					break;
+				}
+#ifdef ANTIKYTHERA_DEBUG
+				m_lastErrorString = name() + "::load() - expected closing parenthesis, read invalid character: " + String(c);
+#endif
+				program->flush();
+				return false;
 			}
-	#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = name() + "::load() - expected closing parenthesis, read invalid character: " + String(c);
-	#endif
-			program->flush();
-			return false;
-		}
-		if (!valid) {
-	#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = name() + "::load() - unexpected end of stream while reading closing parenthesis.";
-	#endif
-			program->flush();
-			return false;
+			if (!valid) {
+#ifdef ANTIKYTHERA_DEBUG
+				m_lastErrorString = name() + "::load() - unexpected end of stream while reading closing parenthesis.";
+#endif
+				program->flush();
+				return false;
+			}
 		}
 	}
 
 	valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -262,7 +262,7 @@ uint8_t ATKIOperator::loadFlags(Stream *program) {
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -298,7 +298,7 @@ uint8_t ATKIOperator::loadFlags(Stream *program) {
 #ifdef ANTIKYTHERA_DEBUG
 	program->print("[flags:");
 	program->print(buffer);
-	program->print("]");
+	program->println("]");
 #endif
 	return (uint8_t)strtoul(buffer, NULL, 10);
 }
@@ -308,7 +308,7 @@ uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -341,6 +341,11 @@ uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
 		return false;
 	}
 
+#ifdef ANTIKYTHERA_DEBUG
+	program->print("[operator index:");
+	program->print(buffer);
+	program->println("]");
+#endif
 	return (uint16_t)strtoul(buffer, NULL, 10);
 }
 
@@ -349,7 +354,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -382,6 +387,11 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 		return false;
 	}
 
+#ifdef ANTIKYTHERA_DEBUG
+	program->print("[result index:");
+	program->print(buffer);
+	program->println("]");
+#endif
 	return (uint8_t)strtoul(buffer, NULL, 10);
 }
 
@@ -396,7 +406,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -495,7 +505,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		index = 0;
 		valid = false;
 		if ((operandType >= OPERANDTYPE_INT8) && (operandType <= OPERANDTYPE_INT32)) {
-			while(program->available()) {
+			while(Antikythera::readProgram(program)) {
 				char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -523,30 +533,30 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (index == maxLength) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 					m_lastErrorString = name() + "::load() - constant has too many digits.";
-		#endif
+#endif
 					program->flush();
 					return false;
 				}
 				if (c && (strchr("-0123456789", c) == NULL)) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 					m_lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
-		#endif
+#endif
 					program->flush();
 					return false;
 				}
 				buffer[index++] = c;
 			}
 			if (!valid) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 				m_lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
-		#endif
+#endif
 				program->flush();
 				return false;
 			}
 		} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType <= OPERANDTYPE_UINT32)) {
-			while(program->available()) {
+			while(Antikythera::readProgram(program)) {
 				char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -574,25 +584,25 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (index == maxLength) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 					m_lastErrorString = name() + "::load() - constant has too many digits.";
-		#endif
+#endif
 					program->flush();
 					return false;
 				}
 				if (!isdigit(c)) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 					m_lastErrorString = name() + "::load() - constant contains invalid character: " + String(c);
-		#endif
+#endif
 					program->flush();
 					return false;
 				}
 				buffer[index++] = c;
 			}
 			if (!valid) {
-		#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 				m_lastErrorString = name() + "::load() - unexpected end of stream while reading constant.";
-		#endif
+#endif
 				program->flush();
 				return false;
 			}

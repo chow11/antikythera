@@ -83,9 +83,15 @@ void loop()
   }
 
   if (timers.antikytheraEnabled && (timers.antikythera + ANTIKYTHERA_TIMEOUT) < now) {
+#ifdef  ANTIKYTHERA_DEBUG
     if (!Antikythera::evaluate(now, &Serial)) {
+#else
+    if (!Antikythera::evaluate(now)) {
+#endif
         Serial.print("\nError running program: ");
+#ifdef  ANTIKYTHERA_DEBUG
         Serial.println(Antikythera::lastErrorString);
+#endif
     }
     timers.antikythera = now;
     now = millis();
@@ -109,7 +115,9 @@ Serial.println((unsigned int) pTopHeap, HEX);
         timers.antikytheraEnabled = true;
       } else {
         Serial.print("\nError loading program: ");
+#ifdef  ANTIKYTHERA_DEBUG
         Serial.println(Antikythera::lastErrorString);
+#endif
       }
     }
 

@@ -279,9 +279,13 @@ void WS2801::line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, 
 }
 
 void WS2801::point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
-	m_frames[layer * m_frameSize + y * m_frameHeight + x] = ATKColor::HSVAtoRGBA(c);
+	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+		m_frames[layer * m_frameSize + y * m_frameHeight + x] = ATKColor::HSVAtoRGBA(c);
+	}
 }
 
 void WS2801::point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
-	m_frames[layer * m_frameSize + y * m_frameHeight + x] = c;
+	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+		m_frames[layer * m_frameSize + y * m_frameHeight + x] = c;
+	}
 }

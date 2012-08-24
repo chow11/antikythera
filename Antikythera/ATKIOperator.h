@@ -67,7 +67,9 @@ public:
 	void resetEvaluatedFlag();
 	void setEvaluatedFlag();
 
+#ifdef ANTIKYTHERA_DEBUG
 	String lastErrorString() { return m_lastErrorString; }
+#endif
 
 protected:
 	ATKIOperator();
@@ -85,7 +87,9 @@ protected:
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 	uint8_t *m_constantSize;
+#ifdef ANTIKYTHERA_DEBUG
 	String m_lastErrorString;
+#endif
 
 private:
 	bool m_isEvaluated;

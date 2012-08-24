@@ -52,10 +52,10 @@ bool ATKDisplay::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 #endif
 
-	for (uint8_t i; i < numOperations(); i++) {
+//	for (uint8_t i; i < numOperations(); i++) {
 		// assume display number input is set to 0 and Display start X,Y matches frame start
 		Antikythera::displays[0]->render(0, 0);
-	}
+//	}
 
 	setEvaluatedFlag();
 

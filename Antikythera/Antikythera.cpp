@@ -7,10 +7,9 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#define ANTIKYTHERA_DEBUG
-
 
 #include <stdlib.h>
+#include <WProgram.h>
 #include <Antikythera.h>
 #include <ATKOperatorFactory.h>
 
@@ -24,18 +23,8 @@ ATKISensor **Antikythera::sensors = NULL;
 
 #ifdef ANTIKYTHERA_DEBUG
 String Antikythera::lastErrorString = "debug";
-#else
-String Antikythera::lastErrorString = "";
 #endif
 
-
-void Antikythera::unload() {
-	for (uint8_t count = 0; count < numOperators; count++) {
-		delete operators[count];
-	}
-	delete[] operators;
-	numOperators = 0;
-}
 
 #ifdef ANTIKYTHERA_DEBUG
 bool Antikythera::evaluate(unsigned long now, Stream *debug) {
@@ -55,6 +44,13 @@ bool Antikythera::evaluate(unsigned long now) {
 #endif
 	return result;
 };
+void Antikythera::unload() {
+	for (uint8_t count = 0; count < numOperators; count++) {
+		delete operators[count];
+	}
+	delete[] operators;
+	numOperators = 0;
+}
 
 // operator count(operatortype0()...operatorNtype())
 bool Antikythera::load(Stream *program) {
@@ -64,7 +60,7 @@ bool Antikythera::load(Stream *program) {
 	memset(buffer, 0, 21);
 	int index = 0;
 	bool valid = false;
-	while(program->available()) {
+	while(readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -111,7 +107,7 @@ bool Antikythera::load(Stream *program) {
 		memset(buffer, 0, 21);
 		index = 0;
 		valid = false;
-		while(program->available()) {
+		while(readProgram(program)) {
 			char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -165,32 +161,32 @@ bool Antikythera::load(Stream *program) {
 		}
 
 		valid = false;
-		while(program->available()) {
+		while(readProgram(program)) {
 			char c = (char)program->read();
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 				program->println(c);
-	#endif
+#endif
 			if (c == ')') {
 				valid = true;
 				break;
 			}
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 			Antikythera::lastErrorString = "Antikythera::load() - expected closing parenthesis, read invalid character: " + String(c);
-	#endif
+#endif
 			program->flush();
 			return false;
 		}
 		if (!valid) {
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 			Antikythera::lastErrorString = "Antikythera::load() - unexpected end of stream while reading closing parenthesis.";
-	#endif
+#endif
 			program->flush();
 			return false;
 		}
 	}
 
 	valid = false;
-	while(program->available()) {
+	while(readProgram(program)) {
 		char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
 			program->println(c);
@@ -216,6 +212,23 @@ bool Antikythera::load(Stream *program) {
 	program->flush();
 	return true;
 };
+
+bool Antikythera::readProgram(Stream *program) {
+	if (program->available() > 0) {
+		return true;
+	}
+
+	program->println("READY");
+
+	unsigned long timer;
+	timer = millis() + ANTIKYTHERA_PROGRAM_TIMEOUT;
+	while (program->available() == 0) {
+		if (millis() > timer) {
+			return false;
+		}
+	}
+	return true;
+}
 
 void Antikythera::resetProcessedFlags() {
 	for (uint8_t count = 0; count < numOperators; count++) {

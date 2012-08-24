@@ -26,8 +26,9 @@ public:
 	static bool evaluate(unsigned long now);
 #endif
 
-	static bool load(Stream *patch);
 	static void unload();
+	static bool load(Stream *program);
+	static bool readProgram(Stream *program);
 
 	static void resetProcessedFlags();
 
@@ -41,7 +42,9 @@ public:
 	static uint8_t numSensors;
 	static ATKISensor **sensors;
 
+#ifdef ANTIKYTHERA_DEBUG
 	static String lastErrorString;
+#endif
 };
 
 
