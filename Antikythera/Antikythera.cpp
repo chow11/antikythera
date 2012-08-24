@@ -58,6 +58,8 @@ bool Antikythera::evaluate(unsigned long now) {
 
 // operator count(operatortype0()...operatorNtype())
 bool Antikythera::load(Stream *program) {
+	unload();
+
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -97,15 +99,18 @@ bool Antikythera::load(Stream *program) {
 
 	numOperators = (uint16_t)strtoul(buffer, NULL, 10);
 	operators = new ATKIOperator*[numOperators];
+#ifdef ANTIKYTHERA_DEBUG
+	program->println("operator count: " + numOperators);
+#endif
 
-	memset(buffer, 0, 21);
-	index = 0;
-	valid = false;
 	for (int count = 0; count < numOperators; count++) {
 #ifdef ANTIKYTHERA_DEBUG
 		program->print("Processing operator #");
 		program->println(count);
 #endif
+		memset(buffer, 0, 21);
+		index = 0;
+		valid = false;
 		while(program->available()) {
 			char c = (char)program->read();
 #ifdef ANTIKYTHERA_DEBUG
@@ -141,6 +146,16 @@ bool Antikythera::load(Stream *program) {
 
 		uint16_t operatorType = (uint16_t)strtoul(buffer, NULL, 10);
 		operators[count] = ATKOperatorFactory::createOperator(operatorType);
+		if (operators[count] == NULL) {
+#ifdef ANTIKYTHERA_DEBUG
+			Antikythera::lastErrorString = "Antikythera::load() - unable to create operator type[" + String(operatorType) + "]";
+#endif
+			program->flush();
+			return false;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		program->println("Created operator: " + operators[count]->name());
+#endif
 		if (!operators[count]->load(program)) {
 #ifdef ANTIKYTHERA_DEBUG
 			Antikythera::lastErrorString = operators[count]->lastErrorString();

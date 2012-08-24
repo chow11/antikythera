@@ -68,25 +68,25 @@ bool ATKLine::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x1 = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<int8_t>(i)[operandElementIndex(0, o, i)];
+		int8_t x1 = OPERAND_ELEMENT(int8_t, 0);
 		o = operand(1);
-		int8_t y1 = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(1, o, i)] : constant<int8_t>(i)[operandElementIndex(1, o, i)];
+		int8_t y1 = OPERAND_ELEMENT(int8_t, 1);
 		o = operand(2);
-		int8_t x2 =(o.flags & OPERANDFLAG_LINK) ?  Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(2, o, i)] : constant<int8_t>(i)[operandElementIndex(2, o, i)];
+		int8_t x2 = OPERAND_ELEMENT(int8_t, 2);
 		o = operand(3);
-		int8_t y2 = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(3, o, i)] : constant<int8_t>(i)[operandElementIndex(3, o, i)];
+		int8_t y2 = OPERAND_ELEMENT(int8_t, 3);
 		o = operand(4);
-		ATKColor::HSVA color = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<ATKColor::HSVA>(o.resultIndex)[operandElementIndex(4, o, i)] : constant<ATKColor::HSVA>(i)[operandElementIndex(4, o, i)];
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 4);
 		o = operand(5);
-		int8_t thickness = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(5, o, i)] : constant<int8_t>(i)[operandElementIndex(5, o, i)];
+		int8_t thickness = OPERAND_ELEMENT(int8_t, 5);
 		o = operand(6);
-		uint8_t style = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(6, o, i)] : constant<uint8_t>(i)[operandElementIndex(6, o, i)];
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 6);
 		o = operand(7);
-		uint8_t mode = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(7, o, i)] : constant<uint8_t>(i)[operandElementIndex(7, o, i)];
+		uint8_t mode = OPERAND_ELEMENT(uint8_t, 7);
 		o = operand(8);
-		uint8_t display = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(8, o, i)] : constant<uint8_t>(i)[operandElementIndex(8, o, i)];
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 8);
 		o = operand(9);
-		uint8_t layer = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(9, o, i)] : constant<uint8_t>(i)[operandElementIndex(9, o, i)];
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 9);
 
 		Antikythera::displays[display]->line(x1, y1, x2, y2, color, thickness, style, mode, layer);
 	}

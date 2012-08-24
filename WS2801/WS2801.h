@@ -68,6 +68,9 @@ protected:
 	uint16_t m_frameHeight;
 	uint8_t m_numLayers;
 	ATKColor::RGBA *m_frames;
+
+private:
+	uint16_t m_frameSize;
 };
 
 

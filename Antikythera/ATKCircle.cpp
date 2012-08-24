@@ -64,21 +64,21 @@ bool ATKCircle::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<int8_t>(i)[operandElementIndex(0, o, i)];
+		int8_t x = OPERAND_ELEMENT(int8_t, 0);
 		o = operand(1);
-		int8_t y = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(1, o, i)] : constant<int8_t>(i)[operandElementIndex(1, o, i)];
+		int8_t y = OPERAND_ELEMENT(int8_t, 1);
 		o = operand(2);
-		int8_t radius = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(2, o, i)] : constant<int8_t>(i)[operandElementIndex(2, o, i)];
+		int8_t radius = OPERAND_ELEMENT(int8_t, 2);
 		o = operand(3);
-		ATKColor::HSVA color = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<ATKColor::HSVA>(o.resultIndex)[operandElementIndex(3, o, i)] : constant<ATKColor::HSVA>(i)[operandElementIndex(3, o, i)];
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 3);
 		o = operand(4);
-		int8_t thickness = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(4, o, i)] : constant<int8_t>(i)[operandElementIndex(4, o, i)];
+		int8_t thickness = OPERAND_ELEMENT(int8_t, 4);
 		o = operand(5);
-		uint8_t style = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(5, o, i)] : constant<uint8_t>(i)[operandElementIndex(5, o, i)];
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 5);
 		o = operand(6);
-		uint8_t display = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(6, o, i)] : constant<uint8_t>(i)[operandElementIndex(6, o, i)];
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 6);
 		o = operand(7);
-		uint8_t layer = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(7, o, i)] : constant<uint8_t>(i)[operandElementIndex(7, o, i)];
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 7);
 
 		Antikythera::displays[display]->circle(x, y, radius, color, thickness, style, layer);
 	}

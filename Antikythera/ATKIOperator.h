@@ -33,6 +33,8 @@
 #define OPERANDTYPE_DOUBLE	12
 #define OPERANDTYPE_CUSTOM	15
 
+#define OPERAND_ELEMENT(X, Y)		(o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<X>(o.resultIndex)[operandElementIndex(Y, o, i)] : constant<X>(Y)[operandElementIndex(Y, o, i)]
+
 
 struct ATK_OPERAND {
 	uint8_t flags;				// lower 4 bits used for data type

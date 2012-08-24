@@ -41,7 +41,6 @@ bool ATKRoot::evaluate(unsigned long now, Stream *debug) {
 bool ATKRoot::evaluate(unsigned long now) {
 #endif
 #ifdef ANTIKYTHERA_DEBUG
-	debug->println("ATKRoot::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);
@@ -49,12 +48,15 @@ bool ATKRoot::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t leaf = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<uint8_t>(i)[operandElementIndex(0, o, i)];
+		uint8_t leaf = OPERAND_ELEMENT(uint8_t, 0);
 
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKRoot::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)leaf) + ")");
+#endif
 #ifdef ANTIKYTHERA_DEBUG
 		result &= Antikythera::operators[leaf]->evaluate(now, debug);
 #else
-	result &= Antikythera::operators[leaf]->evaluate(now);
+		result &= Antikythera::operators[leaf]->evaluate(now);
 #endif
 	}
 

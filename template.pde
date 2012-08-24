@@ -1,6 +1,8 @@
 // increase the heap size from 2k to 8k.
 #define CHANGE_HEAP_SIZE(size) __asm__ volatile ("\t.globl _min_heap_size\n\t.equ _min_heap_size, " #size "\n")
 CHANGE_HEAP_SIZE(0x2000);
+extern __attribute__((section("linker_defined"))) char _heap;
+extern __attribute__((section("linker_defined"))) char _min_heap_size;
 
 #include <WProgram.h>
 #include <HardwareSerial.h>
@@ -11,8 +13,7 @@ CHANGE_HEAP_SIZE(0x2000);
 #define  NUM_DISPLAYS      1
 #define  DISPLAY_WIDTH     8
 #define  DISPLAY_HEIGHT    38
-#define  DISPLAY_SIZE      DISPLAY_WIDTH * DISPLAY_HEIGHT
-#define  DISPLAY_LAYERS    2
+#define  DISPLAY_LAYERS    1
 
 // device management
 #define SERIAL_READ_TIMEOUT 1000
@@ -38,7 +39,6 @@ struct TIMERS {
 };
 
 TIMERS timers;
-
 
 char out[128];
 
@@ -83,17 +83,27 @@ void loop()
   }
 
   if (timers.antikytheraEnabled && (timers.antikythera + ANTIKYTHERA_TIMEOUT) < now) {
-    if (!Antikythera::evaluate(now)) {
+    if (!Antikythera::evaluate(now, &Serial)) {
         Serial.print("\nError running program: ");
         Serial.println(Antikythera::lastErrorString);
     }
-    Serial.println(Antikythera::lastErrorString);
     timers.antikythera = now;
     now = millis();
   }
 
   if (timers.serialEnabled && (timers.serialRead + SERIAL_READ_TIMEOUT) < now) {
     if (Serial.available() > 0) {
+      
+byte * pTopHeap = (byte *) &_heap + (unsigned int) &_min_heap_size; 
+Serial.print ((unsigned int)&_heap, HEX);
+Serial.print ('\n');
+Serial.print ((unsigned int)&_min_heap_size, HEX);
+Serial.print ('\n');
+Serial.print("Bottom of stack: ");
+Serial.println((unsigned int) &pTopHeap, HEX);
+Serial.print("top of heap: ");
+Serial.println((unsigned int) pTopHeap, HEX);      
+      
       if (Antikythera::load(&Serial)) {
         Serial.println("\nProgram loaded and running.");
         timers.antikytheraEnabled = true;

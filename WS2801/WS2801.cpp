@@ -19,6 +19,7 @@ WS2801::WS2801(p32_spi *pspi, uint8_t pinSS) {
 	m_displayHeight = 0;
 	m_frameWidth = 0;
 	m_frameHeight = 0;
+	m_frameSize = 0;
 	m_numLayers = 0;
 	m_frames = NULL;
 }
@@ -189,6 +190,7 @@ void WS2801::initialize(uint16_t displayWidth, uint16_t displayHeight, uint16_t 
 	m_frameWidth = frameWidth;
 	m_frameHeight = frameHeight;
 	m_numLayers = numLayers;
+	m_frameSize = frameWidth * frameHeight;
 
 	m_frames = new ATKColor::RGBA[numLayers * m_frameWidth * m_frameHeight];
 
@@ -277,7 +279,9 @@ void WS2801::line(int8_t x1, int8_t y1, int8_t x2, int8_t y2, ATKColor::RGBA c, 
 }
 
 void WS2801::point(int8_t x, int8_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
+	m_frames[layer * m_frameSize + y * m_frameHeight + x] = ATKColor::HSVAtoRGBA(c);
 }
 
 void WS2801::point(int8_t x, int8_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
+	m_frames[layer * m_frameSize + y * m_frameHeight + x] = c;
 }

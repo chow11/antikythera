@@ -59,17 +59,17 @@ bool ATKPoint::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(0, o, i)] : constant<int8_t>(i)[operandElementIndex(0, o, i)];
+		int8_t x = OPERAND_ELEMENT(int8_t, 0);
 		o = operand(1);
-		int8_t y = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<int8_t>(o.resultIndex)[operandElementIndex(1, o, i)] : constant<int8_t>(i)[operandElementIndex(1, o, i)];
+		int8_t y = OPERAND_ELEMENT(int8_t, 1);
 		o = operand(2);
-		ATKColor::HSVA color = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<ATKColor::HSVA>(o.resultIndex)[operandElementIndex(2, o, i)] : constant<ATKColor::HSVA>(i)[operandElementIndex(2, o, i)];
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 2);
 		o = operand(3);
-		uint8_t style = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(3, o, i)] : constant<uint8_t>(i)[operandElementIndex(3, o, i)];
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 3);
 		o = operand(4);
-		uint8_t display = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(4, o, i)] : constant<uint8_t>(i)[operandElementIndex(4, o, i)];
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 4);
 		o = operand(5);
-		uint8_t layer = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<uint8_t>(o.resultIndex)[operandElementIndex(5, o, i)] : constant<uint8_t>(i)[operandElementIndex(5, o, i)];
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 5);
 
 		Antikythera::displays[display]->point(x, y, color, style, layer);
 	}
