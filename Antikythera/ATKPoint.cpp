@@ -51,6 +51,7 @@ bool ATKPoint::evaluate(unsigned long now, Stream *debug) {
 bool ATKPoint::evaluate(unsigned long now) {
 #endif
 #ifdef ANTIKYTHERA_DEBUG
+	debug->println("ATKPoint::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);

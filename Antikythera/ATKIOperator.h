@@ -49,9 +49,9 @@ public:
 
 	virtual bool load(Stream *program);
 #ifdef ANTIKYTHERA_DEBUG
-	static bool evaluate(unsigned long now, Stream *debug);
+	virtual bool evaluate(unsigned long now, Stream *debug);
 #else
-	static bool evaluate(unsigned long now);
+	virtual bool evaluate(unsigned long now);
 #endif
 	virtual uint8_t numResults();
 	virtual uint8_t resultSize(uint8_t index);

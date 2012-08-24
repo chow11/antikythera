@@ -55,6 +55,7 @@ bool ATKSignal::evaluate(unsigned long now) {
 #endif
 	delete[] m_result;
 #ifdef ANTIKYTHERA_DEBUG
+	debug->println("ATKSignal::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);

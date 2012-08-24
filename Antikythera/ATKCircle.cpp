@@ -56,6 +56,7 @@ bool ATKCircle::evaluate(unsigned long now, Stream *debug) {
 bool ATKCircle::evaluate(unsigned long now) {
 #endif
 #ifdef ANTIKYTHERA_DEBUG
+	debug->println("ATKCircle::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);
