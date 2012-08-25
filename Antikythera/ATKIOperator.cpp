@@ -16,12 +16,12 @@ ATKIOperator::ATKIOperator() {
 	m_numOperands = 0;
 	m_operands = NULL;
 	m_numOperations = 0;
-	m_constantSize = NULL;
+	m_numConstants = NULL;
 }
 
 ATKIOperator::~ATKIOperator() {
 	delete[] m_operands;
-	delete[] m_constantSize;
+	delete[] m_numConstants;
 }
 
 String ATKIOperator::name() {
@@ -76,7 +76,7 @@ bool ATKIOperator::load(Stream *program) {
 	program->println("]");
 #endif
 	m_operands = new ATK_OPERAND[m_numOperands];
-	m_constantSize = new uint8_t[m_numOperands];
+	m_numConstants = new uint8_t[m_numOperands];
 
 	for (int count = 0; count < numOperands(); count++) {
 		valid = false;
@@ -189,12 +189,12 @@ bool ATKIOperator::evaluate(unsigned long now) {
 	for (uint8_t i = 0; i < numOperands(); i++) {
 		ATK_OPERAND o = operand(i);
 		if (o.flags & OPERANDFLAG_LIMIT) {
-			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(i);
 			if (temp < min) {
 				min = temp;
 			}
 		} else {
-			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(i);
 			if (temp > max) {
 				max = temp;
 			}
@@ -235,7 +235,7 @@ void *ATKIOperator::resultGeneric(uint8_t index) {
 uint8_t ATKIOperator::operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration) {
 	uint8_t result = 0;
 
-	uint8_t operandElementSize = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(operandIndex);
+	uint8_t operandElementSize = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(operandIndex);
 	if (o.flags & OPERANDFLAG_SINGLE) {
 		result = 0;
 	} else {
@@ -396,7 +396,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 }
 
 bool ATKIOperator::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	m_constantSize[operandIndex] = constantSize;
+	m_numConstants[operandIndex] = constantSize;
 	return true;
 }
 
@@ -495,12 +495,12 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 
 #ifdef ANTIKYTHERA_DEBUG
 	program->print("[reading ");
-	program->print((int)constantSize(operandIndex));
+	program->print((int)numConstants(operandIndex));
 	program->print(", type:");
 	program->print((int)operandType);
 	program->println(" constants]");
 #endif
-	for (int count = 0; count < constantSize(operandIndex); count++) {
+	for (int count = 0; count < numConstants(operandIndex); count++) {
 		memset(buffer, 0, 21);
 		index = 0;
 		valid = false;
@@ -511,7 +511,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			program->println(c);
 #endif
 				if (c == ',') {
-					if (count == (constantSize(operandIndex) - 1)) {
+					if (count == (numConstants(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
@@ -522,7 +522,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (c == ')') {
-					if (count != (constantSize(operandIndex) - 1)) {
+					if (count != (numConstants(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif
@@ -562,7 +562,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			program->println(c);
 #endif
 				if (c == ',') {
-					if (count == (constantSize(operandIndex) - 1)) {
+					if (count == (numConstants(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
@@ -573,7 +573,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (c == ')') {
-					if (count != (constantSize(operandIndex) - 1)) {
+					if (count != (numConstants(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif

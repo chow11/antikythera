@@ -60,12 +60,12 @@ protected:
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
 private:
-	int8_t *m_constX1;
-	int8_t *m_constY1;
-	int8_t *m_constX2;
-	int8_t *m_constY2;
+	int16_t *m_constX1;
+	int16_t *m_constY1;
+	int16_t *m_constX2;
+	int16_t *m_constY2;
 	ATKColor::HSVA *m_constColor;
-	int8_t *m_constThickness;
+	int16_t *m_constThickness;
 	uint8_t *m_constStyle;
 	uint8_t *m_constMode;
 	uint8_t *m_constDisplay;

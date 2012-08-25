@@ -68,25 +68,25 @@ bool ATKLine::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x1 = OPERAND_ELEMENT(int8_t, 0);
+		int16_t x1 = OPERAND_ELEMENT(int16_t, 0, i);
 		o = operand(1);
-		int8_t y1 = OPERAND_ELEMENT(int8_t, 1);
+		int16_t y1 = OPERAND_ELEMENT(int16_t, 1, i);
 		o = operand(2);
-		int8_t x2 = OPERAND_ELEMENT(int8_t, 2);
+		int16_t x2 = OPERAND_ELEMENT(int16_t, 2, i);
 		o = operand(3);
-		int8_t y2 = OPERAND_ELEMENT(int8_t, 3);
+		int16_t y2 = OPERAND_ELEMENT(int16_t, 3, i);
 		o = operand(4);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 4);
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 4, i);
 		o = operand(5);
-		int8_t thickness = OPERAND_ELEMENT(int8_t, 5);
+		int16_t thickness = OPERAND_ELEMENT(int16_t, 5, i);
 		o = operand(6);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 6);
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 6, i);
 		o = operand(7);
-		uint8_t mode = OPERAND_ELEMENT(uint8_t, 7);
+		uint8_t mode = OPERAND_ELEMENT(uint8_t, 7, i);
 		o = operand(8);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 8);
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 8, i);
 		o = operand(9);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 9);
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 9, i);
 
 		Antikythera::displays[display]->line(x1, y1, x2, y2, color, thickness, style, mode, layer);
 	}
@@ -137,19 +137,19 @@ bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	switch (operandIndex) {
 	case 0:
-		m_constX1 = new int8_t[constantSize];
+		m_constX1 = new int16_t[constantSize];
 		break;
 
 	case 1:
-		m_constY1 = new int8_t[constantSize];
+		m_constY1 = new int16_t[constantSize];
 		break;
 
 	case 2:
-		m_constX2 = new int8_t[constantSize];
+		m_constX2 = new int16_t[constantSize];
 		break;
 
 	case 3:
-		m_constY2 = new int8_t[constantSize];
+		m_constY2 = new int16_t[constantSize];
 		break;
 
 	case 4:
@@ -157,7 +157,7 @@ bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 		break;
 
 	case 5:
-		m_constThickness = new int8_t[constantSize];
+		m_constThickness = new int16_t[constantSize];
 		break;
 
 	case 6:

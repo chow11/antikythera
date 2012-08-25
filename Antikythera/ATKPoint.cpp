@@ -58,17 +58,17 @@ bool ATKPoint::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x = OPERAND_ELEMENT(int8_t, 0);
+		int16_t x = OPERAND_ELEMENT(int16_t, 0, i);
 		o = operand(1);
-		int8_t y = OPERAND_ELEMENT(int8_t, 1);
+		int16_t y = OPERAND_ELEMENT(int16_t, 1, i);
 		o = operand(2);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 2);
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 2, i);
 		o = operand(3);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 3);
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 3, i);
 		o = operand(4);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 4);
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 4, i);
 		o = operand(5);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 5);
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 5, i);
 
 		Antikythera::displays[display]->point(x, y, ATKColor::HSVA(0, 255, 64, 255), style, layer);
 //		Antikythera::displays[display]->point(x, y, color, style, layer);
@@ -111,11 +111,11 @@ bool ATKPoint::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	switch (operandIndex) {
 	case 0:
-		m_constX = new int8_t[constantSize];
+		m_constX = new int16_t[constantSize];
 		break;
 
 	case 1:
-		m_constY = new int8_t[constantSize];
+		m_constY = new int16_t[constantSize];
 		break;
 
 	case 2:

@@ -52,7 +52,7 @@ public:
 	virtual bool evaluate(unsigned long now);
 #endif
 	virtual uint8_t numResults() { return 1; }
-	virtual uint8_t resultSize(uint8_t index) { return 1; }
+	virtual uint8_t resultSize(uint8_t index) { return m_resultSize; }
 
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
@@ -65,6 +65,7 @@ private:
 	int16_t f_cardiac(double phase);
 
 	int16_t *m_result;
+	uint8_t m_resultSize;
 
 	uint8_t *m_constWaveform;
 	uint32_t *m_constWavelength;

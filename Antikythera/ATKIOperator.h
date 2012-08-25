@@ -33,7 +33,7 @@
 #define OPERANDTYPE_DOUBLE	12
 #define OPERANDTYPE_CUSTOM	15
 
-#define OPERAND_ELEMENT(X, Y)		(o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<X>(o.resultIndex)[operandElementIndex(Y, o, i)] : constant<X>(Y)[operandElementIndex(Y, o, i)]
+#define OPERAND_ELEMENT(X,Y,Z)	(o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->result<X>(o.resultIndex)[operandElementIndex(Y, o, Z)] : constant<X>(Y)[operandElementIndex(Y, o, Z)]
 
 
 struct ATK_OPERAND {
@@ -82,11 +82,11 @@ protected:
 	uint8_t loadFlags(Stream *program);
 	uint16_t loadOperatorIndex(Stream *program);
 	uint8_t loadResultIndex(Stream *program);
-	uint8_t constantSize(uint8_t index) { return (index < m_numOperands) ? m_constantSize[index] : 0; }
+	uint8_t numConstants(uint8_t index) { return (index < m_numOperands) ? m_numConstants[index] : 0; }
 	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
 
-	uint8_t *m_constantSize;
+	uint8_t *m_numConstants;
 #ifdef ANTIKYTHERA_DEBUG
 	String m_lastErrorString;
 #endif

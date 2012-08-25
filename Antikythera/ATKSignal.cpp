@@ -15,6 +15,7 @@
 ATKSignal::ATKSignal() {
 	m_result = new int16_t[1];
 	m_result[0] = 0;
+	m_resultSize = 0;
 
 	m_constWaveform = NULL;
 	m_constWavelength = NULL;
@@ -59,16 +60,17 @@ bool ATKSignal::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 #endif
 	m_result = new int16_t[numOperations()];
+	m_resultSize = numOperations();
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t waveform = OPERAND_ELEMENT(uint8_t, 0);
+		uint8_t waveform = OPERAND_ELEMENT(uint8_t, 0, i);
 		o = operand(1);
-		uint32_t wavelength = OPERAND_ELEMENT(uint32_t, 1);
+		uint32_t wavelength = OPERAND_ELEMENT(uint32_t, 1, i);
 		o = operand(2);
-		int16_t amplitude = OPERAND_ELEMENT(int16_t, 2);
+		int16_t amplitude = OPERAND_ELEMENT(int16_t, 2, i);
 		o = operand(3);
-		uint32_t offset = OPERAND_ELEMENT(uint32_t, 3);
+		uint32_t offset = OPERAND_ELEMENT(uint32_t, 3, i);
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
 		double phase = ((now - (unsigned long)offset) % wavelength) / (double)wavelength;

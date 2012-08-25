@@ -48,7 +48,7 @@ bool ATKRoot::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		uint8_t leaf = OPERAND_ELEMENT(uint8_t, 0);
+		uint8_t leaf = OPERAND_ELEMENT(uint8_t, 0, i);
 
 #ifdef ANTIKYTHERA_DEBUG
 		debug->println("ATKRoot::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)leaf) + ")");

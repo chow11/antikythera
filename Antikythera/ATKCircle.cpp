@@ -64,21 +64,21 @@ bool ATKCircle::evaluate(unsigned long now) {
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
-		int8_t x = OPERAND_ELEMENT(int8_t, 0);
+		int16_t x = OPERAND_ELEMENT(int8_t, 0, i);
 		o = operand(1);
-		int8_t y = OPERAND_ELEMENT(int8_t, 1);
+		int16_t y = OPERAND_ELEMENT(int8_t, 1, i);
 		o = operand(2);
-		int8_t radius = OPERAND_ELEMENT(int8_t, 2);
+		int16_t radius = OPERAND_ELEMENT(int8_t, 2, i);
 		o = operand(3);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 3);
+		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 3, i);
 		o = operand(4);
-		int8_t thickness = OPERAND_ELEMENT(int8_t, 4);
+		int16_t thickness = OPERAND_ELEMENT(int8_t, 4, i);
 		o = operand(5);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 5);
+		uint8_t style = OPERAND_ELEMENT(uint8_t, 5, i);
 		o = operand(6);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 6);
+		uint8_t display = OPERAND_ELEMENT(uint8_t, 6, i);
 		o = operand(7);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 7);
+		uint8_t layer = OPERAND_ELEMENT(uint8_t, 7, i);
 
 		Antikythera::displays[display]->circle(x, y, radius, color, thickness, style, layer);
 	}
@@ -123,15 +123,15 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	switch (operandIndex) {
 	case 0:
-		m_constX = new int8_t[constantSize];
+		m_constX = new int16_t[constantSize];
 		break;
 
 	case 1:
-		m_constY = new int8_t[constantSize];
+		m_constY = new int16_t[constantSize];
 		break;
 
 	case 2:
-		m_constRadius = new int8_t[constantSize];
+		m_constRadius = new int16_t[constantSize];
 		break;
 
 	case 3:
@@ -139,7 +139,7 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 		break;
 
 	case 4:
-		m_constThickness = new int8_t[constantSize];
+		m_constThickness = new int16_t[constantSize];
 		break;
 
 	case 5:
