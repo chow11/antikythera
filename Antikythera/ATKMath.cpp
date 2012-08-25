@@ -1,5 +1,5 @@
 /*
- * ATKUnaryIntegerMath.cpp
+ * ATKMath.cpp
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -7,36 +7,39 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#include <math.h>
 #include <WProgram.h>
-#include <ATKUnaryIntegerMath.h>
+#include <ATKMath.h>
 #include <Antikythera.h>
 
 
-ATKUnaryIntegerMath::ATKUnaryIntegerMath() {
+ATKMath::ATKMath() {
 	m_result = new int32_t[1];
 	m_result[0] = 0;
 	m_resultSize = 0;
 
 	m_constOperation = NULL;
+	m_constDataType = NULL;
 	m_constA = NULL;
+	m_constB = NULL;
 }
 
-ATKUnaryIntegerMath::~ATKUnaryIntegerMath() {
+ATKMath::~ATKMath() {
 	delete[] m_result;
 
 	delete[] m_constOperation;
+	delete[] m_constDataType;
 	delete[] m_constA;
+	delete[] m_constB;
 }
 
-bool ATKUnaryIntegerMath::load(Stream *program) {
+bool ATKMath::load(Stream *program) {
 	if (!ATKIOperator::load(program)) {
 		return false;
 	}
 
-	if (numOperands() != 2) {
+	if (numOperands() != 4) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 2.";
+		m_lastErrorString = "ATKMath::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
 #endif
 		program->flush();
 		return false;
@@ -46,9 +49,9 @@ bool ATKUnaryIntegerMath::load(Stream *program) {
 }
 
 #ifdef ANTIKYTHERA_DEBUG
-bool ATKUnaryIntegerMath::evaluate(unsigned long now, Stream *debug) {
+bool ATKMath::evaluate(unsigned long now, Stream *debug) {
 #else
-bool ATKUnaryIntegerMath::evaluate(unsigned long now) {
+bool ATKMath::evaluate(unsigned long now) {
 #endif
 	delete[] m_result;
 #ifdef ANTIKYTHERA_DEBUG
@@ -56,20 +59,42 @@ bool ATKUnaryIntegerMath::evaluate(unsigned long now) {
 #else
 	bool result = ATKIOperator::evaluate(now);
 #endif
-	m_result = new int16_t[numOperations()];
+	m_result = new int32_t[numOperations()];
 	m_resultSize = numOperations();
 
 	for (uint8_t i; i < numOperations(); i++) {
 		ATK_OPERAND o = operand(0);
 		uint8_t operation = OPERAND_ELEMENT(uint8_t, 0, i);
 		o = operand(1);
-		int32_t a = OPERAND_ELEMENT(int32_t, 1, i);
+		uint8_t dataType = OPERAND_ELEMENT(uint8_t, 1, 0);		// only the first type applies
 		o = operand(2);
-		int32_t b = OPERAND_ELEMENT(int32_t, 2, i);
+		int32_t a = OPERAND_ELEMENT(int32_t, 2, i);				// t2d: modify to support other types
+		o = operand(3);
+		int32_t b = OPERAND_ELEMENT(int32_t, 3, i);				// t2d: modify to support other types
 
 		switch (operation) {
 		case MATH_NONE:
 			m_result[i] = 0;
+			break;
+
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
 			break;
 
 		case MATH_INCREMENT:
@@ -85,7 +110,7 @@ bool ATKUnaryIntegerMath::evaluate(unsigned long now) {
 			break;
 		}
 #ifdef ANTIKYTHERA_DEBUG
-		debug->println("ATKUnaryIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+		debug->println("ATKMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
 #endif
 	}
 
@@ -94,19 +119,25 @@ bool ATKUnaryIntegerMath::evaluate(unsigned long now) {
 	return result;
 }
 
-void *ATKUnaryIntegerMath::constantGeneric(uint8_t index) {
+void *ATKMath::constantGeneric(uint8_t index) {
 	switch (index) {
 	case 0:
 		return m_constOperation;
 
 	case 1:
+		return m_constDataType;
+
+	case 2:
 		return m_constA;
+
+	case 3:
+		return m_constB;
 	}
 
 	return NULL;
 }
 
-bool ATKUnaryIntegerMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+bool ATKMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 	switch (operandIndex) {
@@ -115,7 +146,15 @@ bool ATKUnaryIntegerMath::initializeConstant(uint8_t operandIndex, uint8_t const
 		break;
 
 	case 1:
+		m_constDataType = new uint8_t[constantSize];
+		break;
+
+	case 2:
 		m_constA = new int32_t[constantSize];
+		break;
+
+	case 3:
+		m_constB = new int32_t[constantSize];
 		break;
 
 	default:
@@ -128,6 +167,6 @@ bool ATKUnaryIntegerMath::initializeConstant(uint8_t operandIndex, uint8_t const
 	return true;
 }
 
-bool ATKUnaryIntegerMath::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+bool ATKMath::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }

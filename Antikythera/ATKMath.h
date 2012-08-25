@@ -1,5 +1,5 @@
 /*
- * ATKBinaryIntegerMath.h
+ * ATKMath.h
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_BINARY_INTEGER_MATH_H_
-#define ATK_BINARY_INTEGER_MATH_H_
+#ifndef ATK_MATH_H_
+#define ATK_MATH_H_
 
 
 #include <Stream.h>
@@ -19,6 +19,7 @@
 /*
 	Operands:
 		- operation
+		- data type (only the first type applies to all operations)
 		- a value
 		- b value
 	Results:
@@ -30,13 +31,18 @@
 #define MATH_SUBTRACTION		2
 #define MATH_MULTIPLICATION		3
 #define MATH_DIVISION			4
+#define MATH_MODULO				5
+#define MATH_INCREMENT			6
+#define MATH_DECREMENT			7
+#define MATH_ABS				8
 
-class ATKBinaryIntegerMath : public ATKIOperator {
+
+class ATKMath : public ATKIOperator {
 public:
-	ATKBinaryIntegerMath();
-	~ATKBinaryIntegerMath();
+	ATKMath();
+	~ATKMath();
 
-	virtual String name() { return "ATKBinaryIntegerMath"; }
+	virtual String name() { return "ATKMath"; }
 
 	virtual bool load(Stream *program);
 #ifdef ANTIKYTHERA_DEBUG
@@ -58,6 +64,7 @@ private:
 	uint8_t m_resultSize;
 
 	uint8_t *m_constOperation;
+	uint8_t *m_constDataType;
 	int32_t *m_constA;
 	int32_t *m_constB;
 };
@@ -65,4 +72,4 @@ private:
 
 #endif
 
-/* ATK_BINARY_INTEGER_MATH_H_ */
+/* ATK_MATH_H_ */

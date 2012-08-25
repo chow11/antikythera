@@ -21,8 +21,7 @@
 #define ATKOPERATOR_LINE		3
 #define ATKOPERATOR_CIRCLE		4
 #define ATKOPERATOR_SIGNAL		5
-#define ATKOPERATOR_BIMATH		6
-#define ATKOPERATOR_UIMATH		7
+#define ATKOPERATOR_MATH		6
 
 
 class ATKOperatorFactory {
