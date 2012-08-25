@@ -70,8 +70,7 @@ bool ATKPoint::evaluate(unsigned long now) {
 		o = operand(5);
 		uint8_t layer = OPERAND_ELEMENT(uint8_t, 5, i);
 
-		Antikythera::displays[display]->point(x, y, ATKColor::HSVA(0, 255, 64, 255), style, layer);
-//		Antikythera::displays[display]->point(x, y, color, style, layer);
+		Antikythera::displays[display]->point(x, y, color, style, layer);
 #ifdef ANTIKYTHERA_DEBUG
 		debug->println("ATKPoint::evaluate(" + String(now) + ", " + String((int)i) + ": " + String(x) + ", " + String(y) + ", h" + String((int)color.h) + ", s" + String((int)color.s) + ", v" + String((int)color.v) + ")");
 #endif

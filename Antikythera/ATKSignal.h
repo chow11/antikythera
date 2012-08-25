@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_Signal_H_
-#define ATK_Signal_H_
+#ifndef ATK_SIGNAL_H_
+#define ATK_SIGNAL_H_
 
 
 #include <Stream.h>
@@ -76,4 +76,4 @@ private:
 
 #endif
 
-/* ATK_Signal_H_ */
+/* ATK_SIGNAL_H_ */

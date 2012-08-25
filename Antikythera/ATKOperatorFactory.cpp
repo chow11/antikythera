@@ -14,6 +14,8 @@
 #include <ATKLine.h>
 #include <ATKCircle.h>
 #include <ATKSignal.h>
+#include <ATKBinaryIntegerMath.h>
+#include <ATKUnaryIntegerMath.h>
 
 
 ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
@@ -41,6 +43,14 @@ ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
 
 		case ATKOPERATOR_SIGNAL:
 			return new ATKSignal();
+		break;
+
+		case ATKOPERATOR_SIGNAL:
+			return new ATKBinaryIntegerMath();
+		break;
+
+		case ATKOPERATOR_UIMATH:
+			return new ATKUnaryIntegerMath();
 		break;
 
 	};
