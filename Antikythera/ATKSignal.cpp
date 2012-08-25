@@ -191,7 +191,6 @@ double ATKSignal::sin(double x) {
 	double value = x;
 	value -= (x*x*x)/6.0;
 	value += (x*x*x*x*x)/120.0;
-	value -= (x*x*x*x*x*x*x)/5040.0;
 	value *= -1.0;
 
 	return value;
