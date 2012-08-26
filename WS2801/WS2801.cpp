@@ -205,10 +205,23 @@ void WS2801::initialize(uint16_t displayWidth, uint16_t displayHeight, uint16_t 
 void WS2801::render(uint16_t frameX, uint16_t frameY) {
 	uint8_t trash;
 	ATKColor::RGBA *p0 = m_frames;
-	ATKColor::RGBA *p1 = p0 + m_frameWidth * m_frameHeight;
+//	ATKColor::RGBA *p1 = p0 + m_frameWidth * m_frameHeight;
 
 	for (int x = 0; x < m_displayWidth; x += 2) {
 		for (int y = 0; y < m_displayHeight; y++) {
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
+			m_pspi->sxBuf.reg = p0->b;
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
+			trash = m_pspi->sxBuf.reg;
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
+			m_pspi->sxBuf.reg = p0->g;
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
+			trash = m_pspi->sxBuf.reg;
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
+			m_pspi->sxBuf.reg = p0->r;
+			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
+			trash = m_pspi->sxBuf.reg;
+/*
 			if (p0->a) {
 				while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
 				m_pspi->sxBuf.reg = p1->b + ((255 - p1->a) * p0->b >> 8);
@@ -236,6 +249,7 @@ void WS2801::render(uint16_t frameX, uint16_t frameY) {
 				while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 				trash = m_pspi->sxBuf.reg;
 			}
+*/
 			p0++;
 		}
 		p0 += m_displayHeight;
@@ -280,12 +294,12 @@ void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
 	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
-		m_frames[layer * m_frameSize + y * m_frameHeight + x] = ATKColor::HSVAtoRGBA(c);
+		m_frames[layer * m_frameSize + x * m_frameHeight + y] = ATKColor::HSVAtoRGBA(c);
 	}
 }
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
 	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
-		m_frames[layer * m_frameSize + y * m_frameHeight + x] = c;
+		m_frames[layer * m_frameSize + x * m_frameHeight + y] = c;
 	}
 }

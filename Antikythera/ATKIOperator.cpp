@@ -103,6 +103,10 @@ bool ATKIOperator::load(Stream *program) {
 			return false;
 		}
 
+		if (!loadProperties(program)) {
+			return false;
+		}
+
 		m_operands[count].flags = loadFlags(program);
 		if (m_operands[count].flags & OPERANDFLAG_LINK) {
 			m_operands[count].operatorIndex = loadOperatorIndex(program);
@@ -257,6 +261,10 @@ void *ATKIOperator::constantGeneric(uint8_t index) {
 	return NULL;
 }
 
+bool ATKIOperator::loadProperties(Stream *program) {
+	return true;
+}
+
 uint8_t ATKIOperator::loadFlags(Stream *program) {
 	char buffer[21];
 	memset(buffer, 0, 21);
@@ -395,12 +403,7 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	return (uint8_t)strtoul(buffer, NULL, 10);
 }
 
-bool ATKIOperator::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	m_numConstants[operandIndex] = constantSize;
-	return true;
-}
-
-// update to arrays and support more types
+// update to support more types
 bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	char buffer[21];
 	memset(buffer, 0, 21);
@@ -660,5 +663,10 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		}
 	}
 
+	return true;
+}
+
+bool ATKIOperator::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	m_numConstants[operandIndex] = constantSize;
 	return true;
 }

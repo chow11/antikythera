@@ -55,12 +55,14 @@ public:
 #else
 	virtual bool evaluate(unsigned long now);
 #endif
-	virtual uint8_t numResults();
-	virtual uint8_t resultSize(uint8_t index);
 
 	uint8_t numOperands() { return m_numOperands; }
 	ATK_OPERAND operand(uint8_t index) { return m_operands[index]; }
+	uint8_t numConstants(uint8_t index) { return (index < m_numOperands) ? m_numConstants[index] : 0; }
+
 	template<typename T> inline T *constant(uint8_t index) { return (T *)constantGeneric(index); }
+	virtual uint8_t numResults();
+	virtual uint8_t resultSize(uint8_t index);
 	template<typename T> inline T *result(uint8_t index) { return (T *)resultGeneric(index); }
 
 	bool isEvaluated();
@@ -74,17 +76,17 @@ public:
 protected:
 	ATKIOperator();
 
-	virtual void *resultGeneric(uint8_t index);
 	uint8_t numOperations() { return m_numOperations; };
 	uint8_t operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration);
+	virtual void *resultGeneric(uint8_t index);
 	virtual void *constantGeneric(uint8_t index);
 
+	virtual bool loadProperties(Stream *program);
 	uint8_t loadFlags(Stream *program);
 	uint16_t loadOperatorIndex(Stream *program);
 	uint8_t loadResultIndex(Stream *program);
-	uint8_t numConstants(uint8_t index) { return (index < m_numOperands) ? m_numConstants[index] : 0; }
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 
 	uint8_t *m_numConstants;
 #ifdef ANTIKYTHERA_DEBUG

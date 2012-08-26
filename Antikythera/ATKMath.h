@@ -17,13 +17,15 @@
 
 
 /*
-	Operands:
-		- operation
-		- data type (only the first type applies to all operations)
-		- a value
-		- b value
-	Results:
-		- evaluation of operation
+ * Properties:
+ * 		- data type
+ *
+ * Operands:
+ * 		- operation
+ * 		- a value
+ * 		- b value
+ * Results:
+ *		- evaluation of operation
 */
 
 #define MATH_NONE				0
@@ -56,17 +58,25 @@ public:
 protected:
 	virtual void *resultGeneric(uint8_t index) { return m_result; }
 	virtual void *constantGeneric(uint8_t index);
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool loadProperties(Stream *program);
 	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
 
 private:
-	int32_t *m_result;
+#ifdef ANTIKYTHERA_DEBUG
+	template <class T>bool evaluateEx(unsigned long now, Stream *debug);
+#else
+	template <class T>bool evaluateEx(unsigned long now);
+#endif
+
+	uint8_t m_dataType;
+
+	void *m_result;
 	uint8_t m_resultSize;
 
 	uint8_t *m_constOperation;
-	uint8_t *m_constDataType;
-	int32_t *m_constA;
-	int32_t *m_constB;
+	void *m_constA;
+	void *m_constB;
 };
 
 

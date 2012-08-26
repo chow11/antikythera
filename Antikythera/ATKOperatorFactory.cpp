@@ -47,6 +47,7 @@ ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
 		case ATKOPERATOR_MATH:
 			return new ATKMath();
 		break;
+
 	};
 
 	return NULL;

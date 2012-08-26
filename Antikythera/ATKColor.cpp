@@ -50,15 +50,17 @@ const uint8_t ATKColor::DIM_CURVE[] = {
 ATKColor::RGBA ATKColor::HSVAtoRGBA(ATKColor::HSVA hsva) {
 	ATKColor::RGBA rgba;
 	uint8_t h = hsva.h;
-	uint8_t s = 255 - ATKColor::DIM_CURVE[255 - hsva.s];
-	uint8_t v = ATKColor::DIM_CURVE[hsva.v];
+//	uint8_t s = 255 - ATKColor::DIM_CURVE[255 - hsva.s];
+//	uint8_t v = ATKColor::DIM_CURVE[hsva.v];
+	uint8_t s = hsva.s;
+	uint8_t v = hsva.v;
 
 	if (s == 0) { // Acromatic color (gray). Hue doesn't mind.
 		rgba.r = v;
 		rgba.g = v;
 		rgba.b = v;
 	} else  {
-		float f = (h % 42) / 42;
+		float f = (h % 42) / 42.0;
 		uint8_t p = (v * (256 - s)) >> 8; // p = v * (1 - s)
 		uint8_t q = (v * (256 - (uint8_t)(s * f))) >> 8; // q = v * (1 - s * f)
 		uint8_t t = (uint8_t)(v * (256 - (uint8_t)(s * (1 - f)))) >> 8; // t = v * (1 - s * (1 - f))
