@@ -32,6 +32,10 @@ String ATKIOperator::name() {
 // alternate operand specification:
 // (operand0 flags, constant count(constant0 value,...,constantN value))
 bool ATKIOperator::load(Stream *program) {
+	if (!loadProperties(program)) {
+		return false;
+	}
+
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -100,10 +104,6 @@ bool ATKIOperator::load(Stream *program) {
 			m_lastErrorString = name() + "::load() - operand[" + String(count) + "] unexpected end of stream while reading opening parenthesis.";
 #endif
 			program->flush();
-			return false;
-		}
-
-		if (!loadProperties(program)) {
 			return false;
 		}
 

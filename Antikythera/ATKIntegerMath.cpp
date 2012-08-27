@@ -1,5 +1,5 @@
 /*
- * ATKMath.cpp
+ * ATKIntegerMath.cpp
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -8,15 +8,14 @@
  */
 
 #include <WProgram.h>
-#include <ATKMath.h>
+#include <ATKIntegerMath.h>
 #include <Antikythera.h>
 
 
-ATKMath::ATKMath() {
+ATKIntegerMath::ATKIntegerMath() {
 	m_dataType = 0;
 
-	m_result = new int32_t[1];
-	m_result[0] = 0;
+	m_result = NULL;
 	m_resultSize = 0;
 
 	m_constOperation = NULL;
@@ -24,7 +23,7 @@ ATKMath::ATKMath() {
 	m_constB = NULL;
 }
 
-ATKMath::~ATKMath() {
+ATKIntegerMath::~ATKIntegerMath() {
 	delete[] m_result;
 
 	delete[] m_constOperation;
@@ -32,14 +31,14 @@ ATKMath::~ATKMath() {
 	delete[] m_constB;
 }
 
-bool ATKMath::load(Stream *program) {
+bool ATKIntegerMath::load(Stream *program) {
 	if (!ATKIOperator::load(program)) {
 		return false;
 	}
 
-	if (numOperands() != 4) {
+	if (numOperands() != 3) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
+		m_lastErrorString = "ATKIntegerMath::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 3.";
 #endif
 		program->flush();
 		return false;
@@ -49,9 +48,9 @@ bool ATKMath::load(Stream *program) {
 }
 
 #ifdef ANTIKYTHERA_DEBUG
-bool ATKMath::evaluate(unsigned long now, Stream *debug) {
+bool ATKIntegerMath::evaluate(unsigned long now, Stream *debug) {
 #else
-bool ATKMath::evaluate(unsigned long now) {
+bool ATKIntegerMath::evaluate(unsigned long now) {
 #endif
 
 	switch (m_dataType) {
@@ -83,20 +82,6 @@ bool ATKMath::evaluate(unsigned long now) {
 		return evaluateEx<int64_t>(now);
 #endif
 
-	case OPERANDTYPE_FLOAT:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<float>(now, debug);
-#else
-		return evaluateEx<float>(now);
-#endif
-
-	case OPERANDTYPE_STRING:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<String>(now, debug);
-#else
-		return evaluateEx<String>(now);
-#endif
-
 	case OPERANDTYPE_UINT8:
 #ifdef ANTIKYTHERA_DEBUG
 		return evaluateEx<uint8_t>(now, debug);
@@ -124,24 +109,17 @@ bool ATKMath::evaluate(unsigned long now) {
 #else
 		return evaluateEx<uint64_t>(now);
 #endif
-
-	case OPERANDTYPE_DOUBLE:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<double>(now, debug);
-#else
-		return evaluateEx<double>(now);
-#endif
 	}
 
 	return false;
 }
 
 #ifdef ANTIKYTHERA_DEBUG
-template <class T>bool ATKMath::evaluateEx(unsigned long now, Stream *debug) {
+template <typename T>bool ATKIntegerMath::evaluateEx(unsigned long now, Stream *debug) {
 #else
-	template <class T>bool ATKMath::evaulateEx(unsigned long now) {
+	template <typename T>bool ATKIntegerMath::evaluateEx(unsigned long now) {
 #endif
-	delete[] m_result;		// might be a leak
+	delete[] (T *)m_result;
 #ifdef ANTIKYTHERA_DEBUG
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
@@ -159,44 +137,41 @@ template <class T>bool ATKMath::evaluateEx(unsigned long now, Stream *debug) {
 		T b = OPERAND_ELEMENT(T, 2, i);				// t2d: modify to support other types
 		switch (operation) {
 		case MATH_NONE:
-			m_result[i] = 0;
+			((T *)m_result)[i] = 0;
 			break;
 
 		case MATH_ADDITION:
-			m_result[i] = a + b;
+			((T *)m_result)[i] = a + b;
 			break;
 
 		case MATH_SUBTRACTION:
-			m_result[i] = a - b;
+			((T *)m_result)[i] = a - b;
 			break;
 
 		case MATH_MULTIPLICATION:
-			m_result[i] = a * b;
+			((T *)m_result)[i] = a * b;
 			break;
 
 		case MATH_DIVISION:
-			m_result[i] = a / b;
+			((T *)m_result)[i] = a / b;
 			break;
 
 		case MATH_MODULO:
-			m_result[i] = a % b;
+			((T *)m_result)[i] = a % b;
 			break;
 
 		case MATH_INCREMENT:
-			m_result[i] = a + 1;
+			((T *)m_result)[i] = a + 1;
 			break;
 
 		case MATH_DECREMENT:
-			m_result[i] = a - 1;
+			((T *)m_result)[i] = a - 1;
 			break;
 
 		case MATH_ABS:
-			m_result[i] = abs(a);
+			((T *)m_result)[i] = abs(a);
 			break;
 		}
-#ifdef ANTIKYTHERA_DEBUG
-		debug->println("ATKMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
-#endif
 		break;
 	}
 
@@ -205,22 +180,22 @@ template <class T>bool ATKMath::evaluateEx(unsigned long now, Stream *debug) {
 	return result;
 }
 
-void *ATKMath::constantGeneric(uint8_t index) {
+void *ATKIntegerMath::constantGeneric(uint8_t index) {
 	switch (index) {
 	case 0:
 		return m_constOperation;
 
-	case 2:
+	case 1:
 		return m_constA;
 
-	case 3:
+	case 2:
 		return m_constB;
 	}
 
 	return NULL;
 }
 
-bool ATKMath::loadProperties(Stream *program) {
+bool ATKIntegerMath::loadProperties(Stream *program) {
 	ATKIOperator::loadProperties(program);
 
 	char buffer[21];
@@ -238,14 +213,14 @@ bool ATKMath::loadProperties(Stream *program) {
 		}
 		if (index == 3) {
 #ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKMath::loadProperties() - property count has too many digits.";
+			m_lastErrorString = "ATKIntegerMath::loadProperties() - property count has too many digits.";
 #endif
 			program->flush();
 			return false;
 		}
 		if (!isdigit(c)) {
 #ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKMath::loadProperties() - property count contains invalid character: " + String(c);
+			m_lastErrorString = "ATKIntegerMath::loadProperties() - property count contains invalid character: " + String(c);
 #endif
 			program->flush();
 			return false;
@@ -254,7 +229,7 @@ bool ATKMath::loadProperties(Stream *program) {
 	}
 	if (!valid) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::loadProperties() - unexpected end of stream while reading property count.";
+		m_lastErrorString = "ATKIntegerMath::loadProperties() - unexpected end of stream while reading property count.";
 #endif
 		program->flush();
 		return false;
@@ -264,7 +239,7 @@ bool ATKMath::loadProperties(Stream *program) {
 
 	if (numProperties != 1) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::load() - incorrect number(" + String(numProperties) + ") of properties specified, expected 1.";
+		m_lastErrorString = "ATKIntegerMath::load() - incorrect number(" + String(numProperties) + ") of properties specified, expected 1.";
 #endif
 		program->flush();
 		return false;
@@ -284,14 +259,14 @@ bool ATKMath::loadProperties(Stream *program) {
 		}
 		if (index == 3) {
 #ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKMath::loadProperties() - data type has too many digits.";
+			m_lastErrorString = "ATKIntegerMath::loadProperties() - data type has too many digits.";
 #endif
 			program->flush();
 			return false;
 		}
 		if (!isdigit(c)) {
 #ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKMath::loadProperties() - data type contains invalid character: " + String(c);
+			m_lastErrorString = "ATKIntegerMath::loadProperties() - data type contains invalid character: " + String(c);
 #endif
 			program->flush();
 			return false;
@@ -300,22 +275,27 @@ bool ATKMath::loadProperties(Stream *program) {
 	}
 	if (!valid) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::loadProperties() - unexpected end of stream while reading data type.";
+		m_lastErrorString = "ATKIntegerMath::loadProperties() - unexpected end of stream while reading data type.";
 #endif
 		program->flush();
 		return false;
 	}
 
-	uint8_t numProperties = (uint8_t)strtoul(buffer, NULL, 10);
+#ifdef ANTIKYTHERA_DEBUG
+	program->print("[property datatype:");
+	program->print(buffer);
+	program->println("]");
+#endif
+	m_dataType = (uint8_t)strtoul(buffer, NULL, 10);
 
 	return true;
 }
 
-bool ATKMath::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+bool ATKIntegerMath::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
 	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }
 
-bool ATKMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+bool ATKIntegerMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 	switch (operandIndex) {
@@ -421,7 +401,7 @@ bool ATKMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 
 	default:
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKMath::initializeConstant() - operandIndex out of range.";
+		m_lastErrorString = "ATKIntegerMath::initializeConstant() - operandIndex out of range.";
 #endif
 		return false;
 	}

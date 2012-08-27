@@ -1,5 +1,5 @@
 /*
- * ATKMath.h
+ * ATKIntegerMath.h
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -7,8 +7,8 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_MATH_H_
-#define ATK_MATH_H_
+#ifndef ATK_INTEGER_MATH_H_
+#define ATK_INTEGER_MATH_H_
 
 
 #include <Stream.h>
@@ -39,12 +39,12 @@
 #define MATH_ABS				8
 
 
-class ATKMath : public ATKIOperator {
+class ATKIntegerMath : public ATKIOperator {
 public:
-	ATKMath();
-	~ATKMath();
+	ATKIntegerMath();
+	~ATKIntegerMath();
 
-	virtual String name() { return "ATKMath"; }
+	virtual String name() { return "ATKIntegerMath"; }
 
 	virtual bool load(Stream *program);
 #ifdef ANTIKYTHERA_DEBUG
@@ -64,9 +64,9 @@ protected:
 
 private:
 #ifdef ANTIKYTHERA_DEBUG
-	template <class T>bool evaluateEx(unsigned long now, Stream *debug);
+	template <typename T>bool evaluateEx(unsigned long now, Stream *debug);
 #else
-	template <class T>bool evaluateEx(unsigned long now);
+	template <typename T>bool evaluateEx(unsigned long now);
 #endif
 
 	uint8_t m_dataType;
@@ -82,4 +82,4 @@ private:
 
 #endif
 
-/* ATK_MATH_H_ */
+/* ATK_INTEGER_MATH_H_ */
