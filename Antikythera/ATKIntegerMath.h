@@ -4,7 +4,7 @@
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
  *
- *  https://www.gnu.org/licenses/gpl-3.0.html
+ *  hTps://www.gnu.org/licenses/gpl-3.0.html
  */
 
 #ifndef ATK_INTEGER_MATH_H_
@@ -37,8 +37,10 @@
 #define MATH_INCREMENT			6
 #define MATH_DECREMENT			7
 #define MATH_ABS				8
+#define MATH_SPLAY				9
 
 
+template <typename T>
 class ATKIntegerMath : public ATKIOperator {
 public:
 	ATKIntegerMath();
@@ -46,37 +48,44 @@ public:
 
 	virtual String name() { return "ATKIntegerMath"; }
 
+	// loading
+public:
 	virtual bool load(Stream *program);
-#ifdef ANTIKYTHERA_DEBUG
+protected:
+	virtual bool loadProperties(Stream *program);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+
+	// evaluation
+public:
+	#ifdef ANTIKYTHERA_DEBUG
 	virtual bool evaluate(unsigned long now, Stream *debug);
 #else
 	virtual bool evaluate(unsigned long now);
 #endif
+
+	// operands
+
+	// constants
+protected:
+	virtual void *constantGeneric(uint8_t index);
+
+	// operations
+
+	// results
+public:
 	virtual uint8_t numResults() { return 1; }
 	virtual uint8_t resultSize(uint8_t index) { return m_resultSize; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return m_result; }
-	virtual void *constantGeneric(uint8_t index);
-	virtual bool loadProperties(Stream *program);
-	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual void result(uint8_t index, uint8_t element, void *value, uint8_t valueType);
 
 private:
-#ifdef ANTIKYTHERA_DEBUG
-	template <typename T>bool evaluateEx(unsigned long now, Stream *debug);
-#else
-	template <typename T>bool evaluateEx(unsigned long now);
-#endif
-
 	uint8_t m_dataType;
 
-	void *m_result;
+	T *m_result;
 	uint8_t m_resultSize;
 
 	uint8_t *m_constOperation;
-	void *m_constA;
-	void *m_constB;
+	T *m_constA;
+	T *m_constB;
 };
 
 

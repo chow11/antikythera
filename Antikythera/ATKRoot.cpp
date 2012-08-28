@@ -35,6 +35,28 @@ bool ATKRoot::load(Stream *program) {
 	return true;
 }
 
+bool ATKRoot::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
+}
+
+bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
+	switch (operandIndex) {
+	case 0:
+		m_constLeaf = new uint8_t[constantSize];
+		break;
+
+	default:
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
+#endif
+		return false;
+	}
+
+	return true;
+}
+
 #ifdef ANTIKYTHERA_DEBUG
 bool ATKRoot::evaluate(unsigned long now, Stream *debug) {
 #else
@@ -47,8 +69,7 @@ bool ATKRoot::evaluate(unsigned long now) {
 #endif
 
 	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		uint8_t leaf = OPERAND_ELEMENT(uint8_t, 0, i);
+		OPERAND_ELEMENT(leaf, OPERANDTYPE_UINT8, uint8_t, 0, i)
 
 #ifdef ANTIKYTHERA_DEBUG
 		debug->println("ATKRoot::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)leaf) + ")");
@@ -72,26 +93,4 @@ void *ATKRoot::constantGeneric(uint8_t index) {
 	}
 
 	return NULL;
-}
-
-bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	ATKIOperator::initializeConstant(operandIndex, constantSize);
-
-	switch (operandIndex) {
-	case 0:
-		m_constLeaf = new uint8_t[constantSize];
-		break;
-
-	default:
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKRoot::initializeConstant() - operandIndex out of range.";
-#endif
-		return false;
-	}
-
-	return true;
-}
-
-bool ATKRoot::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }

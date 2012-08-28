@@ -11,8 +11,8 @@
 #include <ATKIntegerMath.h>
 #include <Antikythera.h>
 
-
-ATKIntegerMath::ATKIntegerMath() {
+template <typename T>
+ATKIntegerMath<T>::ATKIntegerMath() {
 	m_dataType = 0;
 
 	m_result = NULL;
@@ -23,7 +23,8 @@ ATKIntegerMath::ATKIntegerMath() {
 	m_constB = NULL;
 }
 
-ATKIntegerMath::~ATKIntegerMath() {
+template <typename T>
+ATKIntegerMath<T>::~ATKIntegerMath() {
 	delete[] m_result;
 
 	delete[] m_constOperation;
@@ -31,7 +32,8 @@ ATKIntegerMath::~ATKIntegerMath() {
 	delete[] m_constB;
 }
 
-bool ATKIntegerMath::load(Stream *program) {
+template <typename T>
+bool ATKIntegerMath<T>::load(Stream *program) {
 	if (!ATKIOperator::load(program)) {
 		return false;
 	}
@@ -47,132 +49,111 @@ bool ATKIntegerMath::load(Stream *program) {
 	return true;
 }
 
-#ifdef ANTIKYTHERA_DEBUG
-bool ATKIntegerMath::evaluate(unsigned long now, Stream *debug) {
-#else
-bool ATKIntegerMath::evaluate(unsigned long now) {
-#endif
+template <typename T>
+bool ATKIntegerMath<T>::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
+}
 
-	switch (m_dataType) {
-	case OPERANDTYPE_INT8:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<int8_t>(now, debug);
-#else
-		return evaluateEx<int8_t>(now);
-#endif
+template <typename T>
+bool ATKIntegerMath<T>::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
-	case OPERANDTYPE_INT16:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<int16_t>(now, debug);
-#else
-		return evaluateEx<int16_t>(now);
-#endif
+	switch (operandIndex) {
+	case 0:
+		m_constOperation = new uint8_t[constantSize];
+		break;
 
-	case OPERANDTYPE_INT32:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<int32_t>(now, debug);
-#else
-		return evaluateEx<int32_t>(now);
-#endif
+	case 1:
+		m_constA = new T[constantSize];
+		break;
 
-	case OPERANDTYPE_INT64:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<int64_t>(now, debug);
-#else
-		return evaluateEx<int64_t>(now);
-#endif
+	case 2:
+		m_constB = new T[constantSize];
+		break;
 
-	case OPERANDTYPE_UINT8:
+	default:
 #ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<uint8_t>(now, debug);
-#else
-		return evaluateEx<uint8_t>(now);
+		m_lastErrorString = "ATKIntegerMath::initializeConstant() - operandIndex out of range.";
 #endif
-
-	case OPERANDTYPE_UINT16:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<uint16_t>(now, debug);
-#else
-		return evaluateEx<uint16_t>(now);
-#endif
-
-	case OPERANDTYPE_UINT32:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<uint32_t>(now, debug);
-#else
-		return evaluateEx<uint32_t>(now);
-#endif
-
-	case OPERANDTYPE_UINT64:
-#ifdef ANTIKYTHERA_DEBUG
-		return evaluateEx<uint64_t>(now, debug);
-#else
-		return evaluateEx<uint64_t>(now);
-#endif
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 #ifdef ANTIKYTHERA_DEBUG
-template <typename T>bool ATKIntegerMath::evaluateEx(unsigned long now, Stream *debug) {
+template <>
+bool ATKIntegerMath<int8_t>::evaluate(unsigned long now, Stream *debug) {
 #else
-	template <typename T>bool ATKIntegerMath::evaluateEx(unsigned long now) {
+template <>
+bool ATKIntegerMath<int8_t>::evaluate(unsigned long now) {
 #endif
-	delete[] (T *)m_result;
+	delete[] m_result;
+	m_resultSize = 0;
 #ifdef ANTIKYTHERA_DEBUG
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);
 #endif
-	m_result = new T[numOperations()];
+
+	m_result = new int8_t[numOperations()];
 	m_resultSize = numOperations();
 
 	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		uint8_t operation = OPERAND_ELEMENT(uint8_t, 0, i);
-		o = operand(1);
-		T a = OPERAND_ELEMENT(T, 1, i);				// t2d: modify to support other types
-		o = operand(2);
-		T b = OPERAND_ELEMENT(T, 2, i);				// t2d: modify to support other types
-		switch (operation) {
-		case MATH_NONE:
-			((T *)m_result)[i] = 0;
-			break;
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_INT8, int8_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_INT8, int8_t, 2, i)
 
+		switch (operation) {
 		case MATH_ADDITION:
-			((T *)m_result)[i] = a + b;
+			m_result[i] = a + b;
 			break;
 
 		case MATH_SUBTRACTION:
-			((T *)m_result)[i] = a - b;
+			m_result[i] = a - b;
 			break;
 
 		case MATH_MULTIPLICATION:
-			((T *)m_result)[i] = a * b;
+			m_result[i] = a * b;
 			break;
 
 		case MATH_DIVISION:
-			((T *)m_result)[i] = a / b;
+			m_result[i] = a / b;
 			break;
 
 		case MATH_MODULO:
-			((T *)m_result)[i] = a % b;
+			m_result[i] = a % b;
 			break;
 
 		case MATH_INCREMENT:
-			((T *)m_result)[i] = a + 1;
+			m_result[i] = a + 1;
 			break;
 
 		case MATH_DECREMENT:
-			((T *)m_result)[i] = a - 1;
+			m_result[i] = a - 1;
 			break;
 
 		case MATH_ABS:
-			((T *)m_result)[i] = abs(a);
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:			// splay b values above a a, a+1, a+2...a+(b-1)
+			int8_t *temp = new int8_t[m_resultSize + b - 1];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (int8_t count = 0; count < b; count++) {
+				m_result[i + count] = a + count;
+			}
 			break;
 		}
-		break;
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String((unsigned long)a) + ", " + String((unsigned long)b) + ") = " + String((unsigned long)m_result[i]));
+#endif
 	}
 
 	setEvaluatedFlag();
@@ -180,7 +161,408 @@ template <typename T>bool ATKIntegerMath::evaluateEx(unsigned long now, Stream *
 	return result;
 }
 
-void *ATKIntegerMath::constantGeneric(uint8_t index) {
+#ifdef ANTIKYTHERA_DEBUG
+template <>
+bool ATKIntegerMath<int16_t>::evaluate(unsigned long now, Stream *debug) {
+#else
+template <>
+bool ATKIntegerMath<int16_t>::evaluate(unsigned long now) {
+#endif
+	delete[] m_result;
+	m_resultSize = 0;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	m_result = new int16_t[numOperations()];
+	m_resultSize = numOperations();
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_INT16, int16_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_INT16, int16_t, 2, i)
+
+		switch (operation) {
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
+			break;
+
+		case MATH_INCREMENT:
+			m_result[i] = a + 1;
+			break;
+
+		case MATH_DECREMENT:
+			m_result[i] = a - 1;
+			break;
+
+		case MATH_ABS:
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:
+			int16_t *temp = new int16_t[m_resultSize + (b - a - 1)];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - a - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (int16_t count = a; count < b; count++) {
+				m_result[i + count - a] = count;
+			}
+			break;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+#ifdef ANTIKYTHERA_DEBUG
+template <>
+bool ATKIntegerMath<int32_t>::evaluate(unsigned long now, Stream *debug) {
+#else
+template <>
+bool ATKIntegerMath<int32_t>::evaluate(unsigned long now) {
+#endif
+	delete[] m_result;
+	m_resultSize = 0;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	m_result = new int32_t[numOperations()];
+	m_resultSize = numOperations();
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_INT32, int32_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_INT32, int32_t, 2, i)
+
+		switch (operation) {
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
+			break;
+
+		case MATH_INCREMENT:
+			m_result[i] = a + 1;
+			break;
+
+		case MATH_DECREMENT:
+			m_result[i] = a - 1;
+			break;
+
+		case MATH_ABS:
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:
+			int32_t *temp = new int32_t[m_resultSize + (b - a - 1)];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - a - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (int32_t count = a; count < b; count++) {
+				m_result[i + count - a] = count;
+			}
+			break;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+#ifdef ANTIKYTHERA_DEBUG
+template <>
+bool ATKIntegerMath<uint8_t>::evaluate(unsigned long now, Stream *debug) {
+#else
+template <>
+bool ATKIntegerMath<uint8_t>::evaluate(unsigned long now) {
+#endif
+	delete[] m_result;
+	m_resultSize = 0;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	m_result = new uint8_t[numOperations()];
+	m_resultSize = numOperations();
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_UINT8, uint8_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_UINT8, uint8_t, 2, i)
+
+		switch (operation) {
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
+			break;
+
+		case MATH_INCREMENT:
+			m_result[i] = a + 1;
+			break;
+
+		case MATH_DECREMENT:
+			m_result[i] = a - 1;
+			break;
+
+		case MATH_ABS:
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:
+			uint8_t *temp = new uint8_t[m_resultSize + (b - a - 1)];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - a - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (uint8_t count = a; count < b; count++) {
+				m_result[i + count - a] = count;
+			}
+			break;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+#ifdef ANTIKYTHERA_DEBUG
+template <>
+bool ATKIntegerMath<uint16_t>::evaluate(unsigned long now, Stream *debug) {
+#else
+template <>
+bool ATKIntegerMath<uint16_t>::evaluate(unsigned long now) {
+#endif
+	delete[] m_result;
+	m_resultSize = 0;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	m_result = new uint16_t[numOperations()];
+	m_resultSize = numOperations();
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_UINT16, uint16_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_UINT16, uint16_t, 2, i)
+
+		switch (operation) {
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
+			break;
+
+		case MATH_INCREMENT:
+			m_result[i] = a + 1;
+			break;
+
+		case MATH_DECREMENT:
+			m_result[i] = a - 1;
+			break;
+
+		case MATH_ABS:
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:
+			uint16_t *temp = new uint16_t[m_resultSize + (b - a - 1)];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - a - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (uint16_t count = a; count < b; count++) {
+				m_result[i + count - a] = count;
+			}
+			break;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+#ifdef ANTIKYTHERA_DEBUG
+template <>
+bool ATKIntegerMath<uint32_t>::evaluate(unsigned long now, Stream *debug) {
+#else
+template <>
+bool ATKIntegerMath<uint32_t>::evaluate(unsigned long now) {
+#endif
+	delete[] m_result;
+	m_resultSize = 0;
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	m_result = new uint32_t[numOperations()];
+	m_resultSize = numOperations();
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(operation, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(a, OPERANDTYPE_UINT32, uint32_t, 1, i)
+		OPERAND_ELEMENT(b, OPERANDTYPE_UINT32, uint32_t, 2, i)
+
+		switch (operation) {
+		case MATH_ADDITION:
+			m_result[i] = a + b;
+			break;
+
+		case MATH_SUBTRACTION:
+			m_result[i] = a - b;
+			break;
+
+		case MATH_MULTIPLICATION:
+			m_result[i] = a * b;
+			break;
+
+		case MATH_DIVISION:
+			m_result[i] = a / b;
+			break;
+
+		case MATH_MODULO:
+			m_result[i] = a % b;
+			break;
+
+		case MATH_INCREMENT:
+			m_result[i] = a + 1;
+			break;
+
+		case MATH_DECREMENT:
+			m_result[i] = a - 1;
+			break;
+
+		case MATH_ABS:
+			m_result[i] = abs(a);
+			break;
+
+		case MATH_SPLAY:
+			uint32_t *temp = new uint32_t[m_resultSize + (b - a - 1)];
+			for (int count = 0; count < m_resultSize; count++) {
+				temp[count] = m_result[count];
+			}
+			m_resultSize += (b - a - 1);
+			delete[] m_result;
+			m_result = temp;
+
+			for (uint32_t count = a; count < b; count++) {
+				m_result[i + count - a] = count;
+			}
+			break;
+		}
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKIntegerMath::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)operation) + ", " + String(a) + ", " + String(b) + ") = " + String(m_result[i]));
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+template <typename T>
+void *ATKIntegerMath<T>::constantGeneric(uint8_t index) {
 	switch (index) {
 	case 0:
 		return m_constOperation;
@@ -195,216 +577,43 @@ void *ATKIntegerMath::constantGeneric(uint8_t index) {
 	return NULL;
 }
 
-bool ATKIntegerMath::loadProperties(Stream *program) {
-	ATKIOperator::loadProperties(program);
+template <typename T>
+void ATKIntegerMath<T>::result(uint8_t index, uint8_t element, void *value, uint8_t valueType) {
+	if (index < numResults()) {
+		if (element < m_resultSize) {
+			switch (valueType) {
+			case OPERANDTYPE_INT8:
+				*((int8_t *)value) = m_result[element];
+				break;
 
-	char buffer[21];
-	memset(buffer, 0, 21);
-	int index = 0;
-	bool valid = false;
-	while(Antikythera::readProgram(program)) {
-		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
-		if (c == '(') {
-			valid = true;
-			break;
+			case OPERANDTYPE_INT16:
+				*((int16_t *)value) = m_result[element];
+				break;
+
+			case OPERANDTYPE_INT32:
+				*((int32_t *)value) = m_result[element];
+				break;
+
+			case OPERANDTYPE_UINT8:
+				*((uint8_t *)value) = m_result[element];
+				break;
+
+			case OPERANDTYPE_UINT16:
+				*((uint16_t *)value) = m_result[element];
+				break;
+
+			case OPERANDTYPE_UINT32:
+				*((uint32_t *)value) = m_result[element];
+				break;
+
+			}
 		}
-		if (index == 3) {
-#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKIntegerMath::loadProperties() - property count has too many digits.";
-#endif
-			program->flush();
-			return false;
-		}
-		if (!isdigit(c)) {
-#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKIntegerMath::loadProperties() - property count contains invalid character: " + String(c);
-#endif
-			program->flush();
-			return false;
-		}
-		buffer[index++] = c;
 	}
-	if (!valid) {
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKIntegerMath::loadProperties() - unexpected end of stream while reading property count.";
-#endif
-		program->flush();
-		return false;
-	}
-
-	uint8_t numProperties = (uint8_t)strtoul(buffer, NULL, 10);
-
-	if (numProperties != 1) {
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKIntegerMath::load() - incorrect number(" + String(numProperties) + ") of properties specified, expected 1.";
-#endif
-		program->flush();
-		return false;
-	}
-
-	memset(buffer, 0, 21);
-	index = 0;
-	valid = false;
-	while(Antikythera::readProgram(program)) {
-		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
-		if (c == ')') {
-			valid = true;
-			break;
-		}
-		if (index == 3) {
-#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKIntegerMath::loadProperties() - data type has too many digits.";
-#endif
-			program->flush();
-			return false;
-		}
-		if (!isdigit(c)) {
-#ifdef ANTIKYTHERA_DEBUG
-			m_lastErrorString = "ATKIntegerMath::loadProperties() - data type contains invalid character: " + String(c);
-#endif
-			program->flush();
-			return false;
-		}
-		buffer[index++] = c;
-	}
-	if (!valid) {
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKIntegerMath::loadProperties() - unexpected end of stream while reading data type.";
-#endif
-		program->flush();
-		return false;
-	}
-
-#ifdef ANTIKYTHERA_DEBUG
-	program->print("[property datatype:");
-	program->print(buffer);
-	program->println("]");
-#endif
-	m_dataType = (uint8_t)strtoul(buffer, NULL, 10);
-
-	return true;
 }
 
-bool ATKIntegerMath::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
-}
-
-bool ATKIntegerMath::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	ATKIOperator::initializeConstant(operandIndex, constantSize);
-
-	switch (operandIndex) {
-	case 0:
-		m_constOperation = new uint8_t[constantSize];
-		break;
-
-	case 1:
-		switch (m_dataType) {
-		case OPERANDTYPE_INT8:
-			m_constA = new int8_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT16:
-			m_constA = new int16_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT32:
-			m_constA = new int32_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT64:
-			m_constA = new int64_t[constantSize];
-			return true;
-
-		case OPERANDTYPE_FLOAT:
-			m_constA = new float[constantSize];
-			return true;
-
-		case OPERANDTYPE_STRING:
-			m_constA = new String[constantSize];
-			return true;
-
-		case OPERANDTYPE_UINT8:
-			m_constA = new uint8_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT16:
-			m_constA = new uint16_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT32:
-			m_constA = new uint32_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT64:
-			m_constA = new uint64_t[constantSize];
-			return true;
-
-		case OPERANDTYPE_DOUBLE:
-			m_constA = new double[constantSize];
-			return true;
-		}
-		break;
-
-	case 2:
-		switch (m_dataType) {
-		case OPERANDTYPE_INT8:
-			m_constB = new int8_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT16:
-			m_constB = new int16_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT32:
-			m_constB = new int32_t[constantSize];
-			break;
-
-		case OPERANDTYPE_INT64:
-			m_constB = new int64_t[constantSize];
-			return true;
-
-		case OPERANDTYPE_FLOAT:
-			m_constB = new float[constantSize];
-			return true;
-
-		case OPERANDTYPE_STRING:
-			m_constB = new String[constantSize];
-			return true;
-
-		case OPERANDTYPE_UINT8:
-			m_constB = new uint8_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT16:
-			m_constB = new uint16_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT32:
-			m_constB = new uint32_t[constantSize];
-			break;
-
-		case OPERANDTYPE_UINT64:
-			m_constB = new uint64_t[constantSize];
-			return true;
-
-		case OPERANDTYPE_DOUBLE:
-			m_constB = new double[constantSize];
-			return true;
-		}
-		break;
-
-	default:
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKIntegerMath::initializeConstant() - operandIndex out of range.";
-#endif
-		return false;
-	}
-
-	return true;
-}
+template class ATKIntegerMath<int8_t>;
+template class ATKIntegerMath<int16_t>;
+template class ATKIntegerMath<int32_t>;
+template class ATKIntegerMath<uint8_t>;
+template class ATKIntegerMath<uint16_t>;
+template class ATKIntegerMath<uint32_t>;

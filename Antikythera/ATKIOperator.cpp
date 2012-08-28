@@ -16,12 +16,12 @@ ATKIOperator::ATKIOperator() {
 	m_numOperands = 0;
 	m_operands = NULL;
 	m_numOperations = 0;
-	m_numConstants = NULL;
+	m_constantSize = NULL;
 }
 
 ATKIOperator::~ATKIOperator() {
 	delete[] m_operands;
-	delete[] m_numConstants;
+	delete[] m_constantSize;
 }
 
 String ATKIOperator::name() {
@@ -80,7 +80,7 @@ bool ATKIOperator::load(Stream *program) {
 	program->println("]");
 #endif
 	m_operands = new ATK_OPERAND[m_numOperands];
-	m_numConstants = new uint8_t[m_numOperands];
+	m_constantSize = new uint8_t[m_numOperands];
 
 	for (int count = 0; count < numOperands(); count++) {
 		valid = false;
@@ -107,12 +107,18 @@ bool ATKIOperator::load(Stream *program) {
 			return false;
 		}
 
-		m_operands[count].flags = loadFlags(program);
+		if (!loadFlags(program, &m_operands[count].flags)) {
+			return false;
+		}
 		if (m_operands[count].flags & OPERANDFLAG_LINK) {
-			m_operands[count].operatorIndex = loadOperatorIndex(program);
-			m_operands[count].resultIndex = loadResultIndex(program);
+			if (!loadOperatorIndex(program, &m_operands[count].operatorIndex)) {
+				return false;
+			}
+			if (!loadResultIndex(program, &m_operands[count].resultIndex)) {
+				return false;
+			}
 		} else {
-			if (!loadConstant(count, m_operands[count].flags, program)) {
+			if (!loadConstant(program, count, m_operands[count].flags)) {
 				return false;
 			}
 
@@ -171,101 +177,11 @@ bool ATKIOperator::load(Stream *program) {
 	return true;
 }
 
-#ifdef ANTIKYTHERA_DEBUG
-bool ATKIOperator::evaluate(unsigned long now, Stream *debug) {
-#else
-bool ATKIOperator::evaluate(unsigned long now) {
-#endif
-	bool result = true;
-
-	for (uint8_t count = 0; count < numOperands(); count++) {
-		if ((operand(count).flags & OPERANDFLAG_LINK)) {
-#ifdef ANTIKYTHERA_DEBUG
-			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now, debug);
-#else
-			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
-#endif
-		}
-	}
-
-	uint8_t max = 0;
-	uint8_t min = 255;
-	for (uint8_t i = 0; i < numOperands(); i++) {
-		ATK_OPERAND o = operand(i);
-		if (o.flags & OPERANDFLAG_LIMIT) {
-			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(i);
-			if (temp < min) {
-				min = temp;
-			}
-		} else {
-			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(i);
-			if (temp > max) {
-				max = temp;
-			}
-		}
-	}
-	m_numOperations = min;
-	if (max < min) {
-		m_numOperations = max;
-	}
-
-	return result;
-};
-
-uint8_t ATKIOperator::numResults() {
-	return 0;
-}
-
-uint8_t ATKIOperator::resultSize(uint8_t index) {
-	return 0;
-}
-
-bool ATKIOperator::isEvaluated() {
-	return m_isEvaluated;
-}
-
-void ATKIOperator::resetEvaluatedFlag() {
-	m_isEvaluated = false;
-}
-
-void ATKIOperator::setEvaluatedFlag() {
-	m_isEvaluated = true;
-}
-
-void *ATKIOperator::resultGeneric(uint8_t index) {
-	return NULL;
-}
-
-uint8_t ATKIOperator::operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration) {
-	uint8_t result = 0;
-
-	uint8_t operandElementSize = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : numConstants(operandIndex);
-	if (o.flags & OPERANDFLAG_SINGLE) {
-		result = 0;
-	} else {
-		if (m_numOperations < operandElementSize) {
-			result = iteration;
-		} else {
-			if (o.flags & OPERANDFLAG_EXTEND) {
-				result = operandElementSize - 1;
-			} else {
-				result = iteration % operandElementSize;
-			}
-		}
-	}
-
-	return result;
-}
-
-void *ATKIOperator::constantGeneric(uint8_t index) {
-	return NULL;
-}
-
 bool ATKIOperator::loadProperties(Stream *program) {
 	return true;
 }
 
-uint8_t ATKIOperator::loadFlags(Stream *program) {
+bool ATKIOperator::loadFlags(Stream *program, uint8_t *flags) {
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -308,10 +224,11 @@ uint8_t ATKIOperator::loadFlags(Stream *program) {
 	program->print(buffer);
 	program->println("]");
 #endif
-	return (uint8_t)strtoul(buffer, NULL, 10);
+	*flags = (uint8_t)strtoul(buffer, NULL, 10);
+	return true;
 }
 
-uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
+bool ATKIOperator::loadOperatorIndex(Stream *program, uint16_t *operatorIndex) {
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -354,10 +271,11 @@ uint16_t ATKIOperator::loadOperatorIndex(Stream *program) {
 	program->print(buffer);
 	program->println("]");
 #endif
-	return (uint16_t)strtoul(buffer, NULL, 10);
+	*operatorIndex = (uint16_t)strtoul(buffer, NULL, 10);
+	return true;
 }
 
-uint8_t ATKIOperator::loadResultIndex(Stream *program) {
+bool ATKIOperator::loadResultIndex(Stream *program, uint8_t *resultIndex) {
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -400,11 +318,12 @@ uint8_t ATKIOperator::loadResultIndex(Stream *program) {
 	program->print(buffer);
 	program->println("]");
 #endif
-	return (uint8_t)strtoul(buffer, NULL, 10);
+	*resultIndex = (uint8_t)strtoul(buffer, NULL, 10);
+	return true;
 }
 
 // update to support more types
-bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
+bool ATKIOperator::loadConstant(Stream *program, uint8_t operandIndex, uint8_t flags) {
 	char buffer[21];
 	memset(buffer, 0, 21);
 	int index = 0;
@@ -465,9 +384,6 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		maxLength = 11;
 		break;
 
-	case OPERANDTYPE_INT64:
-		return true;
-
 	case OPERANDTYPE_FLOAT:
 		return true;
 
@@ -486,9 +402,6 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 		maxLength = 10;
 		break;
 
-	case OPERANDTYPE_UINT64:
-		return true;
-
 	case OPERANDTYPE_DOUBLE:
 		return true;
 
@@ -498,12 +411,12 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 
 #ifdef ANTIKYTHERA_DEBUG
 	program->print("[reading ");
-	program->print((int)numConstants(operandIndex));
+	program->print((int)constantSize(operandIndex));
 	program->print(", type:");
 	program->print((int)operandType);
 	program->println(" constants]");
 #endif
-	for (int count = 0; count < numConstants(operandIndex); count++) {
+	for (int count = 0; count < constantSize(operandIndex); count++) {
 		memset(buffer, 0, 21);
 		index = 0;
 		valid = false;
@@ -514,7 +427,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			program->println(c);
 #endif
 				if (c == ',') {
-					if (count == (numConstants(operandIndex) - 1)) {
+					if (count == (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
@@ -525,7 +438,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (c == ')') {
-					if (count != (numConstants(operandIndex) - 1)) {
+					if (count != (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif
@@ -565,7 +478,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			program->println(c);
 #endif
 				if (c == ',') {
-					if (count == (numConstants(operandIndex) - 1)) {
+					if (count == (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is less than number of constants.";
 #endif
@@ -576,7 +489,7 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 					break;
 				}
 				if (c == ')') {
-					if (count != (numConstants(operandIndex) - 1)) {
+					if (count != (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
 						m_lastErrorString = name() + "::load() - constant count is greater than number of constants.";
 #endif
@@ -631,9 +544,6 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			constant<int32_t>(operandIndex)[count] = (int32_t)strtol(buffer, NULL, 10);
 			break;
 
-		case OPERANDTYPE_INT64:
-			return true;
-
 		case OPERANDTYPE_FLOAT:
 			return true;
 
@@ -652,9 +562,6 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 			constant<uint32_t>(operandIndex)[count] = (uint32_t)strtoul(buffer, NULL, 10);
 			break;
 
-		case OPERANDTYPE_UINT64:
-			return true;
-
 		case OPERANDTYPE_DOUBLE:
 			return true;
 
@@ -667,6 +574,68 @@ bool ATKIOperator::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *pro
 }
 
 bool ATKIOperator::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	m_numConstants[operandIndex] = constantSize;
+	m_constantSize[operandIndex] = constantSize;
 	return true;
+}
+
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKIOperator::evaluate(unsigned long now, Stream *debug) {
+#else
+bool ATKIOperator::evaluate(unsigned long now) {
+#endif
+	bool result = true;
+
+	for (uint8_t count = 0; count < numOperands(); count++) {
+		if ((operand(count).flags & OPERANDFLAG_LINK)) {
+#ifdef ANTIKYTHERA_DEBUG
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now, debug);
+#else
+			result &= Antikythera::operators[operand(count).operatorIndex]->evaluate(now);
+#endif
+		}
+	}
+
+	uint8_t max = 0;
+	uint8_t min = 255;
+	for (uint8_t i = 0; i < numOperands(); i++) {
+		ATK_OPERAND o = operand(i);
+		if (o.flags & OPERANDFLAG_LIMIT) {
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			if (temp < min) {
+				min = temp;
+			}
+		} else {
+			uint8_t temp = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(i);
+			if (temp > max) {
+				max = temp;
+			}
+		}
+	}
+	m_numOperations = min;
+	if (max < min) {
+		m_numOperations = max;
+	}
+
+	return result;
+};
+
+uint8_t ATKIOperator::operandElementIndex(uint8_t operandIndex, ATK_OPERAND o, uint8_t iteration) {
+	uint8_t result = 0;
+
+	uint8_t operandElementSize = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->resultSize(o.resultIndex) : constantSize(operandIndex);
+	if (o.flags & OPERANDFLAG_SINGLE) {
+		result = 0;
+	} else {
+		if (m_numOperations < operandElementSize) {
+			result = iteration;
+		} else {
+			if (o.flags & OPERANDFLAG_EXTEND) {
+				result = operandElementSize - 1;
+			} else {
+				result = iteration % operandElementSize;
+			}
+		}
+	}
+
+	return result;
 }

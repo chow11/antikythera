@@ -21,19 +21,26 @@
 							<builder id="org.eclipse.cdt.build.core.settings.default.builder.1173359246" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.50602448" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1119862450" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1009196470" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\variants\Uno32&quot;"/>
+								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.654486090" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1328896397" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1732719451" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\cores\pic32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\compiler\pic32-tools\pic32mx\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\compiler\pic32-tools\pic32mx\include\c++\4.5.1&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\variants\Uno32&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\compiler\pic32-tools\pic32mx\include\c++\4.5.1\pic32mx&quot;"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1250725845" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1753624260" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
-								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.771075380" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.771075380" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\cores\pic32&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\compiler\pic32-tools\pic32mx\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\mpide\hardware\pic32\variants\Uno32&quot;"/>
 								</option>
 								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1453270193" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
 							</tool>

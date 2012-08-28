@@ -17,11 +17,12 @@ extern __attribute__((section("linker_defined"))) char _min_heap_size;
 
 // device management
 #define SERIAL_READ_TIMEOUT 1000
-#define ANTIKYTHERA_TIMEOUT 40        // 25 fps
+#define ANTIKYTHERA_TIMEOUT 25        // 40 fps
 #define GPS_READ_TIMEOUT 1000
 #define COMPASS_READ_TIMEOUT 250
 #define ACCELEROMETER_READ_TIMEOUT 250
 #define TOUCH_READ_TIMEOUT 250
+
 
 struct TIMERS {
   bool serialEnabled;
@@ -88,6 +89,7 @@ void loop()
 #else
     if (!Antikythera::evaluate(now)) {
 #endif
+        timers.antikytheraEnabled = false;
         Serial.print("\nError running program: ");
 #ifdef  ANTIKYTHERA_DEBUG
         Serial.println(Antikythera::lastErrorString);

@@ -48,6 +48,40 @@ bool ATKSignal::load(Stream *program) {
 	return true;
 }
 
+bool ATKSignal::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
+}
+
+bool ATKSignal::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
+	switch (operandIndex) {
+	case 0:
+		m_constWaveform = new uint8_t[constantSize];
+		break;
+
+	case 1:
+		m_constWavelength = new uint32_t[constantSize];
+		break;
+
+	case 2:
+		m_constAmplitude = new int16_t[constantSize];
+		break;
+
+	case 3:
+		m_constOffset = new uint32_t[constantSize];
+		break;
+
+	default:
+#ifdef ANTIKYTHERA_DEBUG
+		m_lastErrorString = "ATKSignal::initializeConstant() - operandIndex out of range.";
+#endif
+		return false;
+	}
+
+	return true;
+}
+
 #ifdef ANTIKYTHERA_DEBUG
 bool ATKSignal::evaluate(unsigned long now, Stream *debug) {
 #else
@@ -63,14 +97,10 @@ bool ATKSignal::evaluate(unsigned long now) {
 	m_resultSize = numOperations();
 
 	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		uint8_t waveform = OPERAND_ELEMENT(uint8_t, 0, i);
-		o = operand(1);
-		uint32_t wavelength = OPERAND_ELEMENT(uint32_t, 1, i);
-		o = operand(2);
-		int16_t amplitude = OPERAND_ELEMENT(int16_t, 2, i);
-		o = operand(3);
-		uint32_t offset = OPERAND_ELEMENT(uint32_t, 3, i);
+		OPERAND_ELEMENT(waveform, OPERANDTYPE_UINT8, uint8_t, 0, i)
+		OPERAND_ELEMENT(wavelength, OPERANDTYPE_UINT32, uint32_t, 1, i)
+		OPERAND_ELEMENT(amplitude, OPERANDTYPE_INT16, int16_t, 2, i)
+		OPERAND_ELEMENT(offset, OPERANDTYPE_UINT32, uint32_t, 3, i)
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
 		double phase = ((now - (unsigned long)offset) % wavelength) / (double)wavelength;
@@ -152,38 +182,37 @@ void *ATKSignal::constantGeneric(uint8_t index) {
 	return NULL;
 }
 
-bool ATKSignal::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	ATKIOperator::initializeConstant(operandIndex, constantSize);
+void ATKSignal::result(uint8_t index, uint8_t element, void *value, uint8_t valueType) {
+	if (index < numResults()) {
+		if (element < m_resultSize) {
+			switch (valueType) {
+			case OPERANDTYPE_INT8:
+				*((int8_t *)value) = m_result[element];
+				break;
 
-	switch (operandIndex) {
-	case 0:
-		m_constWaveform = new uint8_t[constantSize];
-		break;
+			case OPERANDTYPE_INT16:
+				*((int16_t *)value) = m_result[element];
+				break;
 
-	case 1:
-		m_constWavelength = new uint32_t[constantSize];
-		break;
+			case OPERANDTYPE_INT32:
+				*((int32_t *)value) = m_result[element];
+				break;
 
-	case 2:
-		m_constAmplitude = new int16_t[constantSize];
-		break;
+			case OPERANDTYPE_UINT8:
+				*((uint8_t *)value) = m_result[element];
+				break;
 
-	case 3:
-		m_constOffset = new uint32_t[constantSize];
-		break;
+			case OPERANDTYPE_UINT16:
+				*((uint16_t *)value) = m_result[element];
+				break;
 
-	default:
-#ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKSignal::initializeConstant() - operandIndex out of range.";
-#endif
-		return false;
+			case OPERANDTYPE_UINT32:
+				*((uint32_t *)value) = m_result[element];
+				break;
+
+			}
+		}
 	}
-
-	return true;
-}
-
-bool ATKSignal::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }
 
 double ATKSignal::sin(double x) {

@@ -154,7 +154,7 @@ bool Antikythera::load(Stream *program) {
 #endif
 		if (!operators[count]->load(program)) {
 #ifdef ANTIKYTHERA_DEBUG
-			Antikythera::lastErrorString = operators[count]->lastErrorString();
+			Antikythera::lastErrorString = operators[count]->m_lastErrorString;
 #endif
 			program->flush();
 			return false;

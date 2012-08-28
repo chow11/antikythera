@@ -45,64 +45,8 @@ bool ATKPoint::load(Stream *program) {
 	return true;
 }
 
-#ifdef ANTIKYTHERA_DEBUG
-bool ATKPoint::evaluate(unsigned long now, Stream *debug) {
-#else
-bool ATKPoint::evaluate(unsigned long now) {
-#endif
-#ifdef ANTIKYTHERA_DEBUG
-	bool result = ATKIOperator::evaluate(now, debug);
-#else
-	bool result = ATKIOperator::evaluate(now);
-#endif
-
-	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		int16_t x = OPERAND_ELEMENT(int16_t, 0, i);
-		o = operand(1);
-		int16_t y = OPERAND_ELEMENT(int16_t, 1, i);
-		o = operand(2);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 2, i);
-		o = operand(3);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 3, i);
-		o = operand(4);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 4, i);
-		o = operand(5);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 5, i);
-
-		Antikythera::displays[display]->point(x, y, color, style, layer);
-#ifdef ANTIKYTHERA_DEBUG
-		debug->println("ATKPoint::evaluate(" + String(now) + ", " + String((int)i) + ": " + String(x) + ", " + String(y) + ", h" + String((int)color.h) + ", s" + String((int)color.s) + ", v" + String((int)color.v) + ")");
-#endif
-	}
-
-	setEvaluatedFlag();
-
-	return result;
-}
-
-void *ATKPoint::constantGeneric(uint8_t index) {
-	switch (index) {
-	case 0:
-		return m_constX;
-
-	case 1:
-		return m_constY;
-
-	case 2:
-		return m_constColor;
-
-	case 3:
-		return m_constStyle;
-
-	case 4:
-		return m_constDisplay;
-
-	case 5:
-		return m_constLayer;
-	}
-
-	return NULL;
+bool ATKPoint::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
 }
 
 bool ATKPoint::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
@@ -143,6 +87,57 @@ bool ATKPoint::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	return true;
 }
 
-bool ATKPoint::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKPoint::evaluate(unsigned long now, Stream *debug) {
+#else
+bool ATKPoint::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(x, OPERANDTYPE_INT16, int16_t, 0, i)
+		OPERAND_ELEMENT(y, OPERANDTYPE_INT16, int16_t, 1, i)
+		OPERAND_ELEMENT(color, OPERANDTYPE_UINT32, ATKColor::HSVA, 2, i)
+		OPERAND_ELEMENT(style, OPERANDTYPE_UINT8, uint8_t, 3, i)
+		OPERAND_ELEMENT(display, OPERANDTYPE_UINT8, uint8_t, 4, i)
+		OPERAND_ELEMENT(layer, OPERANDTYPE_UINT8, uint8_t, 5, i)
+
+		Antikythera::displays[display]->point(x, y, color, style, layer);
+#ifdef ANTIKYTHERA_DEBUG
+		ATKColor::RGBA rgb = ATKColor::HSVAtoRGBA(color);
+		debug->println("ATKPoint::evaluate(" + String(now) + ", " + String((int)i) + ": " + String(x) + ", " + String(y) + ", h" + String((int)color.h) + ", s" + String((int)color.s) + ", v" + String((int)color.v) + ", r" + String((int)rgb.r) + ", g" + String((int)rgb.g) + ", b" + String((int)rgb.b) + ")");
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+void *ATKPoint::constantGeneric(uint8_t index) {
+	switch (index) {
+	case 0:
+		return m_constX;
+
+	case 1:
+		return m_constY;
+
+	case 2:
+		return m_constColor;
+
+	case 3:
+		return m_constStyle;
+
+	case 4:
+		return m_constDisplay;
+
+	case 5:
+		return m_constLayer;
+	}
+
+	return NULL;
 }

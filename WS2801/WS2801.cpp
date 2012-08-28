@@ -7,6 +7,7 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
+#include <math.h>
 #include <WS2801.h>
 #include <WProgram.h>
 
@@ -281,25 +282,82 @@ ATKColor::RGBA* WS2801::framebuffer(uint8_t layer) {
 }
 
 void WS2801::circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, uint8_t style, uint8_t layer) {
+	circle(x, y, r, ATKColor::HSVAtoRGBA(c), thickness, style, layer);
 }
 
-void WS2801::circle(int16_t x, int16_t y, int16_t r, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t layer) {
+void WS2801::circle(int16_t x1, int16_t y1, int16_t r, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t layer) {
+	int16_t f = 1 - r;
+	int16_t ddfx = 1;
+	int16_t ddfy = -2 * r;
+	int16_t x = 0;
+	int16_t y = r;
+
+	point(x1, y1 + r, c, style, layer);
+	point(x1, y1 - r, c, style, layer);
+	point(x1 + r, y1, c, style, layer);
+	point(x1 - r, y1, c, style, layer);
+
+	while (x < y) {
+		if (f >= 0) {
+			y--;
+			ddfy += 2;
+			f += ddfy;
+		}
+		x++;
+		ddfx += 2;
+		f += ddfx;
+
+		point(x1 + x, y1 + y, c, style, layer);
+		point(x1 - x, y1 + y, c, style, layer);
+		point(x1 + x, y1 - y, c, style, layer);
+		point(x1 - x, y1 - y, c, style, layer);
+		point(x1 + y, y1 + x, c, style, layer);
+		point(x1 - y, y1 + x, c, style, layer);
+		point(x1 + y, y1 - x, c, style, layer);
+		point(x1 - y, y1 - x, c, style, layer);
+	}
 }
 
 void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
+	line(x1, y1, x2, y2, ATKColor::HSVAtoRGBA(c), thickness, style, mode, layer);
 }
 
 void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
+	int16_t dx = x2 - x1;
+	dx = abs(dx);
+	int16_t dy = y2 - y1;
+	dy = abs(dy);
+	int16_t sx = (x1 < x2) ? 1 : -1;
+	int16_t sy = (y1 < y2) ? 1 : -1;
+	int16_t err = dx - dy;
+
+	point(x1, y1, c, style, layer);
+	while((x1 != x2) || (y1 != y2)) {
+		int16_t e2 = err * 2;
+		if (e2 > (-dy)) {
+			err -= dy;
+			x1 += sx;
+		}
+		if (e2 < (dx)) {
+			err += dx;
+			y1 += sy;
+		}
+		point(x1, y1, c, style, layer);
+	}
 }
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
-	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+//	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+	x %= m_frameWidth;
+	if (y >= 0 && y < m_frameHeight) {
 		m_frames[layer * m_frameSize + x * m_frameHeight + y] = ATKColor::HSVAtoRGBA(c);
 	}
 }
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
-	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+	//	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
+	x %= m_frameWidth;
+	if (y >= 0 && y < m_frameHeight) {
 		m_frames[layer * m_frameSize + x * m_frameHeight + y] = c;
 	}
 }

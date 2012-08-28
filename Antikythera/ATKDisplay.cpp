@@ -40,6 +40,19 @@ bool ATKDisplay::load(Stream *program) {
 		- operators that draw to the frame in order of back to front
 */
 
+bool ATKDisplay::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
+}
+
+bool ATKDisplay::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+	ATKIOperator::initializeConstant(operandIndex, constantSize);
+
+#ifdef ANTIKYTHERA_DEBUG
+	m_lastErrorString = "ATKDisplay::initializeConstant() - operandIndex out of range.";
+#endif
+	return false;
+}
+
 #ifdef ANTIKYTHERA_DEBUG
 bool ATKDisplay::evaluate(unsigned long now, Stream *debug) {
 #else
@@ -60,21 +73,4 @@ bool ATKDisplay::evaluate(unsigned long now) {
 	setEvaluatedFlag();
 
 	return result;
-}
-
-void *ATKDisplay::constantGeneric(uint8_t index) {
-	return NULL;
-}
-
-bool ATKDisplay::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
-	ATKIOperator::initializeConstant(operandIndex, constantSize);
-
-#ifdef ANTIKYTHERA_DEBUG
-	m_lastErrorString = "ATKDisplay::initializeConstant() - operandIndex out of range.";
-#endif
-	return false;
-}
-
-bool ATKDisplay::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
 }

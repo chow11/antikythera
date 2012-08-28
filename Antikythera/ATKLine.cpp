@@ -54,82 +54,8 @@ bool ATKLine::load(Stream *program) {
 	return true;
 }
 
-#ifdef ANTIKYTHERA_DEBUG
-bool ATKLine::evaluate(unsigned long now, Stream *debug) {
-#else
-bool ATKLine::evaluate(unsigned long now) {
-#endif
-#ifdef ANTIKYTHERA_DEBUG
-	debug->println("ATKLine::evaluate()");
-	bool result = ATKIOperator::evaluate(now, debug);
-#else
-	bool result = ATKIOperator::evaluate(now);
-#endif
-
-	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		int16_t x1 = OPERAND_ELEMENT(int16_t, 0, i);
-		o = operand(1);
-		int16_t y1 = OPERAND_ELEMENT(int16_t, 1, i);
-		o = operand(2);
-		int16_t x2 = OPERAND_ELEMENT(int16_t, 2, i);
-		o = operand(3);
-		int16_t y2 = OPERAND_ELEMENT(int16_t, 3, i);
-		o = operand(4);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 4, i);
-		o = operand(5);
-		int16_t thickness = OPERAND_ELEMENT(int16_t, 5, i);
-		o = operand(6);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 6, i);
-		o = operand(7);
-		uint8_t mode = OPERAND_ELEMENT(uint8_t, 7, i);
-		o = operand(8);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 8, i);
-		o = operand(9);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 9, i);
-
-		Antikythera::displays[display]->line(x1, y1, x2, y2, color, thickness, style, mode, layer);
-	}
-
-	setEvaluatedFlag();
-
-	return result;
-}
-
-void *ATKLine::constantGeneric(uint8_t index) {
-	switch (index) {
-	case 0:
-		return m_constX1;
-
-	case 1:
-		return m_constY1;
-
-	case 2:
-		return m_constX2;
-
-	case 3:
-		return m_constY2;
-
-	case 4:
-		return m_constColor;
-
-	case 5:
-		return m_constThickness;
-
-	case 6:
-		return m_constStyle;
-
-	case 7:
-		return m_constMode;
-
-	case 8:
-		return m_constDisplay;
-
-	case 9:
-		return m_constLayer;
-	}
-
-	return NULL;
+bool ATKLine::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
 }
 
 bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
@@ -186,6 +112,73 @@ bool ATKLine::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	return true;
 }
 
-bool ATKLine::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKLine::evaluate(unsigned long now, Stream *debug) {
+#else
+bool ATKLine::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	debug->println("ATKLine::evaluate()");
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(x1, OPERANDTYPE_INT16, int16_t, 0, i)
+		OPERAND_ELEMENT(y1, OPERANDTYPE_INT16, int16_t, 1, i)
+		OPERAND_ELEMENT(x2, OPERANDTYPE_INT16, int16_t, 2, i)
+		OPERAND_ELEMENT(y2, OPERANDTYPE_INT16, int16_t, 3, i)
+		OPERAND_ELEMENT(color, OPERANDTYPE_UINT32, ATKColor::HSVA, 4, i)
+		OPERAND_ELEMENT(thickness, OPERANDTYPE_INT16, int16_t, 5, i)
+		OPERAND_ELEMENT(style, OPERANDTYPE_UINT8, uint8_t, 6, i)
+		OPERAND_ELEMENT(mode, OPERANDTYPE_UINT8, uint8_t, 7, i)
+		OPERAND_ELEMENT(display, OPERANDTYPE_UINT8, uint8_t, 8, i)
+		OPERAND_ELEMENT(layer, OPERANDTYPE_UINT8, uint8_t, 9, i)
+
+		Antikythera::displays[display]->line(x1, y1, x2, y2, color, thickness, style, mode, layer);
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("ATKLine::evaluate(" + String(now) + ", " + String((int)i) + ": " + String(x1) + ", " + String(y1) + " - " + String(x2) + ", " + String(y2) + ", h" + String((int)color.h) + ", s" + String((int)color.s) + ", v" + String((int)color.v) + ")");
+#endif
+	}
+
+	setEvaluatedFlag();
+
+	return result;
+}
+
+void *ATKLine::constantGeneric(uint8_t index) {
+	switch (index) {
+	case 0:
+		return m_constX1;
+
+	case 1:
+		return m_constY1;
+
+	case 2:
+		return m_constX2;
+
+	case 3:
+		return m_constY2;
+
+	case 4:
+		return m_constColor;
+
+	case 5:
+		return m_constThickness;
+
+	case 6:
+		return m_constStyle;
+
+	case 7:
+		return m_constMode;
+
+	case 8:
+		return m_constDisplay;
+
+	case 9:
+		return m_constLayer;
+	}
+
+	return NULL;
 }

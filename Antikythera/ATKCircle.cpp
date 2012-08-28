@@ -50,72 +50,8 @@ bool ATKCircle::load(Stream *program) {
 	return true;
 }
 
-#ifdef ANTIKYTHERA_DEBUG
-bool ATKCircle::evaluate(unsigned long now, Stream *debug) {
-#else
-bool ATKCircle::evaluate(unsigned long now) {
-#endif
-#ifdef ANTIKYTHERA_DEBUG
-	debug->println("ATKCircle::evaluate()");
-	bool result = ATKIOperator::evaluate(now, debug);
-#else
-	bool result = ATKIOperator::evaluate(now);
-#endif
-
-	for (uint8_t i; i < numOperations(); i++) {
-		ATK_OPERAND o = operand(0);
-		int16_t x = OPERAND_ELEMENT(int8_t, 0, i);
-		o = operand(1);
-		int16_t y = OPERAND_ELEMENT(int8_t, 1, i);
-		o = operand(2);
-		int16_t radius = OPERAND_ELEMENT(int8_t, 2, i);
-		o = operand(3);
-		ATKColor::HSVA color = OPERAND_ELEMENT(ATKColor::HSVA, 3, i);
-		o = operand(4);
-		int16_t thickness = OPERAND_ELEMENT(int8_t, 4, i);
-		o = operand(5);
-		uint8_t style = OPERAND_ELEMENT(uint8_t, 5, i);
-		o = operand(6);
-		uint8_t display = OPERAND_ELEMENT(uint8_t, 6, i);
-		o = operand(7);
-		uint8_t layer = OPERAND_ELEMENT(uint8_t, 7, i);
-
-		Antikythera::displays[display]->circle(x, y, radius, color, thickness, style, layer);
-	}
-
-	setEvaluatedFlag();
-
-	return true;
-}
-
-void *ATKCircle::constantGeneric(uint8_t index) {
-	switch (index) {
-	case 0:
-		return m_constX;
-
-	case 1:
-		return m_constY;
-
-	case 2:
-		return m_constRadius;
-
-	case 3:
-		return m_constColor;
-
-	case 4:
-		return m_constThickness;
-
-	case 5:
-		return m_constStyle;
-
-	case 6:
-		return m_constDisplay;
-
-	case 7:
-		return m_constLayer;
-	}
-
-	return NULL;
+bool ATKCircle::loadProperties(Stream *program) {
+	return ATKIOperator::loadProperties(program);
 }
 
 bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
@@ -164,6 +100,62 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	return true;
 }
 
-bool ATKCircle::loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program) {
-	return ATKIOperator::loadConstant(operandIndex, flags, program);
+#ifdef ANTIKYTHERA_DEBUG
+bool ATKCircle::evaluate(unsigned long now, Stream *debug) {
+#else
+bool ATKCircle::evaluate(unsigned long now) {
+#endif
+#ifdef ANTIKYTHERA_DEBUG
+	debug->println("ATKCircle::evaluate()");
+	bool result = ATKIOperator::evaluate(now, debug);
+#else
+	bool result = ATKIOperator::evaluate(now);
+#endif
+
+	for (uint8_t i; i < numOperations(); i++) {
+		OPERAND_ELEMENT(x, OPERANDTYPE_INT16, int16_t, 0, i)
+		OPERAND_ELEMENT(y, OPERANDTYPE_INT16, int16_t, 1, i)
+		OPERAND_ELEMENT(radius, OPERANDTYPE_INT16, int16_t, 2, i)
+		OPERAND_ELEMENT(color, OPERANDTYPE_UINT32, ATKColor::HSVA, 3, i)
+		OPERAND_ELEMENT(thickness, OPERANDTYPE_INT16, int16_t, 4, i)
+		OPERAND_ELEMENT(style, OPERANDTYPE_UINT8, uint8_t, 5, i)
+		OPERAND_ELEMENT(display, OPERANDTYPE_UINT8, uint8_t, 6, i)
+		OPERAND_ELEMENT(layer, OPERANDTYPE_UINT8, uint8_t, 7, i)
+
+		Antikythera::displays[display]->circle(x, y, radius, color, thickness, style, layer);
+	}
+
+	setEvaluatedFlag();
+
+	return true;
+}
+
+void *ATKCircle::constantGeneric(uint8_t index) {
+	switch (index) {
+	case 0:
+		return m_constX;
+
+	case 1:
+		return m_constY;
+
+	case 2:
+		return m_constRadius;
+
+	case 3:
+		return m_constColor;
+
+	case 4:
+		return m_constThickness;
+
+	case 5:
+		return m_constStyle;
+
+	case 6:
+		return m_constDisplay;
+
+	case 7:
+		return m_constLayer;
+	}
+
+	return NULL;
 }

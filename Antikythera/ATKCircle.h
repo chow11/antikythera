@@ -36,26 +36,36 @@ public:
 	ATKCircle();
 	~ATKCircle();
 
-#ifdef ANTIKYTHERA_DEBUG
 	virtual String name() { return "ATKCircle"; }
-#else
-	virtual String name() { return ""; }
-#endif
 
+	// loading
+public:
 	virtual bool load(Stream *program);
-#ifdef ANTIKYTHERA_DEBUG
+protected:
+	virtual bool loadProperties(Stream *program);
+	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+
+	// evaluation
+public:
+	#ifdef ANTIKYTHERA_DEBUG
 	virtual bool evaluate(unsigned long now, Stream *debug);
 #else
 	virtual bool evaluate(unsigned long now);
 #endif
+
+	// operands
+
+	// constants
+protected:
+	virtual void *constantGeneric(uint8_t index);
+
+	// operations
+
+	// results
+public:
 	virtual uint8_t numResults() { return 0; }
 	virtual uint8_t resultSize(uint8_t index) { return 0; }
-
-protected:
-	virtual void *resultGeneric(uint8_t index) { return NULL; }
-	virtual void *constantGeneric(uint8_t index);
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
-	virtual bool loadConstant(uint8_t operandIndex, uint8_t flags, Stream *program);
+	virtual void result(uint8_t index, uint8_t element, void *value, uint8_t valueType) { }
 
 private:
 	int16_t *m_constX;
