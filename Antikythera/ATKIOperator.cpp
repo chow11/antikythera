@@ -42,9 +42,8 @@ bool ATKIOperator::load(Stream *program) {
 	bool valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == '(') {
 			valid = true;
 			break;
@@ -86,9 +85,8 @@ bool ATKIOperator::load(Stream *program) {
 		valid = false;
 		while(Antikythera::readProgram(program)) {
 			char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+			program->print(c);
+
 			if (c == '(') {
 				valid = true;
 				break;
@@ -125,9 +123,8 @@ bool ATKIOperator::load(Stream *program) {
 			valid = false;
 			while(Antikythera::readProgram(program)) {
 				char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-					program->println(c);
-#endif
+				program->print(c);
+
 				if (c == ')') {
 					valid = true;
 					break;
@@ -151,9 +148,8 @@ bool ATKIOperator::load(Stream *program) {
 	valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == ')') {
 			valid = true;
 			break;
@@ -188,9 +184,8 @@ bool ATKIOperator::loadFlags(Stream *program, uint8_t *flags) {
 	bool valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == ',') {
 			valid = true;
 			break;
@@ -235,9 +230,8 @@ bool ATKIOperator::loadOperatorIndex(Stream *program, uint16_t *operatorIndex) {
 	bool valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == ',') {
 			valid = true;
 			break;
@@ -282,9 +276,8 @@ bool ATKIOperator::loadResultIndex(Stream *program, uint8_t *resultIndex) {
 	bool valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == ')') {
 			valid = true;
 			break;
@@ -330,9 +323,8 @@ bool ATKIOperator::loadConstant(Stream *program, uint8_t operandIndex, uint8_t f
 	bool valid = false;
 	while(Antikythera::readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == '(') {
 			valid = true;
 			break;
@@ -423,9 +415,8 @@ bool ATKIOperator::loadConstant(Stream *program, uint8_t operandIndex, uint8_t f
 		if ((operandType >= OPERANDTYPE_INT8) && (operandType <= OPERANDTYPE_INT32)) {
 			while(Antikythera::readProgram(program)) {
 				char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+				program->print(c);
+
 				if (c == ',') {
 					if (count == (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG
@@ -474,9 +465,8 @@ bool ATKIOperator::loadConstant(Stream *program, uint8_t operandIndex, uint8_t f
 		} else if ((operandType >= OPERANDTYPE_UINT8) && (operandType <= OPERANDTYPE_UINT32)) {
 			while(Antikythera::readProgram(program)) {
 				char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+				program->print(c);
+
 				if (c == ',') {
 					if (count == (constantSize(operandIndex) - 1)) {
 #ifdef ANTIKYTHERA_DEBUG

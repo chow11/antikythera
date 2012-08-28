@@ -117,6 +117,9 @@ bool ATKLine::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKLine::evaluate(unsigned long now) {
 #endif
+	if (isEvaluated()) {
+		return true;
+	}
 #ifdef ANTIKYTHERA_DEBUG
 	debug->println("ATKLine::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);

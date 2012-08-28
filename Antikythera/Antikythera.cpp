@@ -62,9 +62,8 @@ bool Antikythera::load(Stream *program) {
 	bool valid = false;
 	while(readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == '(') {
 			valid = true;
 			break;
@@ -109,9 +108,8 @@ bool Antikythera::load(Stream *program) {
 		valid = false;
 		while(readProgram(program)) {
 			char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+			program->print(c);
+
 			if (c == '(') {
 				valid = true;
 				break;
@@ -163,9 +161,8 @@ bool Antikythera::load(Stream *program) {
 		valid = false;
 		while(readProgram(program)) {
 			char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-				program->println(c);
-#endif
+			program->print(c);
+
 			if (c == ')') {
 				valid = true;
 				break;
@@ -188,9 +185,8 @@ bool Antikythera::load(Stream *program) {
 	valid = false;
 	while(readProgram(program)) {
 		char c = (char)program->read();
-#ifdef ANTIKYTHERA_DEBUG
-			program->println(c);
-#endif
+		program->print(c);
+
 		if (c == ')') {
 			valid = true;
 			break;

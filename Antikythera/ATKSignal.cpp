@@ -87,6 +87,9 @@ bool ATKSignal::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKSignal::evaluate(unsigned long now) {
 #endif
+	if (isEvaluated()) {
+		return true;
+	}
 	delete[] m_result;
 #ifdef ANTIKYTHERA_DEBUG
 	bool result = ATKIOperator::evaluate(now, debug);

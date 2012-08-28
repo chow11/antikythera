@@ -24,6 +24,7 @@
  * 		- operation
  * 		- a value
  * 		- b value
+ * 		- c value
  * Results:
  *		- evaluation of operation
 */
@@ -86,6 +87,7 @@ private:
 	uint8_t *m_constOperation;
 	T *m_constA;
 	T *m_constB;
+	T *m_constC;
 };
 
 

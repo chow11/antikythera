@@ -63,7 +63,7 @@ protected:
 
 	// evaluation
 public:
-	#ifdef ANTIKYTHERA_DEBUG
+#ifdef ANTIKYTHERA_DEBUG
 	virtual bool evaluate(unsigned long now, Stream *debug);
 #else
 	virtual bool evaluate(unsigned long now);

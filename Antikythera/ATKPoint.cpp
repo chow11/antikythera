@@ -92,6 +92,9 @@ bool ATKPoint::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKPoint::evaluate(unsigned long now) {
 #endif
+	if (isEvaluated()) {
+		return true;
+	}
 #ifdef ANTIKYTHERA_DEBUG
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
