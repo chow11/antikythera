@@ -75,8 +75,8 @@ public:
 	virtual void result(uint8_t index, uint8_t element, void *value, uint8_t valueType);
 
 private:
-	double sin(double x);
-	int16_t f_cardiac(double phase);
+	float sin(float x);
+	int16_t f_cardiac(float phase);
 
 	int16_t *m_result;
 	uint8_t m_resultSize;

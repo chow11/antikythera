@@ -106,7 +106,7 @@ bool ATKSignal::evaluate(unsigned long now) {
 		OPERAND_ELEMENT(offset, OPERANDTYPE_UINT32, uint32_t, 3, i)
 
 		// Because the millisecond counter overflows on an even data boundary, differential millisecond calculations will produce correct results across the millisecond counter overflow.
-		double phase = ((now - (unsigned long)offset) % wavelength) / (double)wavelength;
+		float phase = ((now - (unsigned long)offset) % wavelength) / (float)wavelength;
 
 		switch (waveform) {
 		case SIGNAL_NONE:
@@ -218,9 +218,9 @@ void ATKSignal::result(uint8_t index, uint8_t element, void *value, uint8_t valu
 	}
 }
 
-double ATKSignal::sin(double x) {
+float ATKSignal::sin(float x) {
 	x -= M_PI;
-	double value = x;
+	float value = x;
 	value -= (x*x*x)/6.0;
 	value += (x*x*x*x*x)/120.0;
 	value *= -1.0;
@@ -239,6 +239,6 @@ double ATKSignal::sin(double x) {
  * https://docs.google.com/viewer?a=v&q=cache:kKekMtz9_XYJ:ac.inf.elte.hu/Vol_037_2012/247_37.pdf+&hl=en&gl=us&pid=bl&srcid=ADGEEShfZQSNYQQc2SqZdxGJgMVVvCyxWScsfVf1JLBlWh0sEAwnUIv2d8FxMfdQqnj0E0m2HW3D6Feq54oKNaa2Cv2qrzGxHxGrQAetFKHlPIVjU9kydLoW5aQpjZxPzRrWcpvaDckF&sig=AHIEtbSkyG_uJ6drSRJNzAsHXQGcqKKnPw
  */
 
-int16_t ATKSignal::f_cardiac(double phase) {
+int16_t ATKSignal::f_cardiac(float phase) {
 	return 0;
 }
