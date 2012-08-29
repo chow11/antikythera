@@ -36,6 +36,8 @@ public:
 
 		HSVA() { v = 0; s = 0; h = 0; a = 0; }
 		HSVA(uint8_t ch, uint8_t cs, uint8_t cv, uint8_t ca) { h = ch; s = cs; v = cv; a = ca; }
+
+		HSVA brightness(float b) { return HSVA(h, s, (uint8_t)(v * b), a); }
 	};
 
 	static ATKColor::RGBA HSVAtoRGBA(ATKColor::HSVA hsva);

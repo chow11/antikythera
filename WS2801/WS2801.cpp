@@ -320,9 +320,85 @@ void WS2801::circle(int16_t x1, int16_t y1, int16_t r, ATKColor::RGBA c, int16_t
 
 void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
 	line(x1, y1, x2, y2, ATKColor::HSVAtoRGBA(c), thickness, style, mode, layer);
+	/*
+	 * Xiaolin Wu's Algorithm: http://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
+	 * 						   http://www.codeproject.com/Articles/13360/Antialiasing-Wu-Algorithm#dwuln
+	if (y1 > y2) {
+		int16_t t = y1; y1 = y2; y2 = t;
+		t = x1; x1 = x2; x2 = t;
+	}
+	point(x1, y1, c, style, layer);
+
+	int16_t dx = x2 - x1;
+	int16_t sx = 1;
+	if (dx < 0) {
+		sx = -1;
+		dx = -dx;
+	}
+	int16_t dy = y2 - y1;
+	if (dy == 0) {
+		// Horizontal line
+		while (dx-- != 0) {
+			x1 += sx;
+			point(x1, y1, c, style, layer);
+		}
+		return;
+	}
+	if (dx == 0) {
+		// Vertical line
+		do {
+	         y1++;
+	         point(x1, y1, c, style, layer);
+		} while (--dy != 0);
+		return;
+	}
+	if (dx == dy) {
+		// Diagonal line
+		do {
+			x1 += sx;
+			y1++;
+			point(x1, y1, c, style, layer);
+		} while (--dy != 0);
+		return;
+	}
+	uint16_t err = 0;
+	if (dy > dx) {
+		uint16_t errx = ((unsigned long) dx << 16) / (unsigned long) dy;
+		while (--dy) {
+			uint16_t errt = err;
+			err += errx;
+			if (err <= errt) {
+				x1 += sx;
+			}
+			y1++;
+			uint16_t w = err >> 8;
+			point(x1, y1, c.brightness(w / 256.0), style, layer);
+			point(x1 + sx, y1, c.brightness((w ^ 255) / 256.0), style, layer);
+		}
+		point(x2, y2, c, style, layer);
+		return;
+	}
+	uint16_t errx = ((unsigned long) dy << 16) / (unsigned long) dx;
+	while (--dx) {
+		uint16_t errt = err;
+		err += errx;
+		if (err <= errt) {
+			y1++;
+		}
+		x1 += sx;
+		uint16_t w = err >> 8;
+		point(x1, y1, c.brightness(w / 256.0), style, layer);
+		point(x1, y1 + 1, c.brightness((w ^ 255) / 256.0), style, layer);
+	}
+	point(x2, y2, c, style, layer);
+*/
 }
 
+/*
+ * Bresenham's Algorithm: http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+ */
 void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer) {
+//	ATKColor::RGBA *p = &m_frames[layer * m_frameSize + x1 * m_frameHeight + y1];
 	int16_t dx = x2 - x1;
 	dx = abs(dx);
 	int16_t dy = y2 - y1;
@@ -332,22 +408,25 @@ void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA
 	int16_t err = dx - dy;
 
 	point(x1, y1, c, style, layer);
+//	*p = c;
 	while((x1 != x2) || (y1 != y2)) {
 		int16_t e2 = err * 2;
 		if (e2 > (-dy)) {
 			err -= dy;
 			x1 += sx;
+//			p += sx * m_frameHeight;
 		}
 		if (e2 < (dx)) {
 			err += dx;
 			y1 += sy;
+//			p += sy;
 		}
 		point(x1, y1, c, style, layer);
+//		*p = c;
 	}
 }
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer) {
-//	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
 	x %= m_frameWidth;
 	if (x < 0) {
 		x = x + m_frameWidth - 1;
@@ -358,7 +437,6 @@ void WS2801::point(int16_t x, int16_t y, ATKColor::HSVA c, uint8_t style, uint8_
 }
 
 void WS2801::point(int16_t x, int16_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer) {
-	//	if (x >= 0 && x < m_frameWidth && y >= 0 && y < m_frameHeight) {
 	x %= m_frameWidth;
 	if (x < 0) {
 		x = x + m_frameWidth - 1;
