@@ -22,7 +22,6 @@
 		- x location
 		- y location
 		- color (HSVA)
-		- thickness
 		- style
 		- display
 		- layer (0 = background)
