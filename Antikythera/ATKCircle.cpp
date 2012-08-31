@@ -12,6 +12,8 @@
 
 
 ATKCircle::ATKCircle() {
+	m_name = "Circle";
+
 	m_constX = NULL;
 	m_constY = NULL;
 	m_constRadius = NULL;
@@ -39,9 +41,9 @@ bool ATKCircle::load(Stream *program) {
 		return false;
 	}
 
-	if (numOperands() != 8) {
+	if (m_numOperands != 8) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKCircle::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 8.";
+		m_lastErrorString = "ATKCircle::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 8.";
 #endif
 		program->flush();
 		return false;
@@ -54,7 +56,7 @@ bool ATKCircle::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
-bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+bool ATKCircle::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 	switch (operandIndex) {
@@ -79,15 +81,15 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 		break;
 
 	case 5:
-		m_constStyle = new uint8_t[constantSize];
+		m_constStyle = new int16_t[constantSize];
 		break;
 
 	case 6:
-		m_constDisplay = new uint8_t[constantSize];
+		m_constDisplay = new int16_t[constantSize];
 		break;
 
 	case 7:
-		m_constLayer = new uint8_t[constantSize];
+		m_constLayer = new int16_t[constantSize];
 		break;
 
 	default:
@@ -100,12 +102,48 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	return true;
 }
 
+void ATKCircle::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
+	switch (operandIndex) {
+	case 0:
+		m_constX[element] = *((int16_t *)value);
+		break;
+
+	case 1:
+		m_constY[element] = *((int16_t *)value);
+		break;
+
+	case 2:
+		m_constRadius[element] = *((int16_t *)value);
+		break;
+
+	case 3:
+		m_constColor[element] = *((ATKColor::HSVA *)value);
+		break;
+
+	case 4:
+		m_constThickness[element] = *((int16_t *)value);
+		break;
+
+	case 5:
+		m_constStyle[element] = *((int16_t *)value);
+		break;
+
+	case 6:
+		m_constDisplay[element] = *((int16_t *)value);
+		break;
+
+	case 7:
+		m_constLayer[element] = *((int16_t *)value);
+		break;
+	}
+}
+
 #ifdef ANTIKYTHERA_DEBUG
 bool ATKCircle::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKCircle::evaluate(unsigned long now) {
 #endif
-	if (isEvaluated()) {
+	if (m_isEvaluated) {
 		return true;
 	}
 #ifdef ANTIKYTHERA_DEBUG
@@ -115,50 +153,31 @@ bool ATKCircle::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 #endif
 
-	for (uint8_t i; i < numOperations(); i++) {
-		OPERAND_ELEMENT(x, OPERANDTYPE_INT16, int16_t, 0, i)
-		OPERAND_ELEMENT(y, OPERANDTYPE_INT16, int16_t, 1, i)
-		OPERAND_ELEMENT(radius, OPERANDTYPE_INT16, int16_t, 2, i)
-		OPERAND_ELEMENT(color, OPERANDTYPE_UINT32, ATKColor::HSVA, 3, i)
-		OPERAND_ELEMENT(thickness, OPERANDTYPE_INT16, int16_t, 4, i)
-		OPERAND_ELEMENT(style, OPERANDTYPE_UINT8, uint8_t, 5, i)
-		OPERAND_ELEMENT(display, OPERANDTYPE_UINT8, uint8_t, 6, i)
-		OPERAND_ELEMENT(layer, OPERANDTYPE_UINT8, uint8_t, 7, i)
+	for (int16_t i; i < m_numOperations; i++) {
+		int16_t x;
+		OPERAND_ELEMENT(x, m_constX, 0, i)
+		int16_t y;
+		OPERAND_ELEMENT(y, m_constY, 1, i)
+		int16_t radius;
+		OPERAND_ELEMENT(radius, m_constRadius, 2, i)
+		ATKColor::HSVA color;
+		OPERAND_ELEMENT(color, m_constColor, 3, i)
+		int16_t thickness;
+		OPERAND_ELEMENT(thickness, m_constThickness, 4, i)
+		int16_t style;
+		OPERAND_ELEMENT(style, m_constStyle, 5, i)
+		int16_t display;
+		OPERAND_ELEMENT(display, m_constDisplay, 6, i)
+		int16_t layer;
+		OPERAND_ELEMENT(layer, m_constLayer, 7, i)
 
 		Antikythera::displays[display]->circle(x, y, radius, color, thickness, style, layer);
 	}
 
-	setEvaluatedFlag();
+	m_isEvaluated = true;
 
 	return true;
 }
 
-void *ATKCircle::constantGeneric(uint8_t index) {
-	switch (index) {
-	case 0:
-		return m_constX;
-
-	case 1:
-		return m_constY;
-
-	case 2:
-		return m_constRadius;
-
-	case 3:
-		return m_constColor;
-
-	case 4:
-		return m_constThickness;
-
-	case 5:
-		return m_constStyle;
-
-	case 6:
-		return m_constDisplay;
-
-	case 7:
-		return m_constLayer;
-	}
-
-	return NULL;
+void ATKCircle::getResult(uint8_t resultIndex, uint16_t element, void *value) {
 }

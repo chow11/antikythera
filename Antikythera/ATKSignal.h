@@ -19,9 +19,11 @@
 /*
 	Operands:
 		- waveform (cardiac, exp rise, exp fall, noise, pulse, ramp, sine, square, triangle)
-		- wavelength (milliseconds)
+		- wavelength high bytes (milliseconds)
+		- wavelength low bytes (milliseconds)
 		- amplitude
-		- offset (phase shift in milliseconds)
+		- offset high bytes (phase shift in milliseconds)
+		- offset low bytes (phase shift in milliseconds)
 	Results:
 		- evaluation of waveform at the current time
 */
@@ -43,16 +45,13 @@ public:
 	ATKSignal();
 	~ATKSignal();
 
-	virtual String name() { return "ATKSignal"; }
-
-	// loading
 public:
 	virtual bool load(Stream *program);
 protected:
 	virtual bool loadProperties(Stream *program);
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool initializeConstant(uint8_t operandIndex, uint16_t constantSize);
+	virtual void setConstant(uint8_t operandIndex, uint16_t element, void *value);
 
-	// evaluation
 public:
 	#ifdef ANTIKYTHERA_DEBUG
 	virtual bool evaluate(unsigned long now, Stream *debug);
@@ -60,31 +59,20 @@ public:
 	virtual bool evaluate(unsigned long now);
 #endif
 
-	// operands
-
-	// constants
-protected:
-	virtual void *constantGeneric(uint8_t index);
-
-	// operations
-
-	// results
-public:
-	virtual uint8_t numResults() { return 1; }
-	virtual uint8_t resultSize(uint8_t index) { return m_resultSize; }
-	virtual void result(uint8_t index, uint8_t element, void *value, uint8_t valueType);
+	virtual void getResult(uint8_t resultIndex, uint16_t element, void *value);
 
 private:
 	float sin(float x);
 	int16_t f_cardiac(float phase);
 
 	int16_t *m_result;
-	uint8_t m_resultSize;
 
-	uint8_t *m_constWaveform;
-	uint32_t *m_constWavelength;
+	int16_t *m_constWaveform;
+	int16_t *m_constWavelengthH;
+	int16_t *m_constWavelengthL;
 	int16_t *m_constAmplitude;
-	uint32_t *m_constOffset;
+	int16_t *m_constOffsetH;
+	int16_t *m_constOffsetL;
 };
 
 

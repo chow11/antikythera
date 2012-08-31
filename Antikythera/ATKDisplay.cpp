@@ -12,11 +12,10 @@
 
 
 ATKDisplay::ATKDisplay() {
-
+	m_name = "Display";
 }
 
 ATKDisplay::~ATKDisplay() {
-
 }
 
 // display type,display width,display height,frame width,frame height,num layers)
@@ -25,9 +24,9 @@ bool ATKDisplay::load(Stream *program) {
 		return false;
 	}
 
-	if (numOperands() != 0) {
+	if (m_numOperands != 0) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKDisplay::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 0.";
+		m_lastErrorString = "Display::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 0.";
 #endif
 		program->flush();
 		return false;
@@ -44,13 +43,16 @@ bool ATKDisplay::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
-bool ATKDisplay::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+bool ATKDisplay::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 #ifdef ANTIKYTHERA_DEBUG
-	m_lastErrorString = "ATKDisplay::initializeConstant() - operandIndex out of range.";
+	m_lastErrorString = "Display::initializeConstant() - operandIndex out of range.";
 #endif
 	return false;
+}
+
+void ATKDisplay::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
 }
 
 #ifdef ANTIKYTHERA_DEBUG
@@ -58,22 +60,25 @@ bool ATKDisplay::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKDisplay::evaluate(unsigned long now) {
 #endif
-	if (isEvaluated()) {
+	if (m_isEvaluated) {
 		return true;
 	}
 #ifdef ANTIKYTHERA_DEBUG
-	debug->println("ATKDisplay::evaluate()");
+	debug->println("Display::evaluate()");
 	bool result = ATKIOperator::evaluate(now, debug);
 #else
 	bool result = ATKIOperator::evaluate(now);
 #endif
 
-//	for (uint8_t i; i < numOperations(); i++) {
+//	for (int16_t i; i < m_numOperations; i++) {
 		// assume display number input is set to 0 and Display start X,Y matches frame start
 		Antikythera::displays[0]->render(0, 0);
 //	}
 
-	setEvaluatedFlag();
+	m_isEvaluated = true;
 
 	return result;
+}
+
+void ATKDisplay::getResult(uint8_t resultIndex, uint16_t element, void *value) {
 }

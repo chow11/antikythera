@@ -36,10 +36,10 @@ public:
 	static ATKIOperator **operators;
 
 	// installed hardware components added during setup()
-	static uint8_t numDisplays;
+	static uint16_t numDisplays;
 	static ATKIDisplay **displays;
 
-	static uint8_t numSensors;
+	static uint16_t numSensors;
 	static ATKISensor **sensors;
 
 #ifdef ANTIKYTHERA_DEBUG

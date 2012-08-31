@@ -12,6 +12,7 @@
 
 
 ATKRoot::ATKRoot() {
+	m_name = "Root";
 	m_constLeaf = NULL;
 }
 
@@ -24,9 +25,9 @@ bool ATKRoot::load(Stream *program) {
 		return false;
 	}
 
-	if (numOperands() != 1) {
+	if (m_numOperands != 1) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "ATKRoot::load() - incorrect number(" + String(numOperands()) + ") of operands specified, expected 4.";
+		m_lastErrorString = "ATKRoot::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 4.";
 #endif
 		program->flush();
 		return false;
@@ -39,12 +40,12 @@ bool ATKRoot::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
-bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
+bool ATKRoot::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 	switch (operandIndex) {
 	case 0:
-		m_constLeaf = new uint8_t[constantSize];
+		m_constLeaf = new int16_t[constantSize];
 		break;
 
 	default:
@@ -57,12 +58,20 @@ bool ATKRoot::initializeConstant(uint8_t operandIndex, uint8_t constantSize) {
 	return true;
 }
 
+void ATKRoot::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
+	switch (operandIndex) {
+	case 0:
+		m_constLeaf[element] = *((int16_t *)value);
+		break;
+	}
+}
+
 #ifdef ANTIKYTHERA_DEBUG
 bool ATKRoot::evaluate(unsigned long now, Stream *debug) {
 #else
 bool ATKRoot::evaluate(unsigned long now) {
 #endif
-	if (isEvaluated()) {
+	if (m_isEvaluated) {
 		return true;
 	}
 #ifdef ANTIKYTHERA_DEBUG
@@ -71,11 +80,12 @@ bool ATKRoot::evaluate(unsigned long now) {
 	bool result = ATKIOperator::evaluate(now);
 #endif
 
-	for (uint8_t i; i < numOperations(); i++) {
-		OPERAND_ELEMENT(leaf, OPERANDTYPE_UINT8, uint8_t, 0, i)
+	for (int16_t i; i < m_numOperations; i++) {
+		int16_t leaf;
+		OPERAND_ELEMENT(leaf, m_constLeaf, 0, i)
 
 #ifdef ANTIKYTHERA_DEBUG
-		debug->println("ATKRoot::evaluate(" + String(now) + ", " + String((int)i) + ": " + String((int)leaf) + ")");
+		debug->println("ATKRoot::evaluate(" + String(now) + ", " + String(i) + ": " + String(leaf) + ")");
 #endif
 #ifdef ANTIKYTHERA_DEBUG
 		result &= Antikythera::operators[leaf]->evaluate(now, debug);
@@ -84,16 +94,10 @@ bool ATKRoot::evaluate(unsigned long now) {
 #endif
 	}
 
-	setEvaluatedFlag();
+	m_isEvaluated = true;
 
 	return result;
 };
 
-void *ATKRoot::constantGeneric(uint8_t index) {
-	switch (index) {
-	case 0:
-		return m_constLeaf;
-	}
-
-	return NULL;
+void ATKRoot::getResult(uint8_t resultIndex, uint16_t element, void *value) {
 }

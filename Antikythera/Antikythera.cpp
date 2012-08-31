@@ -16,9 +16,9 @@
 
 uint16_t Antikythera::numOperators = 0;
 ATKIOperator **Antikythera::operators = NULL;
-uint8_t Antikythera::numDisplays = 0;
+uint16_t Antikythera::numDisplays = 0;
 ATKIDisplay **Antikythera::displays = NULL;
-uint8_t Antikythera::numSensors = 0;
+uint16_t Antikythera::numSensors = 0;
 ATKISensor **Antikythera::sensors = NULL;
 
 #ifdef ANTIKYTHERA_DEBUG
@@ -45,7 +45,7 @@ bool Antikythera::evaluate(unsigned long now) {
 	return result;
 };
 void Antikythera::unload() {
-	for (uint8_t count = 0; count < numOperators; count++) {
+	for (uint16_t count = 0; count < numOperators; count++) {
 		delete operators[count];
 	}
 	delete[] operators;
@@ -148,7 +148,7 @@ bool Antikythera::load(Stream *program) {
 			return false;
 		}
 #ifdef ANTIKYTHERA_DEBUG
-		program->println("Created operator: " + operators[count]->name());
+		program->println("Created operator: " + operators[count]->m_name);
 #endif
 		if (!operators[count]->load(program)) {
 #ifdef ANTIKYTHERA_DEBUG
@@ -227,7 +227,7 @@ bool Antikythera::readProgram(Stream *program) {
 }
 
 void Antikythera::resetProcessedFlags() {
-	for (uint8_t count = 0; count < numOperators; count++) {
-		operators[count]->resetEvaluatedFlag();
+	for (uint16_t count = 0; count < numOperators; count++) {
+		operators[count]->m_isEvaluated = false;
 	}
 };

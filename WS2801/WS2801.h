@@ -34,23 +34,23 @@ public:
 	WS2801(p32_spi *pspi, uint8_t pinSS);
 	virtual ~WS2801();
 
-	virtual void initialize(uint16_t displayWidth, uint16_t displayHeight, uint16_t frameWidth, uint16_t frameHeight, uint8_t numLayers);
+	virtual void initialize(int16_t displayWidth, int16_t displayHeight, int16_t frameWidth, int16_t frameHeight, int16_t numLayers);
 
-	virtual uint16_t displayWidth() { return m_displayWidth; }
-	virtual uint16_t displayHeight() { return m_displayHeight; }
-	virtual uint16_t frameWidth() { return m_frameWidth; }
-	virtual uint16_t frameHeight() { return m_frameHeight; }
-	virtual uint8_t numLayers() { return m_numLayers; }
+	virtual int16_t displayWidth() { return m_displayWidth; }
+	virtual int16_t displayHeight() { return m_displayHeight; }
+	virtual int16_t frameWidth() { return m_frameWidth; }
+	virtual int16_t frameHeight() { return m_frameHeight; }
+	virtual int16_t numLayers() { return m_numLayers; }
 
-	virtual void render(uint16_t frameX, uint16_t frameY);
-	virtual ATKColor::RGBA* framebuffer(uint8_t layer);
+	virtual void render(int16_t frameX, int16_t frameY);
+	virtual ATKColor::RGBA* framebuffer(int16_t layer);
 
-	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, uint8_t style, uint8_t layer);
-	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t layer);
-	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, uint8_t style, uint8_t mode, uint8_t layer);
-	virtual void point(int16_t x, int16_t y, ATKColor::HSVA c, uint8_t style, uint8_t layer);
-	virtual void point(int16_t x, int16_t y, ATKColor::RGBA c, uint8_t style, uint8_t layer);
+	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void point(int16_t x, int16_t y, ATKColor::HSVA c, int16_t style, int16_t layer);
+	virtual void point(int16_t x, int16_t y, ATKColor::RGBA c, int16_t style, int16_t layer);
 
 	void begin();
 	void end();
@@ -62,15 +62,15 @@ protected:
 	p32_spi *m_pspi;
 	uint8_t m_pinSS;
 	
-	uint16_t m_displayWidth;
-	uint16_t m_displayHeight;
-	uint16_t m_frameWidth;
-	uint16_t m_frameHeight;
-	uint8_t m_numLayers;
+	int16_t m_displayWidth;
+	int16_t m_displayHeight;
+	int16_t m_frameWidth;
+	int16_t m_frameHeight;
+	int16_t m_numLayers;
 	ATKColor::RGBA *m_frames;
 
 private:
-	uint16_t m_frameSize;
+	int16_t m_frameSize;
 };
 
 

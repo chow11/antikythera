@@ -34,16 +34,13 @@ public:
 	ATKPoint();
 	~ATKPoint();
 
-	virtual String name() { return "ATKPoint"; }
-
-	// loading
 public:
 	virtual bool load(Stream *program);
 protected:
 	virtual bool loadProperties(Stream *program);
-	virtual bool initializeConstant(uint8_t operandIndex, uint8_t constantSize);
+	virtual bool initializeConstant(uint8_t operandIndex, uint16_t constantSize);
+	virtual void setConstant(uint8_t operandIndex, uint16_t element, void *value);
 
-	// evaluation
 public:
 	#ifdef ANTIKYTHERA_DEBUG
 	virtual bool evaluate(unsigned long now, Stream *debug);
@@ -51,27 +48,15 @@ public:
 	virtual bool evaluate(unsigned long now);
 #endif
 
-	// operands
-
-	// constants
-protected:
-	virtual void *constantGeneric(uint8_t index);
-
-	// operations
-
-	// results
-public:
-	virtual uint8_t numResults() { return 0; }
-	virtual uint8_t resultSize(uint8_t index) { return 0; }
-	virtual void result(uint8_t index, uint8_t element, void *value, uint8_t valueType) { }
+	virtual void getResult(uint8_t resultIndex, uint16_t element, void *value);
 
 private:
 	int16_t *m_constX;
 	int16_t *m_constY;
 	ATKColor::HSVA *m_constColor;
-	uint8_t *m_constStyle;
-	uint8_t *m_constDisplay;
-	uint8_t *m_constLayer;
+	int16_t *m_constStyle;
+	int16_t *m_constDisplay;
+	int16_t *m_constLayer;
 };
 
 
