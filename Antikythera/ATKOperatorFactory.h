@@ -22,6 +22,7 @@
 #define ATKOPERATOR_CIRCLE		4
 #define ATKOPERATOR_SIGNAL		5
 #define ATKOPERATOR_IMATH		6
+#define ATKOPERATOR_COLOR		7
 
 
 class ATKOperatorFactory {

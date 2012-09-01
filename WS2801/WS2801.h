@@ -15,7 +15,7 @@
 #include <p32_defs.h>
 #include <ATKIncludes.h>
 #include <ATKIDisplay.h>
-#include <ATKColor.h>
+#include <ATKIColor.h>
 
 
 #define	DSPI_MODE0	((0 << _SPICON_CKP)|(1 << _SPICON_CKE))		// CKP = 0 CKE = 1
@@ -43,14 +43,14 @@ public:
 	virtual int16_t numLayers() { return m_numLayers; }
 
 	virtual void render(int16_t frameX, int16_t frameY);
-	virtual ATKColor::RGBA* framebuffer(int16_t layer);
+	virtual ATKIColor::RGBA* framebuffer(int16_t layer);
 
-	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
-	virtual void circle(int16_t x, int16_t y, int16_t r, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
-	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
-	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
-	virtual void point(int16_t x, int16_t y, ATKColor::HSVA c, int16_t style, int16_t layer);
-	virtual void point(int16_t x, int16_t y, ATKColor::RGBA c, int16_t style, int16_t layer);
+	virtual void circle(int16_t x, int16_t y, int16_t r, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void circle(int16_t x, int16_t y, int16_t r, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer);
+	virtual void point(int16_t x, int16_t y, ATKIColor::HSVA c, int16_t style, int16_t layer);
+	virtual void point(int16_t x, int16_t y, ATKIColor::RGBA c, int16_t style, int16_t layer);
 
 	void begin();
 	void end();
@@ -67,7 +67,7 @@ protected:
 	int16_t m_frameWidth;
 	int16_t m_frameHeight;
 	int16_t m_numLayers;
-	ATKColor::RGBA *m_frames;
+	ATKIColor::RGBA *m_frames;
 
 private:
 	int16_t m_frameSize;

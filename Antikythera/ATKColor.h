@@ -1,49 +1,61 @@
 /*
  * ATKColor.h
  *
- *  Created on: Jul 20, 2011
- *      Author: chow
+ *  Created on: Apr 13, 2012
+ *      Author: Brian Chojnowski
  *
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
- 
+
 #ifndef ATK_COLOR_H_
 #define ATK_COLOR_H_
 
 
+#include <Stream.h>
 #include <ATKIncludes.h>
+#include <ATKIColor.h>
+#include <ATKIOperator.h>
 
 
-class ATKColor {
+/*
+	Operands:
+		- hue
+		- saturation
+		- value
+	Results:
+		- ATKColor struct
+*/
+
+class ATKColor : public ATKIOperator {
 public:
-	// aarrggbb
-	struct RGBA {
-		uint8_t b;
-		uint8_t g;
-		uint8_t r;
-		uint8_t a;
+	ATKColor();
+	~ATKColor();
 
-		RGBA() { b = 0; g = 0; r = 0; a = 0; }
-		RGBA(uint8_t cr, uint8_t cg, uint8_t cb, uint8_t ca) { r = cr; g = cg; b = cb; a = ca; }
-	};
+public:
+	virtual bool load(Stream *program);
+protected:
+	virtual bool loadProperties(Stream *program);
+	virtual bool initializeConstant(uint8_t operandIndex, uint16_t constantSize);
+	virtual void setConstant(uint8_t operandIndex, uint16_t element, void *value);
 
-	// aahhssvv
-	struct HSVA {
-		uint8_t v;
-		uint8_t s;
-		uint8_t h;
-		uint8_t a;
+public:
+	#ifdef ANTIKYTHERA_DEBUG
+	virtual bool evaluate(unsigned long now, Stream *debug);
+#else
+	virtual bool evaluate(unsigned long now);
+#endif
 
-		HSVA() { v = 0; s = 0; h = 0; a = 0; }
-		HSVA(uint8_t ch, uint8_t cs, uint8_t cv, uint8_t ca) { h = ch; s = cs; v = cv; a = ca; }
+	virtual void getResult(uint8_t resultIndex, uint16_t element, void *value);
 
-		HSVA brightness(float b) { return HSVA(h, s, (uint8_t)(v * b), a); }
-	};
+private:
+	ATKIColor::HSVA *m_result;
 
-	static ATKColor::RGBA HSVAtoRGBA(ATKColor::HSVA hsva);
-
-	static const uint8_t DIM_CURVE[];
+	int16_t *m_constHue;
+	int16_t *m_constSaturation;
+	int16_t *m_constValue;
 };
 
 
 #endif
+
+/* ATK_COLOR_H_ */

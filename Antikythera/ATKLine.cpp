@@ -79,7 +79,7 @@ bool ATKLine::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 		break;
 
 	case 4:
-		m_constColor = new ATKColor::HSVA[constantSize];
+		m_constColor = new ATKIColor::HSVA[constantSize];
 		break;
 
 	case 5:
@@ -127,7 +127,7 @@ void ATKLine::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
 		break;
 
 	case 4:
-		m_constColor[element] = *((ATKColor::HSVA *)value);
+		m_constColor[element] = *((ATKIColor::HSVA *)value);
 		break;
 
 	case 5:
@@ -172,7 +172,7 @@ bool ATKLine::evaluate(unsigned long now) {
 		OPERAND_ELEMENT(x2, m_constX2, 2, i)
 		int16_t y2;
 		OPERAND_ELEMENT(y2, m_constY2, 3, i)
-		ATKColor::HSVA color;
+		ATKIColor::HSVA color;
 		OPERAND_ELEMENT(color, m_constColor, 4, i)
 		int16_t thickness;
 		OPERAND_ELEMENT(thickness, m_constThickness, 5, i)

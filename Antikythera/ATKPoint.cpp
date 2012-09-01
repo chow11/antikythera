@@ -12,7 +12,7 @@
 
 
 ATKPoint::ATKPoint() {
-	m_name = "Signal";
+	m_name = "Point";
 
 	m_constX = NULL;
 	m_constY = NULL;
@@ -64,7 +64,7 @@ bool ATKPoint::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 		break;
 
 	case 2:
-		m_constColor = new ATKColor::HSVA[constantSize];
+		m_constColor = new ATKIColor::HSVA[constantSize];
 		break;
 
 	case 3:
@@ -100,7 +100,7 @@ void ATKPoint::setConstant(uint8_t operandIndex, uint16_t element, void *value) 
 		break;
 
 	case 2:
-		m_constColor[element] = *((ATKColor::HSVA *)value);
+		m_constColor[element] = *((ATKIColor::HSVA *)value);
 		break;
 
 	case 3:
@@ -136,7 +136,7 @@ bool ATKPoint::evaluate(unsigned long now) {
 		OPERAND_ELEMENT(x, m_constX, 0, i)
 		int16_t y;
 		OPERAND_ELEMENT(y, m_constY, 1, i)
-		ATKColor::HSVA color;
+		ATKIColor::HSVA color;
 		OPERAND_ELEMENT(color, m_constColor, 2, i)
 		int16_t style;
 		OPERAND_ELEMENT(style, m_constStyle, 3, i)
@@ -147,7 +147,7 @@ bool ATKPoint::evaluate(unsigned long now) {
 
 		Antikythera::displays[display]->point(x, y, color, style, layer);
 #ifdef ANTIKYTHERA_DEBUG
-		ATKColor::RGBA rgb = ATKColor::HSVAtoRGBA(color);
+		ATKIColor::RGBA rgb = ATKIColor::HSVAtoRGBA(color);
 		debug->println("ATKPoint::evaluate(" + String(now) + ", " + String(i) + ": " + String(x) + ", " + String(y) + ", h" + String((int)color.h) + ", s" + String((int)color.s) + ", v" + String((int)color.v) + ", r" + String((int)rgb.r) + ", g" + String((int)rgb.g) + ", b" + String((int)rgb.b) + ")");
 #endif
 	}

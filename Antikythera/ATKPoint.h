@@ -14,7 +14,7 @@
 #include <Stream.h>
 #include <ATKIncludes.h>
 #include <ATKIOperator.h>
-#include <ATKColor.h>
+#include <ATKIColor.h>
 
 
 /*
@@ -53,7 +53,7 @@ public:
 private:
 	int16_t *m_constX;
 	int16_t *m_constY;
-	ATKColor::HSVA *m_constColor;
+	ATKIColor::HSVA *m_constColor;
 	int16_t *m_constStyle;
 	int16_t *m_constDisplay;
 	int16_t *m_constLayer;

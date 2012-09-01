@@ -73,7 +73,7 @@ bool ATKCircle::initializeConstant(uint8_t operandIndex, uint16_t constantSize) 
 		break;
 
 	case 3:
-		m_constColor = new ATKColor::HSVA[constantSize];
+		m_constColor = new ATKIColor::HSVA[constantSize];
 		break;
 
 	case 4:
@@ -117,7 +117,7 @@ void ATKCircle::setConstant(uint8_t operandIndex, uint16_t element, void *value)
 		break;
 
 	case 3:
-		m_constColor[element] = *((ATKColor::HSVA *)value);
+		m_constColor[element] = *((ATKIColor::HSVA *)value);
 		break;
 
 	case 4:
@@ -160,7 +160,7 @@ bool ATKCircle::evaluate(unsigned long now) {
 		OPERAND_ELEMENT(y, m_constY, 1, i)
 		int16_t radius;
 		OPERAND_ELEMENT(radius, m_constRadius, 2, i)
-		ATKColor::HSVA color;
+		ATKIColor::HSVA color;
 		OPERAND_ELEMENT(color, m_constColor, 3, i)
 		int16_t thickness;
 		OPERAND_ELEMENT(thickness, m_constThickness, 4, i)

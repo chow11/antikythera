@@ -193,7 +193,7 @@ void WS2801::initialize(int16_t displayWidth, int16_t displayHeight, int16_t fra
 	m_numLayers = numLayers;
 	m_frameSize = frameWidth * frameHeight;
 
-	m_frames = new ATKColor::RGBA[numLayers * m_frameWidth * m_frameHeight];
+	m_frames = new ATKIColor::RGBA[numLayers * m_frameWidth * m_frameHeight];
 
 	begin();
 	setSpeed(2000000);
@@ -205,7 +205,7 @@ void WS2801::initialize(int16_t displayWidth, int16_t displayHeight, int16_t fra
 // layer 1 is premultiplied alpha
 void WS2801::render(int16_t frameX, int16_t frameY) {
 	uint8_t trash;
-	ATKColor::RGBA *p0 = m_frames;
+	ATKIColor::RGBA *p0 = m_frames;
 //	ATKColor::RGBA *p1 = p0 + m_frameWidth * m_frameHeight;
 
 	for (int x = 0; x < m_displayWidth; x += 2) {
@@ -277,15 +277,15 @@ void WS2801::render(int16_t frameX, int16_t frameY) {
 	memset(m_frames, 0 , m_frameWidth * m_frameHeight * 4 * m_numLayers);
 };
 
-ATKColor::RGBA* WS2801::framebuffer(int16_t layer) {
+ATKIColor::RGBA* WS2801::framebuffer(int16_t layer) {
 	return m_frames + layer * m_frameWidth * m_frameHeight;
 }
 
-void WS2801::circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
-	circle(x, y, r, ATKColor::HSVAtoRGBA(c), thickness, style, layer);
+void WS2801::circle(int16_t x, int16_t y, int16_t r, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
+	circle(x, y, r, ATKIColor::HSVAtoRGBA(c), thickness, style, layer);
 }
 
-void WS2801::circle(int16_t x1, int16_t y1, int16_t r, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
+void WS2801::circle(int16_t x1, int16_t y1, int16_t r, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
 	int16_t f = 1 - r;
 	int16_t ddfx = 1;
 	int16_t ddfy = -2 * r;
@@ -318,8 +318,8 @@ void WS2801::circle(int16_t x1, int16_t y1, int16_t r, ATKColor::RGBA c, int16_t
 	}
 }
 
-void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
-	line(x1, y1, x2, y2, ATKColor::HSVAtoRGBA(c), thickness, style, layer);
+void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
+	line(x1, y1, x2, y2, ATKIColor::HSVAtoRGBA(c), thickness, style, layer);
 	/*
 	 * Xiaolin Wu's Algorithm: http://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
 	 * 						   http://www.codeproject.com/Articles/13360/Antialiasing-Wu-Algorithm#dwuln
@@ -397,7 +397,7 @@ void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA
 /*
  * Bresenham's Algorithm: http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
  */
-void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
+void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
 //	ATKColor::RGBA *p = &m_frames[layer * m_frameSize + x1 * m_frameHeight + y1];
 	int16_t dx = x2 - x1;
 	dx = abs(dx);
@@ -426,17 +426,17 @@ void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA
 	}
 }
 
-void WS2801::point(int16_t x, int16_t y, ATKColor::HSVA c, int16_t style, int16_t layer) {
+void WS2801::point(int16_t x, int16_t y, ATKIColor::HSVA c, int16_t style, int16_t layer) {
 	x %= m_frameWidth;
 	if (x < 0) {
 		x = x + m_frameWidth - 1;
 	}
 	if (y >= 0 && y < m_frameHeight) {
-		m_frames[layer * m_frameSize + x * m_frameHeight + y] = ATKColor::HSVAtoRGBA(c);
+		m_frames[layer * m_frameSize + x * m_frameHeight + y] = ATKIColor::HSVAtoRGBA(c);
 	}
 }
 
-void WS2801::point(int16_t x, int16_t y, ATKColor::RGBA c, int16_t style, int16_t layer) {
+void WS2801::point(int16_t x, int16_t y, ATKIColor::RGBA c, int16_t style, int16_t layer) {
 	x %= m_frameWidth;
 	if (x < 0) {
 		x = x + m_frameWidth - 1;

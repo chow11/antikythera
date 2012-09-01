@@ -15,6 +15,7 @@
 #include <ATKCircle.h>
 #include <ATKSignal.h>
 #include <ATKIMath.h>
+#include <ATKColor.h>
 
 
 ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
@@ -46,6 +47,10 @@ ATKIOperator *ATKOperatorFactory::createOperator(uint16_t operatorType) {
 
 		case ATKOPERATOR_IMATH:
 			return new ATKIMath();
+		break;
+
+		case ATKOPERATOR_COLOR:
+			return new ATKColor();
 		break;
 
 	};

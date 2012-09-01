@@ -44,29 +44,29 @@ int16_t ATKIDisplay::numLayers() {
 void ATKIDisplay::render(int16_t frameX, int16_t frameY) {
 }
 
-ATKColor::RGBA* ATKIDisplay::framebuffer(int16_t layer) {
+ATKIColor::RGBA* ATKIDisplay::framebuffer(int16_t layer) {
 	return NULL;
 }
 
-void ATKIDisplay::circle(int16_t x, int16_t y, int16_t r, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
+void ATKIDisplay::circle(int16_t x, int16_t y, int16_t r, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
 }
 
 
-void ATKIDisplay::circle(int16_t x, int16_t y, int16_t r, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
+void ATKIDisplay::circle(int16_t x, int16_t y, int16_t r, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
 }
 
 
-void ATKIDisplay::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
+void ATKIDisplay::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::HSVA c, int16_t thickness, int16_t style, int16_t layer) {
 }
 
 
-void ATKIDisplay::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
+void ATKIDisplay::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::RGBA c, int16_t thickness, int16_t style, int16_t layer) {
 }
 
 
-void ATKIDisplay::point(int16_t x, int16_t y, ATKColor::HSVA c, int16_t style, int16_t layer) {
+void ATKIDisplay::point(int16_t x, int16_t y, ATKIColor::HSVA c, int16_t style, int16_t layer) {
 }
 
 
-void ATKIDisplay::point(int16_t x, int16_t y, ATKColor::RGBA c, int16_t style, int16_t layer) {
+void ATKIDisplay::point(int16_t x, int16_t y, ATKIColor::RGBA c, int16_t style, int16_t layer) {
 }
