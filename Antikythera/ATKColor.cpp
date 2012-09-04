@@ -22,6 +22,7 @@ ATKColor::ATKColor() {
 	m_constHue = NULL;
 	m_constSaturation = NULL;
 	m_constValue = NULL;
+	m_constAlpha = NULL;
 }
 
 ATKColor::~ATKColor() {
@@ -30,6 +31,7 @@ ATKColor::~ATKColor() {
 	delete[] m_constHue;
 	delete[] m_constSaturation;
 	delete[] m_constValue;
+	delete[] m_constAlpha;
 }
 
 bool ATKColor::load(Stream *program) {
@@ -37,9 +39,9 @@ bool ATKColor::load(Stream *program) {
 		return false;
 	}
 
-	if (m_numOperands != 3) {
+	if (m_numOperands != 4) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "Color::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 3.";
+		m_lastErrorString = "Color::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 4.";
 #endif
 		program->flush();
 		return false;
@@ -68,6 +70,10 @@ bool ATKColor::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 		m_constValue = new int16_t[constantSize];
 		break;
 
+	case 3:
+		m_constAlpha = new int16_t[constantSize];
+		break;
+
 	default:
 #ifdef ANTIKYTHERA_DEBUG
 		m_lastErrorString = "Color::initializeConstant() - operandIndex out of range.";
@@ -90,6 +96,10 @@ void ATKColor::setConstant(uint8_t operandIndex, uint16_t element, void *value) 
 
 	case 2:
 		m_constValue[element] = *((int16_t *)value);
+		break;
+
+	case 3:
+		m_constAlpha[element] = *((int16_t *)value);
 		break;
 	}
 }
@@ -121,11 +131,12 @@ bool ATKColor::evaluate(unsigned long now) {
 		OPERAND_ELEMENT(saturation, m_constSaturation, 1, i)
 		int16_t value;
 		OPERAND_ELEMENT(value, m_constValue, 2, i)
+		int16_t alpha;
+		OPERAND_ELEMENT(value, m_constValue, 3, i)
 
-		m_result[i] = ATKIColor::HSVA(hue, saturation, value, 255);
+		m_result[i] = ATKIColor::HSVA(hue, saturation, value, alpha);
 #ifdef ANTIKYTHERA_DEBUG
-//		debug->println("Color::evaluate(" + String(now) + ", " + String(i) + ": " + String(hue) + ", " + String(saturation) + ", " + String(value) + ") = " + String((uint32_t)m_result[i]));
-		debug->println("Color::evaluate(" + String(now) + ", " + String(i) + ": " + String(hue) + ", " + String(saturation) + ", " + String(value) + ")");
+		debug->println("Color::evaluate(" + String(now) + ", " + String(i) + ": " + String(hue) + ", " + String(saturation) + ", " + String(value) + ", " + String(alpha) + ")");
 #endif
 	}
 

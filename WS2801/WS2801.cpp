@@ -272,7 +272,7 @@ void WS2801::render(int16_t frameX, int16_t frameY) {
 		p0 += m_displayHeight;
 	}
 
-	delay(1);
+//	delay(1);
 	
 	memset(m_frames, 0 , m_frameWidth * m_frameHeight * 4 * m_numLayers);
 };

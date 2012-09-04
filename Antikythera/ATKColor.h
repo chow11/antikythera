@@ -22,6 +22,7 @@
 		- hue
 		- saturation
 		- value
+		- alpha
 	Results:
 		- ATKColor struct
 */
@@ -53,6 +54,7 @@ private:
 	int16_t *m_constHue;
 	int16_t *m_constSaturation;
 	int16_t *m_constValue;
+	int16_t *m_constAlpha;
 };
 
 
