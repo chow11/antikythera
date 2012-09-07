@@ -323,6 +323,8 @@ void WS2801::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::HSV
 	/*
 	 * Xiaolin Wu's Algorithm: http://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
 	 * 						   http://www.codeproject.com/Articles/13360/Antialiasing-Wu-Algorithm#dwuln
+	 */
+/*
 	if (y1 > y2) {
 		int16_t t = y1; y1 = y2; y2 = t;
 		t = x1; x1 = x2; x2 = t;

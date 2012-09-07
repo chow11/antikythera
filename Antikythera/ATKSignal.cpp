@@ -45,7 +45,7 @@ bool ATKSignal::load(Stream *program) {
 
 	if (m_numOperands != 6) {
 #ifdef ANTIKYTHERA_DEBUG
-		m_lastErrorString = "Signal::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 4.";
+		m_lastErrorString = "Signal::load() - incorrect number(" + String(m_numOperands) + ") of operands specified, expected 6.";
 #endif
 		program->flush();
 		return false;

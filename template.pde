@@ -46,6 +46,7 @@ char out[128];
 void setup()
 {
   Serial.begin(115200);
+//  Serial1.begin(115200);
   randomSeed(analogRead(0));
   Serial.println("randomSeed set");
 //  WS2801 *ws2801 = new WS2801(_DSPI0_BASE, PIN_DSPI0_SS);
@@ -68,23 +69,22 @@ void loop()
 {
   unsigned long now = millis();
 
-  if (timers.gpsEnabled && (timers.gpsRead + GPS_READ_TIMEOUT) < now) {
+  if (timers.gpsEnabled && (timers.gpsRead + GPS_READ_TIMEOUT) <= now) {
     timers.gpsRead = now;
     now = millis();
   }
 
-  if (timers.compassEnabled && (timers.compassRead + COMPASS_READ_TIMEOUT) < now) {
+  if (timers.compassEnabled && (timers.compassRead + COMPASS_READ_TIMEOUT) <= now) {
     timers.compassRead = now;
     now = millis();
   }
 
-  if (timers.accelerometerEnabled && (timers.accelerometerRead + ACCELEROMETER_READ_TIMEOUT) < now) {
+  if (timers.accelerometerEnabled && (timers.accelerometerRead + ACCELEROMETER_READ_TIMEOUT) <= now) {
     timers.accelerometerRead = now;
     now = millis();
   }
 
-  if (timers.antikytheraEnabled && (timers.antikythera + ANTIKYTHERA_TIMEOUT) < now) {
-    unsigned long t0 = millis();
+  if (timers.antikytheraEnabled && (timers.antikythera + ANTIKYTHERA_TIMEOUT) <= now) {
 #ifdef  ANTIKYTHERA_DEBUG
     if (!Antikythera::evaluate(now, &Serial)) {
 #else
@@ -96,14 +96,13 @@ void loop()
       Serial.println(Antikythera::lastErrorString);
 #endif
     }
-    unsigned long t1 = millis();
-    sprintf(out, "time elapsed:%ul", (t1 - t0));
-    Serial.println(out);
     timers.antikythera = now;
     now = millis();
+    sprintf(out, "time(%lu) elapsed:%lu", timers.antikythera, (now - timers.antikythera));
+    Serial.println(out);
   }
 
-  if (timers.serialEnabled && (timers.serialRead + SERIAL_READ_TIMEOUT) < now) {
+  if (timers.serialEnabled && (timers.serialRead + SERIAL_READ_TIMEOUT) <= now) {
     if (Serial.available() > 0) {
       if (Antikythera::load(&Serial)) {
         Serial.println("\nProgram loaded and running.");
@@ -117,5 +116,6 @@ void loop()
     }
 
     timers.serialRead = now;
+//    now = millis();
   }
 }
