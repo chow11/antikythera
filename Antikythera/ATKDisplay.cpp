@@ -44,7 +44,7 @@ bool ATKDisplay::loadProperties(Stream *program) {
 }
 
 void ATKDisplay::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKDisplay::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {

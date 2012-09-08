@@ -54,7 +54,7 @@ bool ATKMath::loadProperties(Stream *program) {
 }
 
 void ATKMath::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKMath::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {

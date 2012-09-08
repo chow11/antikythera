@@ -50,7 +50,7 @@ bool ATKSelect::loadProperties(Stream *program) {
 }
 
 void ATKSelect::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 
 	m_consts = new int16_t *[numOperands];
 }
@@ -102,13 +102,13 @@ bool ATKSelect::evaluate(unsigned long now) {
 				result &= Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->evaluate(now);
 		#endif
 				m_numResults = Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->m_numResults;
-				m_resultSize = new int16_t[m_numResults];
+				m_resultSize = new uint16_t[m_numResults];
 				for (uint8_t count = 0; count < m_numResults; count++) {
 					m_resultSize[count] = Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->m_resultSize[count];
 				}
 			} else {
 				m_numResults = 1;
-				m_resultSize = new int16_t[1];
+				m_resultSize = new uint16_t[1];
 				m_resultSize[0] = m_constantSize[m_evaluatedIndex];
 			}
 		} else {
@@ -130,7 +130,7 @@ void ATKSelect::getResult(uint8_t resultIndex, uint16_t element, void *value) {
 		Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->getResult(resultIndex, element, value);
 	} else {
 		if (element < m_constantSize[resultIndex]) {
-			*value = m_consts[resultIndex][element];
+			*((int16_t *)value) = m_consts[resultIndex][element];
 		}
 	}
 }

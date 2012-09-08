@@ -55,7 +55,7 @@ bool ATKColor::loadProperties(Stream *program) {
 }
 
 void ATKColor::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKColor::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {

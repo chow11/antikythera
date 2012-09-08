@@ -41,7 +41,7 @@ bool ATKRoot::loadProperties(Stream *program) {
 }
 
 void ATKRoot::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKRoot::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {

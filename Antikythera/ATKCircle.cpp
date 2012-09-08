@@ -57,7 +57,7 @@ bool ATKCircle::loadProperties(Stream *program) {
 }
 
 void ATKCircle::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKCircle::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {

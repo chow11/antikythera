@@ -50,7 +50,7 @@ public:
 	virtual void getResult(uint8_t resultIndex, uint16_t element, void *value);
 
 private:
-	int16_t *m_evaluatedIndex;
+	int16_t m_evaluatedIndex;
 	int16_t **m_consts;
 };
 

@@ -59,7 +59,7 @@ bool ATKSignal::loadProperties(Stream *program) {
 }
 
 void ATKSignal::initializeOperands(uint8_t numOperands) {
-	ATKIOperator::initializeOperands(program);
+	ATKIOperator::initializeOperands(numOperands);
 }
 
 bool ATKSignal::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
