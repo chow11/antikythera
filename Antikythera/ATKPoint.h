@@ -38,6 +38,7 @@ public:
 	virtual bool load(Stream *program);
 protected:
 	virtual bool loadProperties(Stream *program);
+	virtual void initializeOperands(uint8_t numOperands);
 	virtual bool initializeConstant(uint8_t operandIndex, uint16_t constantSize);
 	virtual void setConstant(uint8_t operandIndex, uint16_t element, void *value);
 

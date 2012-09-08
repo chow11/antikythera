@@ -43,6 +43,10 @@ bool ATKSensor::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
+void ATKSensor::initializeOperands(uint8_t numOperands) {
+	ATKIOperator::initializeOperands(program);
+}
+
 bool ATKSensor::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 

@@ -7,8 +7,8 @@
  *  hTps://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_INTEGER_MATH_H_
-#define ATK_INTEGER_MATH_H_
+#ifndef ATK_MATH_H_
+#define ATK_MATH_H_
 
 
 #include <Stream.h>
@@ -40,15 +40,16 @@
 #define MATH_SPLAY				9
 
 
-class ATKIMath : public ATKIOperator {
+class ATKMath : public ATKIOperator {
 public:
-	ATKIMath();
-	~ATKIMath();
+	ATKMath();
+	~ATKMath();
 
 public:
 	virtual bool load(Stream *program);
 protected:
 	virtual bool loadProperties(Stream *program);
+	virtual void initializeOperands(uint8_t numOperands);
 	virtual bool initializeConstant(uint8_t operandIndex, uint16_t constantSize);
 	virtual void setConstant(uint8_t operandIndex, uint16_t element, void *value);
 
@@ -73,4 +74,4 @@ private:
 
 #endif
 
-/* ATK_INTEGER_MATH_H_ */
+/* ATK_MATH_H_ */

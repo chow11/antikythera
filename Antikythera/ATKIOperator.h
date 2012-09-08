@@ -45,6 +45,7 @@ public:
 	virtual bool load(Stream *program);
 protected:
 	virtual bool loadProperties(Stream *program) { return true; }
+	virtual void initializeOperands(uint8_t numOperands);
 	bool loadFlags(Stream *program, uint8_t *flags);
 	bool loadOperatorIndex(Stream *program, uint16_t *index);
 	bool loadResultIndex(Stream *program, uint8_t *index);

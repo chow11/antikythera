@@ -1,5 +1,5 @@
 /*
- * ATKLine.h
+ * ATKSelect.h
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -7,35 +7,30 @@
  *  https://www.gnu.org/licenses/gpl-3.0.html
  */
 
-#ifndef ATK_LINE_H_
-#define ATK_LINE_H_
+#ifndef ATK_SELECT_H_
+#define ATK_SELECT_H_
 
 
 #include <Stream.h>
 #include <ATKIncludes.h>
 #include <ATKIOperator.h>
-#include <ATKIColor.h>
 
 
 /*
 	Operands:
-		- first x location
-		- first y location
-		- second x location
-		- second y location
-		- color (HSVA)
-		- line width
-		- style
-		- display
-		- layer (0 = background)
+		- index of which operator link is evaluated and results passed through. 0 = does nothing.  Implied OPERANDFLAG_SINGLE
+		- operator link 1
+		- operator link 2
+		- ...
+		- operator link n
 	Results:
-		- none
+		- pass through of results of select operator link
 */
 
-class ATKLine : public ATKIOperator {
+class ATKSelect : public ATKIOperator {
 public:
-	ATKLine();
-	~ATKLine();
+	ATKSelect();
+	~ATKSelect();
 
 public:
 	virtual bool load(Stream *program);
@@ -55,18 +50,11 @@ public:
 	virtual void getResult(uint8_t resultIndex, uint16_t element, void *value);
 
 private:
-	int16_t *m_constX1;
-	int16_t *m_constY1;
-	int16_t *m_constX2;
-	int16_t *m_constY2;
-	ATKIColor::HSVA *m_constColor;
-	int16_t *m_constThickness;
-	int16_t *m_constStyle;
-	int16_t *m_constDisplay;
-	int16_t *m_constLayer;
+	int16_t *m_evaluatedIndex;
+	int16_t **m_consts;
 };
 
 
 #endif
 
-/* ATK_LINE_H_ */
+/* ATK_SELECT_H_ */

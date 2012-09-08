@@ -58,6 +58,10 @@ bool ATKLine::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
+void ATKLine::initializeOperands(uint8_t numOperands) {
+	ATKIOperator::initializeOperands(program);
+}
+
 bool ATKLine::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 

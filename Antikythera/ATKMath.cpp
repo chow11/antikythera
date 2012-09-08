@@ -1,5 +1,5 @@
 /*
- * ATKIntegerMath.cpp
+ * ATKMath.cpp
  *
  *  Created on: Apr 13, 2012
  *      Author: Brian Chojnowski
@@ -8,11 +8,11 @@
  */
 
 #include <WProgram.h>
-#include <ATKIMath.h>
+#include <ATKMath.h>
 #include <Antikythera.h>
 
-ATKIMath::ATKIMath() {
-	m_name = "IMath";
+ATKMath::ATKMath() {
+	m_name = "Math";
 
 	m_result = NULL;
 	m_resultSize = new uint16_t[1];
@@ -24,7 +24,7 @@ ATKIMath::ATKIMath() {
 	m_constC = NULL;
 }
 
-ATKIMath::~ATKIMath() {
+ATKMath::~ATKMath() {
 	delete[] m_result;
 
 	delete[] m_constOperation;
@@ -33,7 +33,7 @@ ATKIMath::~ATKIMath() {
 	delete[] m_constC;
 }
 
-bool ATKIMath::load(Stream *program) {
+bool ATKMath::load(Stream *program) {
 	if (!ATKIOperator::load(program)) {
 		return false;
 	}
@@ -49,11 +49,15 @@ bool ATKIMath::load(Stream *program) {
 	return true;
 }
 
-bool ATKIMath::loadProperties(Stream *program) {
+bool ATKMath::loadProperties(Stream *program) {
 	return ATKIOperator::loadProperties(program);
 }
 
-bool ATKIMath::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
+void ATKMath::initializeOperands(uint8_t numOperands) {
+	ATKIOperator::initializeOperands(program);
+}
+
+bool ATKMath::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	ATKIOperator::initializeConstant(operandIndex, constantSize);
 
 	switch (operandIndex) {
@@ -83,7 +87,7 @@ bool ATKIMath::initializeConstant(uint8_t operandIndex, uint16_t constantSize) {
 	return true;
 }
 
-void ATKIMath::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
+void ATKMath::setConstant(uint8_t operandIndex, uint16_t element, void *value) {
 	switch (operandIndex) {
 	case 0:
 		m_constOperation[element] = *((int16_t *)value);
@@ -104,9 +108,9 @@ void ATKIMath::setConstant(uint8_t operandIndex, uint16_t element, void *value) 
 }
 
 #ifdef ANTIKYTHERA_DEBUG
-bool ATKIMath::evaluate(unsigned long now, Stream *debug) {
+bool ATKMath::evaluate(unsigned long now, Stream *debug) {
 #else
-bool ATKIMath::evaluate(unsigned long now) {
+bool ATKMath::evaluate(unsigned long now) {
 #endif
 	if (m_isEvaluated) {
 		return true;
@@ -190,7 +194,7 @@ bool ATKIMath::evaluate(unsigned long now) {
 	return result;
 }
 
-void ATKIMath::getResult(uint8_t resultIndex, uint16_t element, void *value) {
+void ATKMath::getResult(uint8_t resultIndex, uint16_t element, void *value) {
 	if (resultIndex < m_numResults) {
 		if (element < m_resultSize[0]) {
 			*((int16_t *)value) = m_result[element];

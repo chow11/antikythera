@@ -73,14 +73,12 @@ bool ATKIOperator::load(Stream *program) {
 		return false;
 	}
 
-	m_numOperands = (uint8_t)strtoul(buffer, NULL, 10);
+	initializeOperands((uint8_t)strtoul(buffer, NULL, 10));
 #ifdef ANTIKYTHERA_DEBUG
 	program->print("[num operands:");
 	program->print(buffer);
 	program->println("]");
 #endif
-	m_operands = new ATK_OPERAND[m_numOperands];
-	m_constantSize = new uint16_t[m_numOperands];
 
 	for (int count = 0; count < m_numOperands; count++) {
 		valid = false;
@@ -172,6 +170,12 @@ bool ATKIOperator::load(Stream *program) {
 	// connect root to leaf nodes
 
 	return true;
+}
+
+void ATKIOperator::initializeOperands(uint8_t numOperands) {
+	m_numOperands = numOperands;
+	m_operands = new ATK_OPERAND[m_numOperands];
+	m_constantSize = new uint16_t[m_numOperands];
 }
 
 bool ATKIOperator::loadFlags(Stream *program, uint8_t *flags) {
