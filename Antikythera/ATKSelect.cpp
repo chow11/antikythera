@@ -88,23 +88,39 @@ bool ATKSelect::evaluate(unsigned long now) {
 
 	m_numResults = 0;
 	delete[] m_resultSize;
+	m_resultSize = NULL;
 
 	ATK_OPERAND o = m_operands[0];
 	uint16_t operations = (o.flags & OPERANDFLAG_LINK) ? Antikythera::operators[o.operatorIndex]->m_resultSize[o.resultIndex] : m_constantSize[0];
 	if (operations > 0) {
 		int16_t m_evaluatedIndex;
 		OPERAND_ELEMENT(m_evaluatedIndex, m_consts[0], 0, 0)
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Select::m_evaluatedIndex(" + String(m_evaluatedIndex) + ")");
+#endif
 		if (m_evaluatedIndex > 0 && m_evaluatedIndex < m_numOperands) {
 			if ((m_operands[m_evaluatedIndex].flags & OPERANDFLAG_LINK)) {
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Select::calling linked evaluate");
+#endif
 		#ifdef ANTIKYTHERA_DEBUG
 				result &= Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->evaluate(now, debug);
 		#else
 				result &= Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->evaluate(now);
 		#endif
+#ifdef ANTIKYTHERA_DEBUG
+				debug->println("Select::return linked evaluate");
+#endif
 				m_numResults = Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->m_numResults;
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Select::m_numResults(" + String(m_numResults) + ")");
+#endif
 				m_resultSize = new uint16_t[m_numResults];
 				for (uint8_t count = 0; count < m_numResults; count++) {
 					m_resultSize[count] = Antikythera::operators[m_operands[m_evaluatedIndex].operatorIndex]->m_resultSize[count];
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Select::copied resultSize[count] (" + String(m_resultSize[count]) + ")");
+#endif
 				}
 			} else {
 				m_numResults = 1;
@@ -117,7 +133,7 @@ bool ATKSelect::evaluate(unsigned long now) {
 	}
 
 #ifdef ANTIKYTHERA_DEBUG
-		debug->println("Select::evaluate(" + String(now) + ", " + String(i) + ": " + String(m_evaluatedIndex));
+		debug->println("Select::evaluate(" + String(now) + ") = " + String(m_evaluatedIndex));
 #endif
 
 	m_isEvaluated = true;

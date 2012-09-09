@@ -109,6 +109,7 @@ void loop()
         timers.antikytheraEnabled = true;
       } else {
         Serial.print("\nError loading program: ");
+        timers.antikytheraEnabled = false;
 #ifdef  ANTIKYTHERA_DEBUG
         Serial.println(Antikythera::lastErrorString);
 #endif
