@@ -26,7 +26,7 @@
 		- display
 		- layer (0 = background)
 	Results:
-		- layer (0 = background)
+		- none
 */
 
 class ATKPoint : public ATKIOperator {
