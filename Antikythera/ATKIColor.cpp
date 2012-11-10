@@ -50,8 +50,10 @@ const uint8_t ATKIColor::DIM_CURVE[] = {
 ATKIColor::RGBA ATKIColor::HSVAtoRGBA(ATKIColor::HSVA hsva) {
 	ATKIColor::RGBA rgba;
 	uint8_t h = hsva.h;
-	uint8_t s = 255 - ATKIColor::DIM_CURVE[255 - hsva.s];
-	uint8_t v = ATKIColor::DIM_CURVE[hsva.v];
+//	uint8_t s = 255 - ATKIColor::DIM_CURVE[255 - hsva.s];
+//	uint8_t v = ATKIColor::DIM_CURVE[hsva.v];
+	uint8_t s = 255 - hsva.s;
+	uint8_t v = hsva.v;
 
 	if (s == 0) { // Acromatic color (gray). Hue doesn't mind.
 		rgba.r = v;

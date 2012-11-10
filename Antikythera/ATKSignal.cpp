@@ -215,6 +215,50 @@ bool ATKSignal::evaluate(unsigned long now) {
 		case SIGNAL_TRIANGLE:
 			m_result[i] = (phase < 0.5) ? 4 * amplitude * abs(phase - 0.25) : -4 * amplitude * abs(phase - 0.75);
 			break;
+
+		case SIGNAL_A_CARDIAC:
+			m_result[i] = f_cardiac(phase);
+			break;
+
+		case SIGNAL_A_EXP_FALL:
+//			m_result[i] = f_exponentialFall(phase);
+			break;
+
+		case SIGNAL_A_EXP_RISE:
+//			m_result[i] = m_amplitude * exp(phase);
+			break;
+
+		case SIGNAL_A_NOISE:
+			m_result[i] = (amplitude < 0) ? 0 - random(0, abs(amplitude)) : random(0, amplitude);
+			break;
+
+		case SIGNAL_A_PULSE:
+			if (phase == 0) {
+				m_result[i] = 1;
+			} else {
+				m_result[i] = (phase < 0.5) ? amplitude * sin(phase * 4 * M_PI) / (phase * 4 * M_PI) : amplitude * sin((phase - 1) * 4 * M_PI) / ((phase - 1) * 4 * M_PI);
+			}
+			break;
+
+		case SIGNAL_A_RAMP:
+			m_result[i] = amplitude * phase;
+			break;
+
+		case SIGNAL_A_SAWTOOTH:
+			m_result[i] = (phase < 0.5) ? 2 * amplitude * phase : 2 * amplitude * (phase - 1);
+			break;
+
+		case SIGNAL_A_SINE:
+			m_result[i] = amplitude * sin(phase * M_TWOPI);
+			break;
+
+		case SIGNAL_A_SQUARE:
+			m_result[i] = (phase < 0.5) ? amplitude : 0 - amplitude;
+			break;
+
+		case SIGNAL_A_TRIANGLE:
+			m_result[i] = (phase < 0.5) ? 2 * amplitude * phase : 2 * amplitude * (1 - phase);
+			break;
 		}
 #ifdef ANTIKYTHERA_DEBUG
 		debug->println("Signal::evaluate(" + String(now) + ", " + String(i) + ": " + String(waveform) + ", " + String(wavelength) + ", " + String(amplitude) + ", " + String(offset) + ") = " + String(m_result[i]));

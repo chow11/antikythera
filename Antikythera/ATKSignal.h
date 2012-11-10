@@ -39,6 +39,16 @@
 #define SIGNAL_SINE			8
 #define SIGNAL_SQUARE		9
 #define SIGNAL_TRIANGLE		10
+#define SIGNAL_A_CARDIAC	101
+#define SIGNAL_A_EXP_FALL	102
+#define SIGNAL_A_EXP_RISE	103
+#define SIGNAL_A_NOISE		104
+#define SIGNAL_A_PULSE		105		// normalized sinc()
+#define SIGNAL_A_RAMP		106
+#define SIGNAL_A_SAWTOOTH	107
+#define SIGNAL_A_SINE		108
+#define SIGNAL_A_SQUARE		109
+#define SIGNAL_A_TRIANGLE	110
 
 class ATKSignal : public ATKIOperator {
 public:
