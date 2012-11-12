@@ -237,6 +237,7 @@ bool ATKSignal::evaluate(unsigned long now) {
 				m_result[i] = 1;
 			} else {
 				m_result[i] = (phase < 0.5) ? amplitude * sin(phase * 4 * M_PI) / (phase * 4 * M_PI) : amplitude * sin((phase - 1) * 4 * M_PI) / ((phase - 1) * 4 * M_PI);
+				m_result[i] = abs(m_result[i]);
 			}
 			break;
 

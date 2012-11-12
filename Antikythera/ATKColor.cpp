@@ -131,12 +131,21 @@ bool ATKColor::evaluate(unsigned long now) {
 	for (int16_t i; i < m_numOperations; i++) {
 		int16_t hue;
 		OPERAND_ELEMENT(hue, m_constHue, 0, i)
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Color::hue(" + String(hue) + ")");
+#endif
 		int16_t saturation;
 		OPERAND_ELEMENT(saturation, m_constSaturation, 1, i)
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Color::saturation(" + String(saturation) + ")");
+#endif
 		int16_t value;
 		OPERAND_ELEMENT(value, m_constValue, 2, i)
+#ifdef ANTIKYTHERA_DEBUG
+		debug->println("Color::value(" + String(value) + ")");
+#endif
 		int16_t alpha;
-		OPERAND_ELEMENT(value, m_constValue, 3, i)
+		OPERAND_ELEMENT(alpha, m_constAlpha, 3, i)
 
 		m_result[i] = ATKIColor::HSVA(hue, saturation, value, alpha);
 #ifdef ANTIKYTHERA_DEBUG
