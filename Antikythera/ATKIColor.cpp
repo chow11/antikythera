@@ -49,16 +49,16 @@ const uint8_t ATKIColor::DIM_CURVE[] = {
 */
 ATKIColor::RGBA ATKIColor::HSVAtoRGBA(ATKIColor::HSVA hsva) {
 	ATKIColor::RGBA rgba;
-	uint8_t h = hsva.h;
+	uint8_t h = hsva.color.h;
 //	uint8_t s = 255 - ATKIColor::DIM_CURVE[255 - hsva.s];
 //	uint8_t v = ATKIColor::DIM_CURVE[hsva.v];
-	uint8_t s = 255 - hsva.s;
-	uint8_t v = hsva.v;
+	uint8_t s = 255 - hsva.color.s;
+	uint8_t v = hsva.color.v;
 
 	if (s == 0) { // Acromatic color (gray). Hue doesn't mind.
-		rgba.r = v;
-		rgba.g = v;
-		rgba.b = v;
+		rgba.color.r = v;
+		rgba.color.g = v;
+		rgba.color.b = v;
 	} else  {
 		float f = (h % 42) / 42.0;
 		uint8_t p = (v * (256 - s)) >> 8; // p = v * (1 - s)
@@ -67,39 +67,39 @@ ATKIColor::RGBA ATKIColor::HSVAtoRGBA(ATKIColor::HSVA hsva) {
 
 		switch (h / 42) {
 		case 0:
-			rgba.r = v;
-			rgba.g = t;
-			rgba.b = p;
+			rgba.color.r = v;
+			rgba.color.g = t;
+			rgba.color.b = p;
 		break;
 
 		case 1:
-			rgba.r = q;
-			rgba.g = v;
-			rgba.b = p;
+			rgba.color.r = q;
+			rgba.color.g = v;
+			rgba.color.b = p;
 		break;
 
 		case 2:
-			rgba.r = p;
-			rgba.g = v;
-			rgba.b = t;
+			rgba.color.r = p;
+			rgba.color.g = v;
+			rgba.color.b = t;
 		break;
 
 		case 3:
-			rgba.r = p;
-			rgba.g = q;
-			rgba.b = v;
+			rgba.color.r = p;
+			rgba.color.g = q;
+			rgba.color.b = v;
 		break;
 
 		case 4:
-			rgba.r = t;
-			rgba.g = p;
-			rgba.b = v;
+			rgba.color.r = t;
+			rgba.color.g = p;
+			rgba.color.b = v;
 		break;
 
 		case 5:
-			rgba.r = v;
-			rgba.g = p;
-			rgba.b = q;
+			rgba.color.r = v;
+			rgba.color.g = p;
+			rgba.color.b = q;
 		break;
 		}
 	}

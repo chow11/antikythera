@@ -211,15 +211,15 @@ void WS2801::render(int16_t frameX, int16_t frameY) {
 	for (int x = 0; x < m_displayWidth; x += 2) {
 		for (int y = 0; y < m_displayHeight; y++) {
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->b;
+			m_pspi->sxBuf.reg = p0->color.b;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->g;
+			m_pspi->sxBuf.reg = p0->color.g;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->r;
+			m_pspi->sxBuf.reg = p0->color.r;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 /*
@@ -257,15 +257,15 @@ void WS2801::render(int16_t frameX, int16_t frameY) {
 		for (int y = 0; y < m_displayHeight; y++) {
 			p0--;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->b;
+			m_pspi->sxBuf.reg = p0->color.b;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->g;
+			m_pspi->sxBuf.reg = p0->color.g;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPITBE)) == 0) { }
-			m_pspi->sxBuf.reg = p0->r;
+			m_pspi->sxBuf.reg = p0->color.r;
 			while ((m_pspi->sxStat.reg & (1 << _SPISTAT_SPIRBF)) == 0) { }
 			trash = m_pspi->sxBuf.reg;
 		}
