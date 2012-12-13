@@ -7,11 +7,12 @@ CHANGE_HEAP_SIZE(0x2000);
 #define NOP_25NS NOP; NOP;
 #define NOP_50NS NOP_25NS; NOP_25NS;
 #define NOP_100NS NOP_50NS; NOP_50NS;
+#define NOP_150NS NOP_100NS; NOP_50NS;
 #define NOP_200NS NOP_100NS; NOP_100NS;
-#define NOP_250NS NOP_100NS; NOP_100NS; NOP_50NS;
+#define NOP_250NS NOP_200NS; NOP_50NS;
+#define NOP_300NS NOP_200NS; NOP_100NS;
 #define NOP_400NS NOP_200NS; NOP_200NS;
-#define NOP_500NS NOP_200NS; NOP_200NS; NOP_100NS;
-#define NOP_1US NOP_500NS; NOP_500NS;
+#define NOP_500NS NOP_250NS; NOP_250NS;
 
 #include <WProgram.h>
 #include <HardwareSerial.h>
@@ -38,16 +39,190 @@ uint32_t et;
   register ATKIColor::RGBA *p1 = frame;
   register ATKIColor::RGBA *p2 = p1 + DISPLAY_WIDTH;
   ATKIColor::RGBA *e = p2;
-  uint32_t mask = 0x00800000;
-  uint32_t c1 = p1->bits;
-  uint32_t c2 = p2->bits;
+  uint8_t mask = 0x08;
+  uint8_t c1;
+  uint8_t c2;
 
   st = ReadCoreTimer();
   INTDisableInterrupts();
   while (p1 != e) {
-    c1 = p1++->bits;
-    c2 = p2++->bits;
-    mask = 0x00800000;
+    c1 = p1->color.g;
+    c2 = p2->color.g;
+    mask = 0x80;
+    while (mask > 1) {
+et = ReadCoreTimer();
+sprintf(out, "span(%lu) next(%x/%x) mask %x", et - st - 4, c1, c2, mask);
+Serial.println(out);
+st = ReadCoreTimer();
+      iop1->lat.set = bit1;
+      iop2->lat.set = bit2;
+      NOP_100NS;
+      NOP_50NS;
+      NOP_25NS;
+      if (c1 & mask) {
+        if (c2 & mask) { // both on
+          NOP_250NS;
+          NOP_100NS;
+          iop1->lat.clr = bit1;
+          iop2->lat.clr = bit2;
+          NOP_400NS;
+          NOP_50NS;
+        } else {
+          iop2->lat.clr = bit2;
+          NOP_250NS;
+          NOP_50NS;
+          iop1->lat.clr = bit1;
+          NOP_400NS;
+          NOP;
+        }
+      } else {
+        if (c2 & mask) {
+          iop1->lat.clr = bit1;
+          NOP_250NS;
+          NOP_50NS;
+          iop2->lat.clr = bit2;
+          NOP_400NS;
+          NOP_50NS;
+          NOP_25NS;
+          NOP;
+        } else { // both off
+          iop1->lat.clr = bit1;
+          iop2->lat.clr = bit2;
+          NOP_500NS;
+          NOP_200NS;
+          NOP_25NS;
+          NOP;
+        }
+      }
+      mask >>= 1;
+    }
+    iop1->lat.set = bit1;
+    iop2->lat.set = bit2;
+    NOP_100NS;
+    NOP_50NS;
+    NOP_25NS;
+    if (c1 & mask) {
+      if (c2 & mask) { // both on
+        NOP_400NS;
+        iop1->lat.clr = bit1;
+        iop2->lat.clr = bit2;
+        NOP_400NS;
+        NOP_25NS;
+      } else {
+        iop2->lat.clr = bit2;
+        NOP_250NS;
+        NOP_50NS;
+        iop1->lat.clr = bit1;
+        NOP_400NS;
+        NOP_25NS;
+        NOP;
+      }
+    } else {
+      if (c2 & mask) {
+        iop1->lat.clr = bit1;
+        NOP_250NS;
+        NOP_50NS;
+        iop2->lat.clr = bit2;
+        NOP_250NS;
+        NOP_200NS;
+        NOP_25NS;
+        NOP;
+      } else { // both off
+        iop1->lat.clr = bit1;
+        iop2->lat.clr = bit2;
+        NOP_500NS;
+        NOP_200NS;
+        NOP_25NS;
+      }
+    }
+    c1 = p1->color.r;
+    c2 = p2->color.r;
+    mask = 0x80;
+    while (mask > 1) {
+      iop1->lat.set = bit1;
+      iop2->lat.set = bit2;
+      NOP_100NS;
+      NOP_50NS;
+      NOP_25NS;
+      if (c1 & mask) {
+        if (c2 & mask) { // both on
+          NOP_250NS;
+          NOP_100NS;
+          iop1->lat.clr = bit1;
+          iop2->lat.clr = bit2;
+          NOP_400NS;
+          NOP_50NS;
+        } else {
+          iop2->lat.clr = bit2;
+          NOP_250NS;
+          NOP_50NS;
+          iop1->lat.clr = bit1;
+          NOP_400NS;
+          NOP;
+        }
+      } else {
+        if (c2 & mask) {
+          iop1->lat.clr = bit1;
+          NOP_250NS;
+          NOP_50NS;
+          iop2->lat.clr = bit2;
+          NOP_400NS;
+          NOP_50NS;
+          NOP_25NS;
+          NOP;
+        } else { // both off
+          iop1->lat.clr = bit1;
+          iop2->lat.clr = bit2;
+          NOP_500NS;
+          NOP_200NS;
+          NOP_25NS;
+          NOP;
+        }
+      }
+      mask >>= 1;
+    }
+    iop1->lat.set = bit1;
+    iop2->lat.set = bit2;
+    NOP_100NS;
+    NOP_50NS;
+    NOP_25NS;
+    if (c1 & mask) {
+      if (c2 & mask) { // both on
+        NOP_400NS;
+        iop1->lat.clr = bit1;
+        iop2->lat.clr = bit2;
+        NOP_400NS;
+        NOP_25NS;
+      } else {
+        iop2->lat.clr = bit2;
+        NOP_250NS;
+        NOP_50NS;
+        iop1->lat.clr = bit1;
+        NOP_400NS;
+        NOP_25NS;
+        NOP;
+      }
+    } else {
+      if (c2 & mask) {
+        iop1->lat.clr = bit1;
+        NOP_250NS;
+        NOP_50NS;
+        iop2->lat.clr = bit2;
+        NOP_250NS;
+        NOP_200NS;
+        NOP_25NS;
+        NOP;
+      } else { // both off
+        iop1->lat.clr = bit1;
+        iop2->lat.clr = bit2;
+        NOP_500NS;
+        NOP_200NS;
+        NOP_25NS;
+      }
+    }
+    c1 = p1++->color.b;
+    c2 = p2++->color.b;
+    mask = 0x80;
     while (mask > 1) {
 //et = ReadCoreTimer();
 //sprintf(out, "span(%lu) next(%d/%d) m-%lu", et - st - 4, c1 & mask, c2 & mask, mask);
@@ -64,8 +239,8 @@ uint32_t et;
           NOP_100NS;
           iop1->lat.clr = bit1;
           iop2->lat.clr = bit2;
-          NOP_250NS;
-          NOP_200NS;
+          NOP_400NS;
+          NOP_50NS;
         } else {
           iop2->lat.clr = bit2;
           NOP_250NS;
@@ -139,8 +314,6 @@ uint32_t et;
   delayMicroseconds(50);
 
   memset(frame, 0 , DISPLAY_SIZE * 4);
-  sprintf(out, "span(%lu)", et - st - 4);
-  Serial.println(out);
 }
 
 void setup() {
@@ -151,12 +324,17 @@ void setup() {
 
 void loop() {
   uint16_t i;
-  for (i = 0; i < 39; i++) {
+//  for (i = 0; i < 39; i++) {
+  for (i = 0; i < DISPLAY_WIDTH; i++) {
 //    frame[i] = ATKIColor::HSVAtoRGBA(ATKIColor::HSVA((hue + i) % 252, 191, 15, 255));
 //    frame[DISPLAY_SIZE - 1 - i] = ATKIColor::HSVAtoRGBA(ATKIColor::HSVA((hue + 240 + i) % 252, 191, 15, 255));
-    frame[i] = ATKIColor::RGBA(63, 0, 0, 255);
-    frame[DISPLAY_SIZE - 1 - i] = ATKIColor::RGBA(63, 0, 0, 255);
+//    frame[i] = ATKIColor::RGBA(63, 0, 0, 255);
+//    frame[DISPLAY_SIZE - 1 - i] = ATKIColor::RGBA(63, 0, 0, 255);
+    frame[i] = ATKIColor::RGBA(0xF0, 255, 0, 255);
+    frame[DISPLAY_WIDTH + i] = ATKIColor::RGBA(0xCC, 0, 0, 255);
+//    frame[DISPLAY_SIZE - 1 - i] = ATKIColor::RGBA(255, 255, 255, 255);
   }
+/*
   for (i = 40; i < 119; i++) {
     frame[i] = ATKIColor::RGBA(0, 63, 0, 255);
     frame[DISPLAY_SIZE - 1 - i] = ATKIColor::RGBA(0, 63, 0, 255);
@@ -165,7 +343,7 @@ void loop() {
     frame[i] = ATKIColor::RGBA(0, 0, 63, 255);
     frame[DISPLAY_SIZE - 1 - i] = ATKIColor::RGBA(0, 0, 63, 255);
   }
-  
+*/
   send_frame();
   Serial.println("frame sent.");
 
