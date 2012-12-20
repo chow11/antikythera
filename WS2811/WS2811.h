@@ -11,6 +11,7 @@
 #define WS2811_H_
 
 
+#include <WProgram.h>
 #include <ATKIncludes.h>
 #include <ATKIDisplay.h>
 #include <ATKIColor.h>

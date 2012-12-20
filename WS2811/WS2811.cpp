@@ -69,6 +69,8 @@ void WS2811::initialize(int16_t displayWidth, int16_t displayHeight, int16_t fra
 	m_frameSize = frameWidth * frameHeight;
 
 	m_frames = new ATKIColor::RGBA[numLayers * m_frameWidth * m_frameHeight];
+
+	begin();
 }
 
 // blue t-> green -> red

@@ -11,22 +11,7 @@ CHANGE_HEAP_SIZE(0x2000);
 
 #include <WProgram.h>
 #include <HardwareSerial.h>
-
-    union RGBA {
-        struct {
-            uint8_t b;
-            uint8_t g;
-            uint8_t r;
-            uint8_t a;
-        } color;
-        uint32_t bits;
-
-        RGBA() { bits = 0; }
-        RGBA(uint32_t color) { bits = color; }
-        RGBA(uint8_t cr, uint8_t cg, uint8_t cb, uint8_t ca) { color.r = cr; color.g = cg; color.b = cb; color.a = ca; }
-
-        operator uint32_t() { return bits; }
-    };
+#include <ATKIColor.h>
 
 #define DISPLAY_WIDTH 240
 #define DISPLAY_HEIGHT 2
@@ -36,7 +21,7 @@ CHANGE_HEAP_SIZE(0x2000);
 #define OUTPUT_PIN2 5
 
 char out[128];
-RGBA frame[DISPLAY_SIZE];
+ATKIColor::RGBA frame[DISPLAY_SIZE];
 
 void send_frame() {
   register p32_ioport *iop1 = (p32_ioport *)portModeRegister(digitalPinToPort(OUTPUT_PIN1));
@@ -52,11 +37,11 @@ void send_frame() {
   register uint32_t c2;
 #endif
   register uint32_t mask;
-  RGBA *p1 = frame;
+  ATKIColor::RGBA *p1 = frame;
 #if (NUM_WS2811_OUTPUTS > 1)
-  RGBA *p2 = p1 + DISPLAY_WIDTH;
+  ATKIColor::RGBA *p2 = p1 + DISPLAY_WIDTH;
 #endif
-  RGBA *e = p1 + DISPLAY_WIDTH;
+  ATKIColor::RGBA *e = p1 + DISPLAY_WIDTH;
 
   noInterrupts();
   while (p1 != e) {
@@ -142,6 +127,19 @@ void setup() {
 }
 
 void loop() {
+  for (uint16_t i = 0; i < 252; i += 8) {
+    for (uint16_t j = 0; j < 240; j++) {
+      ATKIColor::HSVA hsva = ATKIColor::HSVA((i + j) % 252, 255, 15, 255);
+      ATKIColor::RGBA rgba = ATKIColor::HSVAtoRGBA(hsva);
+//sprintf(out, "H(%u), S(%u), V(%u) => R(%u) G(%u) B(%u)", (uint16_t)hsva.color.h, (uint16_t)hsva.color.s, (uint16_t)hsva.color.v, (uint16_t)rgba.color.r, (uint16_t)rgba.color.g, (uint16_t)rgba.color.b);
+//Serial.println(out);
+      frame[j] = rgba;
+      frame[DISPLAY_WIDTH + j] = rgba;
+    }
+      send_frame();
+      delay(17);
+  }
+  /*
   uint16_t i, j;
   for (i = 0; i < 39; i++) {
     frame[i] = RGBA(7, 0, 0, 255);
@@ -156,9 +154,9 @@ void loop() {
     frame[i] = RGBA(0, 0, 7, 255);
     frame[DISPLAY_WIDTH + i] = RGBA(0, 0, 63, 255);
   }
-
   send_frame();
   Serial.println("frame sent.");
 
   delay(17);
+*/
 }
