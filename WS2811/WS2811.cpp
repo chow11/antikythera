@@ -325,22 +325,13 @@ void WS2811::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, ATKIColor::RGB
 }
 
 void WS2811::point(int16_t x, int16_t y, ATKIColor::HSVA c, int16_t style, int16_t layer) {
-	x %= m_frameWidth;
-	if (x < 0) {
-		x = x + m_frameWidth - 1;
-	}
-	if (y >= 0 && y < m_frameHeight) {
-		m_frames[layer * m_frameSize + x * m_frameHeight + y] = ATKIColor::HSVAtoRGBA(c);
+	if ((x >= 0 && x < m_frameWidth) && (y >= 0 && y < m_frameHeight)) {
+		m_frames[layer * m_frameSize + y * m_frameWidth + x] = ATKIColor::HSVAtoRGBA(c);
 	}
 }
 
 void WS2811::point(int16_t x, int16_t y, ATKIColor::RGBA c, int16_t style, int16_t layer) {
-	x %= m_frameWidth;
-	if (x < 0) {
-		x = x + m_frameWidth - 1;
-	}
-	if (y >= 0 && y < m_frameHeight) {
-		m_frames[layer * m_frameSize + x * m_frameHeight + y] = c;
+	if ((x >= 0 && x < m_frameWidth) && (y >= 0 && y < m_frameHeight)) {
+		m_frames[layer * m_frameSize + y * m_frameWidth + x] = c;
 	}
 }
-

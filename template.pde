@@ -8,11 +8,14 @@ CHANGE_HEAP_SIZE(0x2000);
 #include <HardwareSerial.h>
 #include <Antikythera.h>
 #include <ATKColor.h>
-#include <WS2801.h>
+//#include <WS2801.h>
+#include <WS2811.h>
 
 #define  NUM_DISPLAYS      1
-#define  DISPLAY_WIDTH     8
-#define  DISPLAY_HEIGHT    38
+//#define  DISPLAY_WIDTH     8
+//#define  DISPLAY_HEIGHT    38
+#define  DISPLAY_WIDTH     240
+#define  DISPLAY_HEIGHT    2
 #define  DISPLAY_LAYERS    1
 
 // device management
@@ -46,20 +49,24 @@ char out[128];
 void setup()
 {
   Serial.begin(115200);
-//  Serial1.begin(115200);
   randomSeed(analogRead(0));
   Serial.println("randomSeed set");
-//  WS2801 *ws2801 = new WS2801(_DSPI0_BASE, PIN_DSPI0_SS);
 
-  WS2801 *ws2801 = new WS2801((p32_spi *) _SPI2_BASE_ADDRESS, PIN_DSPI0_SS);
-  Serial.println("WS2801 object instantiated");
-  ws2801->initialize(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_LAYERS);
-  Serial.println("WS2801 initialized");
+//  WS2801 *ws2801 = new WS2801((p32_spi *) _SPI2_BASE_ADDRESS, PIN_DSPI0_SS);
+//  Serial.println("WS2801 object instantiated");
+//  ws2801->initialize(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_LAYERS);
+//  Serial.println("WS2801 initialized");
+  WS2811 *ws2811 = new WS2811(4, 5);
+  Serial.println("WS2811 object instantiated");
+  ws2811->initialize(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_LAYERS);
+  Serial.println("WS2811 initialized");
   Antikythera::numDisplays = NUM_DISPLAYS;
   Antikythera::displays = new ATKIDisplay*[NUM_DISPLAYS];
   Serial.println("ATK added display pointers");
-  Antikythera::displays[0] = ws2801;
-  Serial.println("set ATK display[0] = WS2801");
+//  Antikythera::displays[0] = ws2801;
+//  Serial.println("set ATK display[0] = WS2801");
+  Antikythera::displays[0] = ws2811;
+  Serial.println("set ATK display[0] = WS2811");
 
   Serial.println("Send initial program.");
   timers.serialEnabled = true;
